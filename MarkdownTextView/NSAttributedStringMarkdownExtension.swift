@@ -190,7 +190,8 @@ extension NSAttributedString
                     }
                 case .OrderedList:
                     if self.isOrderedListSection(line) {
-                        sectionLines.append(line)
+                        let listLine = self.extractOrderedListLine(line)
+                        sectionLines.append(listLine)
                         lineHandled = true
                     } else {
                         let sectionData = MarkdownSectionData.OrderedList(sectionLines)
@@ -201,7 +202,8 @@ extension NSAttributedString
                     }
                 case .UnorderedList:
                     if self.isUnorderedListSection(line) {
-                        sectionLines.append(line)
+                        let listLine = self.extractUnorderedListLine(line)
+                        sectionLines.append(listLine)
                         lineHandled = true
                     } else {
                         let sectionData = MarkdownSectionData.UnorderedList(sectionLines)
