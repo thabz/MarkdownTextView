@@ -1,0 +1,422 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		811999261ACF9C8200809293 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999251ACF9C8200809293 /* AppDelegate.swift */; };
+		811999281ACF9C8200809293 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999271ACF9C8200809293 /* ViewController.swift */; };
+		8119992B1ACF9C8200809293 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 811999291ACF9C8200809293 /* Main.storyboard */; };
+		8119992D1ACF9C8200809293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8119992C1ACF9C8200809293 /* Images.xcassets */; };
+		811999301ACF9C8200809293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8119992E1ACF9C8200809293 /* LaunchScreen.xib */; };
+		8119993C1ACF9C8200809293 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		811999361ACF9C8200809293 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 811999181ACF9C8200809293 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8119991F1ACF9C8200809293;
+			remoteInfo = MarkdownTextView;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		811999201ACF9C8200809293 /* MarkdownTextView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarkdownTextView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		811999241ACF9C8200809293 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		811999251ACF9C8200809293 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		811999271ACF9C8200809293 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8119992A1ACF9C8200809293 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8119992C1ACF9C8200809293 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		8119992F1ACF9C8200809293 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkdownTextViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8119993A1ACF9C8200809293 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8119991D1ACF9C8200809293 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		811999321ACF9C8200809293 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		811999171ACF9C8200809293 = {
+			isa = PBXGroup;
+			children = (
+				811999221ACF9C8200809293 /* MarkdownTextView */,
+				811999381ACF9C8200809293 /* MarkdownTextViewTests */,
+				811999211ACF9C8200809293 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		811999211ACF9C8200809293 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				811999201ACF9C8200809293 /* MarkdownTextView.app */,
+				811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		811999221ACF9C8200809293 /* MarkdownTextView */ = {
+			isa = PBXGroup;
+			children = (
+				811999251ACF9C8200809293 /* AppDelegate.swift */,
+				811999271ACF9C8200809293 /* ViewController.swift */,
+				811999291ACF9C8200809293 /* Main.storyboard */,
+				8119992C1ACF9C8200809293 /* Images.xcassets */,
+				8119992E1ACF9C8200809293 /* LaunchScreen.xib */,
+				811999231ACF9C8200809293 /* Supporting Files */,
+			);
+			path = MarkdownTextView;
+			sourceTree = "<group>";
+		};
+		811999231ACF9C8200809293 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				811999241ACF9C8200809293 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		811999381ACF9C8200809293 /* MarkdownTextViewTests */ = {
+			isa = PBXGroup;
+			children = (
+				8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */,
+				811999391ACF9C8200809293 /* Supporting Files */,
+			);
+			path = MarkdownTextViewTests;
+			sourceTree = "<group>";
+		};
+		811999391ACF9C8200809293 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8119993A1ACF9C8200809293 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8119991F1ACF9C8200809293 /* MarkdownTextView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8119993F1ACF9C8200809293 /* Build configuration list for PBXNativeTarget "MarkdownTextView" */;
+			buildPhases = (
+				8119991C1ACF9C8200809293 /* Sources */,
+				8119991D1ACF9C8200809293 /* Frameworks */,
+				8119991E1ACF9C8200809293 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarkdownTextView;
+			productName = MarkdownTextView;
+			productReference = 811999201ACF9C8200809293 /* MarkdownTextView.app */;
+			productType = "com.apple.product-type.application";
+		};
+		811999341ACF9C8200809293 /* MarkdownTextViewTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 811999421ACF9C8200809293 /* Build configuration list for PBXNativeTarget "MarkdownTextViewTests" */;
+			buildPhases = (
+				811999311ACF9C8200809293 /* Sources */,
+				811999321ACF9C8200809293 /* Frameworks */,
+				811999331ACF9C8200809293 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				811999371ACF9C8200809293 /* PBXTargetDependency */,
+			);
+			name = MarkdownTextViewTests;
+			productName = MarkdownTextViewTests;
+			productReference = 811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		811999181ACF9C8200809293 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0620;
+				ORGANIZATIONNAME = "Jesper Christensen";
+				TargetAttributes = {
+					8119991F1ACF9C8200809293 = {
+						CreatedOnToolsVersion = 6.2;
+					};
+					811999341ACF9C8200809293 = {
+						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 8119991F1ACF9C8200809293;
+					};
+				};
+			};
+			buildConfigurationList = 8119991B1ACF9C8200809293 /* Build configuration list for PBXProject "MarkdownTextView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 811999171ACF9C8200809293;
+			productRefGroup = 811999211ACF9C8200809293 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8119991F1ACF9C8200809293 /* MarkdownTextView */,
+				811999341ACF9C8200809293 /* MarkdownTextViewTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8119991E1ACF9C8200809293 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8119992B1ACF9C8200809293 /* Main.storyboard in Resources */,
+				811999301ACF9C8200809293 /* LaunchScreen.xib in Resources */,
+				8119992D1ACF9C8200809293 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		811999331ACF9C8200809293 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8119991C1ACF9C8200809293 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				811999281ACF9C8200809293 /* ViewController.swift in Sources */,
+				811999261ACF9C8200809293 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		811999311ACF9C8200809293 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8119993C1ACF9C8200809293 /* MarkdownTextViewTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		811999371ACF9C8200809293 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8119991F1ACF9C8200809293 /* MarkdownTextView */;
+			targetProxy = 811999361ACF9C8200809293 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		811999291ACF9C8200809293 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8119992A1ACF9C8200809293 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8119992E1ACF9C8200809293 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8119992F1ACF9C8200809293 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		8119993D1ACF9C8200809293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8119993E1ACF9C8200809293 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		811999401ACF9C8200809293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = MarkdownTextView/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		811999411ACF9C8200809293 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = MarkdownTextView/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		811999431ACF9C8200809293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = MarkdownTextViewTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
+			};
+			name = Debug;
+		};
+		811999441ACF9C8200809293 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = MarkdownTextViewTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8119991B1ACF9C8200809293 /* Build configuration list for PBXProject "MarkdownTextView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8119993D1ACF9C8200809293 /* Debug */,
+				8119993E1ACF9C8200809293 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8119993F1ACF9C8200809293 /* Build configuration list for PBXNativeTarget "MarkdownTextView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				811999401ACF9C8200809293 /* Debug */,
+				811999411ACF9C8200809293 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		811999421ACF9C8200809293 /* Build configuration list for PBXNativeTarget "MarkdownTextViewTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				811999431ACF9C8200809293 /* Debug */,
+				811999441ACF9C8200809293 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 811999181ACF9C8200809293 /* Project object */;
+}
