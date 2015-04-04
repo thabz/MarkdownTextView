@@ -10,9 +10,30 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var textView: UITextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        let markdownExample = [
+            "Go download [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
+            "",
+            "* Normal group",
+            "* Placebo group",
+            "",
+            "```",
+            "func square(x) {",
+            "    return x * x",
+            "}",
+            "```",
+            "Normal, *bold* and /italic/."
+        ]
+        let font = UIFont.systemFontOfSize(13)
+        let italicFont = UIFont.italicSystemFontOfSize(13)
+        let boldFont = UIFont.boldSystemFontOfSize(13)
+        let monospaceFont = UIFont(name: "Menlo-Regular", size: 13)!
+        let joinedMarkdown = "\n".join(markdownExample)
+        textView.attributedText = NSAttributedString.attributedStringFromMarkdown(joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
     }
 
     override func didReceiveMemoryWarning() {
