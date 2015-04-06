@@ -15,6 +15,10 @@ extension NSAttributedString
         return NSRegularExpression(pattern: "^(#+)\\s*?(.*)", options: nil, error: nil)!
     }
 
+    private class func blankLineMatchRegExp() -> NSRegularExpression {
+        return NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
+    }
+
     private class func orderedListLineMatchRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\d+\\s", options: nil, error: nil)!
     }
@@ -31,21 +35,33 @@ extension NSAttributedString
         return NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
     }
     
-    enum MarkdownSectionData {
+    enum MarkdownSectionData: Printable {
         case Headline(Int, String)
         case Paragraph([String])
         case Code([String])
         case UnorderedList([String])
         case OrderedList([String])
+        
+        var description: String {
+            get {
+                switch self {
+                case .Headline(_, _): return "h"
+                case .Paragraph(_): return "p"
+                case .Code(_): return "pre"
+                case .UnorderedList(_): return "ul"
+                case .OrderedList(_): return "ol"
+                }
+            }
+        }
     }
     
-    enum MarkdownSection {
-        case Headline
-        case Paragraph
-        case Code
-        case UnorderedList
-        case OrderedList
-        case None
+    enum MarkdownSection: String {
+        case Headline = "h"
+        case Paragraph = "p"
+        case Code = "pre"
+        case UnorderedList = "ul"
+        case OrderedList = "ol"
+        case None = "none"
     }
     
     class func attributedStringFromMarkdown(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) -> NSAttributedString
@@ -60,7 +76,7 @@ extension NSAttributedString
             var lineHandled: Bool?
             var i = 0
             do {
-                println("CurSection: \(curSection): line: \(line)")
+                println("CurSection: \(curSection.rawValue): line: \(line)")
                 lineHandled = nil
                 switch curSection {
                 case .Code:
@@ -87,8 +103,11 @@ extension NSAttributedString
                         curSection = .OrderedList
                         lineHandled = false
                     } else if self.isUnorderedListSection(line) {
-                        curSection = .OrderedList
+                        curSection = .UnorderedList
                         lineHandled = false
+                    } else if self.isBlankLine(line) {
+                        println("Ignoring blank line")
+                        lineHandled = true
                     } else {
                         curSection = .Paragraph
                         lineHandled = false
@@ -117,6 +136,7 @@ extension NSAttributedString
                         curSection = .None
                         lineHandled = true
                     } else if self.endsParagraphSection(line) {
+                        println("Ends paragraph")
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
                         sections.append(sectionData)
                         sectionLines = []
@@ -129,6 +149,7 @@ extension NSAttributedString
                         curSection = .OrderedList
                         lineHandled = false
                     } else if self.isUnorderedListSection(line) {
+                        println("Ends paragraph")
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
                         sections.append(sectionData)
                         sectionLines = []
@@ -169,7 +190,7 @@ extension NSAttributedString
         
         // Convert each section into an NSAttributedString
         var result = NSMutableAttributedString(string: "")
-        for section in sections {
+        for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
             switch section {
             case .Paragraph(let lines):
@@ -187,33 +208,26 @@ extension NSAttributedString
             let newline = NSAttributedString(string: "\n")
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
             mutableSection.appendAttributedString(newline)
-            
             var paragraph = NSMutableParagraphStyle()
             paragraph.alignment = .Natural
-            paragraph.paragraphSpacing = 12
+            paragraph.paragraphSpacing = 8
             paragraph.lineSpacing = 0
             paragraph.paragraphSpacingBefore = 0
             paragraph.lineBreakMode = .ByWordWrapping
-            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0]
+            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.greenColor()]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
-            
-            /*
-            NSAttributedString* newline = [[NSAttributedString alloc] initWithString:@"\n"];
-            [result appendAttributedString:newline];
-            
-            NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
-            paragraph.alignment = NSTextAlignmentNatural;
-            paragraph.paragraphSpacing = 12;
-            paragraph.lineSpacing = 0;
-            paragraph.paragraphSpacingBefore = 0;
-            paragraph.lineBreakMode = NSLineBreakByWordWrapping;
-            NSDictionary* attributes = @{NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: @(0)};
-            [result addAttributes:attributes range:NSMakeRange(0, result.length)];
-*/
-            
+            mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
             result.appendAttributedString(mutableSection)
-            
         }
+      
+        var paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .Natural
+        paragraph.paragraphSpacing = 8
+        paragraph.lineSpacing = 0
+        paragraph.paragraphSpacingBefore = 0
+        paragraph.lineBreakMode = .ByWordWrapping
+        let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.redColor()]
+        result.addAttributes(attrs, range: NSMakeRange(0, result.length))
 
         return result
     }
@@ -224,7 +238,7 @@ extension NSAttributedString
     
     private class func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
         let attributes = [NSFontAttributeName: font]
-        return NSAttributedString(string: "\(line)\n", attributes: attributes)
+        return NSAttributedString(string: line, attributes: attributes)
     }
     
     private class func formatHeadline(size: Int, title: String) -> NSAttributedString {
@@ -232,11 +246,8 @@ extension NSAttributedString
     }
     
     private class func formatParagraphLines(lines: [String]) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
-        for line in lines {
-            result.appendAttributedString(formatParagraphLine(line))
-        }
-        return result
+        let formattedLines = lines.map { return self.formatParagraphLine($0) }
+        return "\n".join(formattedLines)
     }
     
     private class func formatOrderedList(lines: [String]) -> NSAttributedString {
@@ -254,19 +265,17 @@ extension NSAttributedString
         for (index,line) in enumerate(lines) {
             var prefixed = NSMutableAttributedString(string: "● ")
             prefixed.appendAttributedString(formatParagraphLine(line))
+            prefixed.appendAttributedString(NSAttributedString(string: "\n"))
             result.appendAttributedString(prefixed)
         }
         return result
     }
     
     private class func formatCodeLines(lines: [String], font: UIFont) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
-        for line in lines {
-            result.appendAttributedString(formatCodeLine(line, font: font))
-        }
-        return result
+        var joinedLines = "\n".join(lines)
+        let attributes = [NSFontAttributeName: font]
+        return NSAttributedString(string: joinedLines, attributes: attributes)
     }
-
     
     private class func beginsHeaderSection(line: String) -> Bool {
         return line.hasPrefix("# ") || line.hasPrefix("## ") || line.hasPrefix("### ")
@@ -281,7 +290,7 @@ extension NSAttributedString
     }
 
     private class func endsParagraphSection(line: String) -> Bool {
-        return line.hasPrefix("\n") || line.hasPrefix("\r\n") || line.hasPrefix("\n\r") || (line as NSString).length == 0
+        return isBlankLine(line)
     }
 
     private class func beginsUnorderedListSection(line: String) -> Bool {
@@ -306,6 +315,16 @@ extension NSAttributedString
         }
     }
 
+    private class func isBlankLine(line: NSString) -> Bool {
+        let range = NSMakeRange(0, line.length)
+        if let match = self.blankLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    
     private class func extractOrderedListLine(line: NSString) -> String {
         var hashmarks: String?
         var title: String?
@@ -324,7 +343,7 @@ extension NSAttributedString
         let range = NSMakeRange(0, line.length)
         if let match = self.unorderedListLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
-                return line.substringWithRange(match.rangeAtIndex(0))
+                return line.substringWithRange(match.rangeAtIndex(1))
             }
         }
         assertionFailure("We should be here if we don't match isUnorderedListSection")
@@ -345,5 +364,25 @@ extension NSAttributedString
         } else {
             return MarkdownSectionData.Headline(1, "")
         }
+    }
+}
+
+extension NSAttributedString {
+    func join(parts: [NSAttributedString]) -> NSAttributedString {
+        var result = NSMutableAttributedString(string: "")
+        for (index, part) in enumerate(parts) {
+            result.appendAttributedString(part)
+            if index < parts.count - 1 {
+                result.appendAttributedString(self)
+            }
+        }
+        return result
+    }
+}
+
+extension String {
+    func join(parts: [NSAttributedString]) -> NSAttributedString {
+        let joiner = NSAttributedString(string: self)
+        return joiner.join(parts)
     }
 }
