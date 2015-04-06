@@ -31,7 +31,7 @@ class ViewController: UIViewController {
         let font = UIFont.systemFontOfSize(13)
         let italicFont = UIFont.italicSystemFontOfSize(13)
         let boldFont = UIFont.boldSystemFontOfSize(13)
-        let monospaceFont = UIFont(name: "Menlo-Regular", size: 13)!
+        let monospaceFont = UIFont(name: "Menlo-Regular", size: 12)!
         let joinedMarkdown = "\n".join(markdownExample)
         textView.attributedText = NSAttributedString.attributedStringFromMarkdown(joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
     }

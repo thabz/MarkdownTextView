@@ -56,16 +56,15 @@ extension NSAttributedString
 
 
         // Group the text into sections
-        (markdown+"\n").enumerateLines { (line,stop) in
-            println("Handling line: \(line)")
+        (markdown+"\n\n").enumerateLines { (line,stop) in
             var lineHandled: Bool?
             var i = 0
             do {
+                println("CurSection: \(curSection): line: \(line)")
                 lineHandled = nil
                 switch curSection {
                 case .Code:
                     if self.endsCodeSection(line) {
-                        sectionLines.append(line)
                         let sectionData = MarkdownSectionData.Code(sectionLines)
                         sections.append(sectionData)
                         sectionLines = []
@@ -186,6 +185,17 @@ extension NSAttributedString
             }
             
             let newline = NSAttributedString(string: "\n")
+            var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
+            mutableSection.appendAttributedString(newline)
+            
+            var paragraph = NSMutableParagraphStyle()
+            paragraph.alignment = .Natural
+            paragraph.paragraphSpacing = 12
+            paragraph.lineSpacing = 0
+            paragraph.paragraphSpacingBefore = 0
+            paragraph.lineBreakMode = .ByWordWrapping
+            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0]
+            mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
             
             /*
             NSAttributedString* newline = [[NSAttributedString alloc] initWithString:@"\n"];
@@ -201,7 +211,7 @@ extension NSAttributedString
             [result addAttributes:attributes range:NSMakeRange(0, result.length)];
 */
             
-            result.appendAttributedString(sectionAttributedString)
+            result.appendAttributedString(mutableSection)
             
         }
 
@@ -214,7 +224,7 @@ extension NSAttributedString
     
     private class func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
         let attributes = [NSFontAttributeName: font]
-        return NSAttributedString(string: line, attributes: attributes)
+        return NSAttributedString(string: "\(line)\n", attributes: attributes)
     }
     
     private class func formatHeadline(size: Int, title: String) -> NSAttributedString {
