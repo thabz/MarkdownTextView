@@ -189,9 +189,10 @@ extension NSAttributedString
         }
         
         // Convert each section into an NSAttributedString
-        var result = NSMutableAttributedString(string: "")
+        var result = NSMutableAttributedString(string: "\n")
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
+
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines)
@@ -216,18 +217,9 @@ extension NSAttributedString
             paragraph.lineBreakMode = .ByWordWrapping
             let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.greenColor()]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
-            mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
+            //mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
             result.appendAttributedString(mutableSection)
         }
-      
-        var paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .Natural
-        paragraph.paragraphSpacing = 8
-        paragraph.lineSpacing = 0
-        paragraph.paragraphSpacingBefore = 0
-        paragraph.lineBreakMode = .ByWordWrapping
-        let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.redColor()]
-        result.addAttributes(attrs, range: NSMakeRange(0, result.length))
 
         return result
     }
@@ -247,7 +239,7 @@ extension NSAttributedString
     
     private class func formatParagraphLines(lines: [String]) -> NSAttributedString {
         let formattedLines = lines.map { return self.formatParagraphLine($0) }
-        return "\n".join(formattedLines)
+        return "".join(formattedLines)
     }
     
     private class func formatOrderedList(lines: [String]) -> NSAttributedString {
@@ -261,14 +253,23 @@ extension NSAttributedString
     }
     
     private class func formatUnorderedList(lines: [String]) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
-        for (index,line) in enumerate(lines) {
+        var parts = [NSAttributedString]()
+        for line in lines {
             var prefixed = NSMutableAttributedString(string: "● ")
             prefixed.appendAttributedString(formatParagraphLine(line))
-            prefixed.appendAttributedString(NSAttributedString(string: "\n"))
-            result.appendAttributedString(prefixed)
+            parts.append(prefixed)
         }
-        return result
+        var joined =  NSMutableAttributedString(attributedString: "\n".join(parts))
+        
+        var paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .Natural
+        paragraph.paragraphSpacing = 0
+        paragraph.lineSpacing = 0
+        paragraph.paragraphSpacingBefore = 0
+        paragraph.lineBreakMode = .ByWordWrapping
+        let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.redColor()]
+        joined.addAttributes(attrs, range: NSMakeRange(0, joined.length))
+        return joined
     }
     
     private class func formatCodeLines(lines: [String], font: UIFont) -> NSAttributedString {
