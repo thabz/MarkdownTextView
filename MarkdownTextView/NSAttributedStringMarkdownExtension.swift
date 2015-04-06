@@ -192,29 +192,50 @@ extension NSAttributedString
         var result = NSMutableAttributedString(string: "\n")
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
-
+            var paragraph = NSMutableParagraphStyle()
+            let newline = NSAttributedString(string: "\n")
+            // TODO: Sæt en paragraph spacing 8 på ovenstående newline, så alle sections har en spacing. Lige nu mangler Code sections efterfølgende spacing.
+            // TODO: Alternativ, findes der et unicode soft-newline som laver "lineSpacing" men ikke "paragraphSpacing"?
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 8
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             case .Code(let lines):
                 sectionAttributedString = formatCodeLines(lines, font: monospaceFont)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 0
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
                 sectionAttributedString = formatHeadline(size, title: title)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 8
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             case .UnorderedList(let lines):
                 sectionAttributedString = formatUnorderedList(lines)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 4
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
                 sectionAttributedString = formatOrderedList(lines)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 4
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             }
             
-            let newline = NSAttributedString(string: "\n")
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
             mutableSection.appendAttributedString(newline)
-            var paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .Natural
-            paragraph.paragraphSpacing = 8
-            paragraph.lineSpacing = 0
-            paragraph.paragraphSpacingBefore = 0
-            paragraph.lineBreakMode = .ByWordWrapping
             let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.greenColor()]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
             //mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)

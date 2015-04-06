@@ -32,6 +32,7 @@ class ViewController: UIViewController {
             "    return x * x",
             "}",
             "```",
+            "",
             "Normal, *bold* and /italic/."
         ]
         let font = UIFont.systemFontOfSize(13)
