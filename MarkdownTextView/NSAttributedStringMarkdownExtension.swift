@@ -48,65 +48,16 @@ extension NSAttributedString
         case None
     }
     
-    class func attributedStringFromMarkdown(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) -> NSAttributedString {
-
-        func formatParagraphLine(line: String) -> NSAttributedString {
-            return NSAttributedString(string: line)
-        }
-        
-        func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
-            let attributes = [NSFontAttributeName: font]
-            return NSAttributedString(string: line, attributes: attributes)
-        }
-
-        func formatHeadline(size: Int, title: String) -> NSAttributedString {
-            return NSAttributedString(string: title)
-        }
-        
-        func formatParagraphLines(lines: [String]) -> NSAttributedString {
-            var result = NSMutableAttributedString(string: "")
-            for line in lines {
-                result.appendAttributedString(formatParagraphLine(line))
-            }
-            return result
-        }
-        
-        func formatOrderedList(lines: [String]) -> NSAttributedString {
-            var result = NSMutableAttributedString(string: "")
-            for (index,line) in enumerate(lines) {
-                var prefixed = NSMutableAttributedString(string: "\(index+1) ")
-                prefixed.appendAttributedString(formatParagraphLine(line))
-                result.appendAttributedString(prefixed)
-            }
-            return result
-        }
-
-        func formatUnorderedList(lines: [String]) -> NSAttributedString {
-            var result = NSMutableAttributedString(string: "")
-            for (index,line) in enumerate(lines) {
-                var prefixed = NSMutableAttributedString(string: "● ")
-                prefixed.appendAttributedString(formatParagraphLine(line))
-                result.appendAttributedString(prefixed)
-            }
-            return result
-        }
-
-        func formatCodeLines(lines: [String]) -> NSAttributedString {
-            var result = NSMutableAttributedString(string: "")
-            for line in lines {
-                result.appendAttributedString(formatCodeLine(line, monospaceFont))
-            }
-            return result
-        }
-
-        var sections = [MarkdownSectionData]()
-        
+    class func attributedStringFromMarkdown(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) -> NSAttributedString
+    {
         var sectionLines = [String]()
-        var curSection: MarkdownSection = .None
-        
-        // Group the text into sections
+        var curSection: MarkdownSection = MarkdownSection.None
+        var sections = [MarkdownSectionData]()
 
+
+        // Group the text into sections
         (markdown+"\n").enumerateLines { (line,stop) in
+            println("Handling line: \(line)")
             var lineHandled: Bool?
             var i = 0
             do {
@@ -213,28 +164,99 @@ extension NSAttributedString
                         lineHandled = false
                     }
                 }
-            } while lineHandled != nil || lineHandled! == false
+            } while lineHandled == false
             assert(lineHandled != nil, "linedHandled bool was not set after processing line (\(line))")
         }
         
         // Convert each section into an NSAttributedString
         var result = NSMutableAttributedString(string: "")
         for section in sections {
+            var sectionAttributedString: NSAttributedString
             switch section {
             case .Paragraph(let lines):
-                result.appendAttributedString(formatParagraphLines(lines))
+                sectionAttributedString = formatParagraphLines(lines)
             case .Code(let lines):
-                result.appendAttributedString(formatCodeLines(lines))
+                sectionAttributedString = formatCodeLines(lines, font: monospaceFont)
             case .Headline(let size, let title):
-                result.appendAttributedString(formatHeadline(size, title))
+                sectionAttributedString = formatHeadline(size, title: title)
             case .UnorderedList(let lines):
-                result.appendAttributedString(formatUnorderedList(lines))
+                sectionAttributedString = formatUnorderedList(lines)
             case .OrderedList(let lines):
-                result.appendAttributedString(formatOrderedList(lines))
+                sectionAttributedString = formatOrderedList(lines)
             }
+            
+            let newline = NSAttributedString(string: "\n")
+            
+            /*
+            NSAttributedString* newline = [[NSAttributedString alloc] initWithString:@"\n"];
+            [result appendAttributedString:newline];
+            
+            NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
+            paragraph.alignment = NSTextAlignmentNatural;
+            paragraph.paragraphSpacing = 12;
+            paragraph.lineSpacing = 0;
+            paragraph.paragraphSpacingBefore = 0;
+            paragraph.lineBreakMode = NSLineBreakByWordWrapping;
+            NSDictionary* attributes = @{NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: @(0)};
+            [result addAttributes:attributes range:NSMakeRange(0, result.length)];
+*/
+            
+            result.appendAttributedString(sectionAttributedString)
+            
         }
-        return NSAttributedString(string: markdown)
+
+        return result
     }
+    
+    private class func formatParagraphLine(line: String) -> NSAttributedString {
+        return NSAttributedString(string: line)
+    }
+    
+    private class func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
+        let attributes = [NSFontAttributeName: font]
+        return NSAttributedString(string: line, attributes: attributes)
+    }
+    
+    private class func formatHeadline(size: Int, title: String) -> NSAttributedString {
+        return NSAttributedString(string: title)
+    }
+    
+    private class func formatParagraphLines(lines: [String]) -> NSAttributedString {
+        var result = NSMutableAttributedString(string: "")
+        for line in lines {
+            result.appendAttributedString(formatParagraphLine(line))
+        }
+        return result
+    }
+    
+    private class func formatOrderedList(lines: [String]) -> NSAttributedString {
+        var result = NSMutableAttributedString(string: "")
+        for (index,line) in enumerate(lines) {
+            var prefixed = NSMutableAttributedString(string: "\(index+1) ")
+            prefixed.appendAttributedString(formatParagraphLine(line))
+            result.appendAttributedString(prefixed)
+        }
+        return result
+    }
+    
+    private class func formatUnorderedList(lines: [String]) -> NSAttributedString {
+        var result = NSMutableAttributedString(string: "")
+        for (index,line) in enumerate(lines) {
+            var prefixed = NSMutableAttributedString(string: "● ")
+            prefixed.appendAttributedString(formatParagraphLine(line))
+            result.appendAttributedString(prefixed)
+        }
+        return result
+    }
+    
+    private class func formatCodeLines(lines: [String], font: UIFont) -> NSAttributedString {
+        var result = NSMutableAttributedString(string: "")
+        for line in lines {
+            result.appendAttributedString(formatCodeLine(line, font: font))
+        }
+        return result
+    }
+
     
     private class func beginsHeaderSection(line: String) -> Bool {
         return line.hasPrefix("# ") || line.hasPrefix("## ") || line.hasPrefix("### ")
@@ -258,7 +280,7 @@ extension NSAttributedString
 
     private class func isUnorderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = self.orderedListLineMatchRegExp().firstMatchInString(line, options: NSMatchingOptions(), range: range) {
+        if let match = self.unorderedListLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -267,7 +289,7 @@ extension NSAttributedString
 
     private class func isOrderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = self.orderedListLineMatchRegExp().firstMatchInString(line, options: NSMatchingOptions(), range: range) {
+        if let match = self.orderedListLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -278,7 +300,7 @@ extension NSAttributedString
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.orderedListLineExtractRegExp().firstMatchInString(line, options: NSMatchingOptions(), range: range) {
+        if let match = self.orderedListLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 return line.substringWithRange(match.rangeAtIndex(1))
             }
@@ -290,7 +312,7 @@ extension NSAttributedString
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.unorderedListLineExtractRegExp().firstMatchInString(line, options: NSMatchingOptions(), range: range) {
+        if let match = self.unorderedListLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 return line.substringWithRange(match.rangeAtIndex(0))
             }
@@ -302,7 +324,7 @@ extension NSAttributedString
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.headerLineExtractRegExp().firstMatchInString(line, options: NSMatchingOptions(), range: range) {
+        if let match = self.headerLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 hashmarks = line.substringWithRange(match.rangeAtIndex(1))
                 title = line.substringWithRange(match.rangeAtIndex(2))
@@ -314,5 +336,4 @@ extension NSAttributedString
             return MarkdownSectionData.Headline(1, "")
         }
     }
-    
 }

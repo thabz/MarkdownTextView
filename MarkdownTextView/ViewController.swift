@@ -18,8 +18,8 @@ class ViewController: UIViewController {
         let markdownExample = [
             "Go download [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
             "",
-            "* Normal group",
-            "* Placebo group",
+            " * Normal group",
+            " * Placebo group",
             "",
             "```",
             "func square(x) {",
