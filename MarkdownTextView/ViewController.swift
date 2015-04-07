@@ -33,7 +33,10 @@ class ViewController: UIViewController {
             "}",
             "```",
             "",
-            "Normal, *bold* and /italic/."
+            "Normal, *bold* and /italic/.",
+            "",
+            "1. First item",
+            "2. Second item"
         ]
         let font = UIFont.systemFontOfSize(13)
         let italicFont = UIFont.italicSystemFontOfSize(13)

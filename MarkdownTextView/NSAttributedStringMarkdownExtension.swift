@@ -35,15 +35,6 @@ extension NSAttributedString
         return NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
     }
 
-    private class func italicMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
-    }
-
-    private class func boldMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
-    }
-
-    
     enum MarkdownSectionData: Printable {
         case Headline(Int, String)
         case Paragraph([String])
@@ -75,11 +66,139 @@ extension NSAttributedString
     
     class func attributedStringFromMarkdown(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) -> NSAttributedString
     {
+        func boldMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
+        }
+        
+        func italicMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
+        }
+
+        func linkMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
+        }
+
+        func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = italicMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
+        func formatBoldParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = boldMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    italicPart.addAttributes(styles[.Bold]!, range: NSMakeRange(0, italicPart.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
+        func formatLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = linkMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let text = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    let href = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+                    text.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, text.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: text)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
+        
+        func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
+            var attributedLine = NSAttributedString(string: line)
+            attributedLine = formatLinkParts(attributedLine, styles)
+            attributedLine = formatBoldParts(attributedLine, styles)
+            attributedLine = formatItalicParts(attributedLine, styles)
+            return attributedLine
+        }
+        
+        func formatCodeLine(line: String, font: UIFont, styles: StylesDict) -> NSAttributedString {
+            let attributes = [NSFontAttributeName: font]
+            return NSAttributedString(string: line, attributes: attributes)
+        }
+        
+        func formatHeadline(size: Int, title: String, styles: StylesDict) -> NSAttributedString {
+            return NSAttributedString(string: title)
+        }
+        
+        func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
+            let formattedLines = lines.map { return formatParagraphLine($0, styles) }
+            return "".join(formattedLines)
+        }
+        
+        func formatOrderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
+            var result = NSMutableAttributedString(string: "")
+            for (index,line) in enumerate(lines) {
+                var prefixed = NSMutableAttributedString(string: "\(index+1) ")
+                prefixed.appendAttributedString(formatParagraphLine(line, styles))
+                result.appendAttributedString(prefixed)
+            }
+            return result
+        }
+        
+        func formatUnorderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
+            var parts = [NSAttributedString]()
+            for line in lines {
+                var prefixed = NSMutableAttributedString(string: "● ")
+                prefixed.appendAttributedString(formatParagraphLine(line, styles))
+                parts.append(prefixed)
+            }
+            var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
+            return joined
+        }
+        
+        func formatCodeLines(lines: [String], styles: StylesDict) -> NSAttributedString {
+            var joinedLines = "\u{2028}".join(lines)
+            return NSAttributedString(string: joinedLines, attributes: styles[.Monospace])
+        }
+        
         var sectionLines = [String]()
         var curSection: MarkdownSection = MarkdownSection.None
         var sections = [MarkdownSectionData]()
 
-
+        typealias StylesDict = [StylesName: [String:AnyObject]]
+        
+        enum StylesName {
+            case Normal
+            case Bold
+            case Italic
+            case Monospace
+        }
+        
+        let styles: StylesDict = [
+            StylesName.Normal: [NSFontAttributeName: font],
+            StylesName.Bold: [NSFontAttributeName: boldFont],
+            StylesName.Italic: [NSFontAttributeName: italicFont],
+            StylesName.Monospace: [NSFontAttributeName: monospaceFont]
+        ]
+        
         // Group the text into sections
         (markdown+"\n\n").enumerateLines { (line,stop) in
             var lineHandled: Bool?
@@ -208,35 +327,35 @@ extension NSAttributedString
             // prøv at joine intern i sektioner med 0x2028 og join sektioner med 0x2029
             switch section {
             case .Paragraph(let lines):
-                sectionAttributedString = formatParagraphLines(lines)
+                sectionAttributedString = formatParagraphLines(lines, styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Code(let lines):
-                sectionAttributedString = formatCodeLines(lines, font: monospaceFont)
+                sectionAttributedString = formatCodeLines(lines, styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
-                sectionAttributedString = formatHeadline(size, title: title)
+                sectionAttributedString = formatHeadline(size, title, styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .UnorderedList(let lines):
-                sectionAttributedString = formatUnorderedList(lines)
+                sectionAttributedString = formatUnorderedList(lines, styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 4
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
-                sectionAttributedString = formatOrderedList(lines)
+                sectionAttributedString = formatOrderedList(lines, styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 4
@@ -254,68 +373,7 @@ extension NSAttributedString
 
         return result
     }
-    
-    private class func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
-        let range = NSMakeRange(0, line.length)
-        var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            if let match = self.italicMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
-                let italicPart = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
-                mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
-            } else {
-                done = true
-            }
-        }
-        return mutable
-    }
-    
-    private class func formatParagraphLine(line: String) -> NSAttributedString {
-        return NSAttributedString(string: line)
-    }
-    
-    private class func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
-        let attributes = [NSFontAttributeName: font]
-        return NSAttributedString(string: line, attributes: attributes)
-    }
-    
-    private class func formatHeadline(size: Int, title: String) -> NSAttributedString {
-        return NSAttributedString(string: title)
-    }
-    
-    private class func formatParagraphLines(lines: [String]) -> NSAttributedString {
-        let formattedLines = lines.map { return self.formatParagraphLine($0) }
-        return "".join(formattedLines)
-    }
-    
-    private class func formatOrderedList(lines: [String]) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
-        for (index,line) in enumerate(lines) {
-            var prefixed = NSMutableAttributedString(string: "\(index+1) ")
-            prefixed.appendAttributedString(formatParagraphLine(line))
-            result.appendAttributedString(prefixed)
-        }
-        return result
-    }
-    
-    private class func formatUnorderedList(lines: [String]) -> NSAttributedString {
-        var parts = [NSAttributedString]()
-        for line in lines {
-            var prefixed = NSMutableAttributedString(string: "● ")
-            prefixed.appendAttributedString(formatParagraphLine(line))
-            parts.append(prefixed)
-        }
-        var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
-        return joined
-    }
-    
-    private class func formatCodeLines(lines: [String], font: UIFont) -> NSAttributedString {
-        var joinedLines = "\u{2028}".join(lines)
-        let attributes = [NSFontAttributeName: font]
-        return NSAttributedString(string: joinedLines, attributes: attributes)
-    }
-    
+
     private class func beginsHeaderSection(line: String) -> Bool {
         return line.hasPrefix("# ") || line.hasPrefix("## ") || line.hasPrefix("### ")
     }
