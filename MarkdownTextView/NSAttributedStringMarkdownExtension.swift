@@ -34,6 +34,15 @@ extension NSAttributedString
     private class func unorderedListLineExtractRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
     }
+
+    private class func italicMatchRegExp() -> NSRegularExpression {
+        return NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
+    }
+
+    private class func boldMatchRegExp() -> NSRegularExpression {
+        return NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
+    }
+
     
     enum MarkdownSectionData: Printable {
         case Headline(Int, String)
@@ -193,21 +202,22 @@ extension NSAttributedString
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
             var paragraph = NSMutableParagraphStyle()
-            let newline = NSAttributedString(string: "\n")
+            let newline = NSAttributedString(string: "\u{2029}")
             // TODO: Sæt en paragraph spacing 8 på ovenstående newline, så alle sections har en spacing. Lige nu mangler Code sections efterfølgende spacing.
-            // TODO: Alternativ, findes der et unicode soft-newline som laver "lineSpacing" men ikke "paragraphSpacing"?
+            // TODO: Alternativ, findes der et unicode soft-newline som laver "lineSpacing" men ikke "paragraphSpacing"? Jeps! Se http://www.unicode.org/standard/reports/tr13/tr13-5.html
+            // prøv at joine intern i sektioner med 0x2028 og join sektioner med 0x2029
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
-                paragraph.lineSpacing = 0
+                paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Code(let lines):
                 sectionAttributedString = formatCodeLines(lines, font: monospaceFont)
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 0
+                paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
@@ -221,28 +231,44 @@ extension NSAttributedString
             case .UnorderedList(let lines):
                 sectionAttributedString = formatUnorderedList(lines)
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 4
-                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacing = 6
+                paragraph.lineSpacing = 4
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
                 sectionAttributedString = formatOrderedList(lines)
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 4
-                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacing = 6
+                paragraph.lineSpacing = 4
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             }
             
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
             mutableSection.appendAttributedString(newline)
-            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.greenColor()]
+            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
             //mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
             result.appendAttributedString(mutableSection)
         }
 
         return result
+    }
+    
+    private class func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
+        let range = NSMakeRange(0, line.length)
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            if let match = self.italicMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let range = match.range
+                let italicPart = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
+                mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+            } else {
+                done = true
+            }
+        }
+        return mutable
     }
     
     private class func formatParagraphLine(line: String) -> NSAttributedString {
@@ -280,21 +306,12 @@ extension NSAttributedString
             prefixed.appendAttributedString(formatParagraphLine(line))
             parts.append(prefixed)
         }
-        var joined =  NSMutableAttributedString(attributedString: "\n".join(parts))
-        
-        var paragraph = NSMutableParagraphStyle()
-        paragraph.alignment = .Natural
-        paragraph.paragraphSpacing = 0
-        paragraph.lineSpacing = 0
-        paragraph.paragraphSpacingBefore = 0
-        paragraph.lineBreakMode = .ByWordWrapping
-        let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.redColor()]
-        joined.addAttributes(attrs, range: NSMakeRange(0, joined.length))
+        var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
         return joined
     }
     
     private class func formatCodeLines(lines: [String], font: UIFont) -> NSAttributedString {
-        var joinedLines = "\n".join(lines)
+        var joinedLines = "\u{2028}".join(lines)
         let attributes = [NSFontAttributeName: font]
         return NSAttributedString(string: joinedLines, attributes: attributes)
     }
