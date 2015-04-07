@@ -5,6 +5,9 @@
 //  Created by Jesper Christensen on 04/04/15.
 //  Copyright (c) 2015 Jesper Christensen. All rights reserved.
 //
+// Notes
+// See http://www.unicode.org/standard/reports/tr13/tr13-5.html on the distinction between line separator \u{2028} and paragraph separator \u{2029}.
+//
 
 import Foundation
 import UIKit
@@ -20,11 +23,11 @@ extension NSAttributedString
     }
 
     private class func orderedListLineMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\d+\\s", options: nil, error: nil)!
+        return NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
     }
 
     private class func orderedListLineExtractRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^(\\d+)\\s*?(.*)", options: nil, error: nil)!
+        return NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
     }
     
     private class func unorderedListLineMatchRegExp() -> NSRegularExpression {
@@ -154,13 +157,15 @@ extension NSAttributedString
         }
         
         func formatOrderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
+            var parts = [NSAttributedString]()
             var result = NSMutableAttributedString(string: "")
             for (index,line) in enumerate(lines) {
-                var prefixed = NSMutableAttributedString(string: "\(index+1) ")
+                var prefixed = NSMutableAttributedString(string: "\(index+1). ")
                 prefixed.appendAttributedString(formatParagraphLine(line, styles))
-                result.appendAttributedString(prefixed)
+                parts.append(prefixed)
             }
-            return result
+            var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
+            return joined
         }
         
         func formatUnorderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
@@ -277,7 +282,6 @@ extension NSAttributedString
                         curSection = .OrderedList
                         lineHandled = false
                     } else if self.isUnorderedListSection(line) {
-                        println("Ends paragraph")
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
                         sections.append(sectionData)
                         sectionLines = []
