@@ -81,6 +81,10 @@ extension NSAttributedString
             return NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
         }
 
+        func monospaceMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
+        }
+
         func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
             var done = false
             var mutable = NSMutableAttributedString(attributedString: line)
@@ -115,6 +119,23 @@ extension NSAttributedString
             return mutable
         }
 
+        func formatMonospaceParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = monospaceMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    italicPart.addAttributes(styles[.Monospace]!, range: NSMakeRange(0, italicPart.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
         func formatLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
             var done = false
             var mutable = NSMutableAttributedString(attributedString: line)
@@ -137,6 +158,7 @@ extension NSAttributedString
         func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
             var attributedLine = NSAttributedString(string: line)
             attributedLine = formatLinkParts(attributedLine, styles)
+            attributedLine = formatMonospaceParts(attributedLine, styles)
             attributedLine = formatBoldParts(attributedLine, styles)
             attributedLine = formatItalicParts(attributedLine, styles)
             return attributedLine

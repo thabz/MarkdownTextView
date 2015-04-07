@@ -18,7 +18,7 @@ class ViewController: UIViewController {
         let markdownExample = [
             "Go download [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
             "",
-            "A section spread over multiple lines. ",
+            "An `NSAttributedString` spread over multiple lines. ",
             "A section spread over multiple lines. ",
             "",
             "Short line.",
