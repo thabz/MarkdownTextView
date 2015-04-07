@@ -85,6 +85,14 @@ extension NSAttributedString
             return NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
         }
 
+        func strikethroughMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
+        }
+
+        func underlineMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "__(.*?)__", options: nil, error: nil)!
+        }
+
         func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
             var done = false
             var mutable = NSMutableAttributedString(attributedString: line)
@@ -136,6 +144,44 @@ extension NSAttributedString
             return mutable
         }
 
+        func formatStrikethroughParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = strikethroughMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    var attrs = styles[.Normal]!
+                    attrs[NSStrikethroughStyleAttributeName] = NSUnderlineStyle.StyleSingle.rawValue
+                    italicPart.addAttributes(attrs, range: NSMakeRange(0, italicPart.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
+        func formatUnderlineParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = underlineMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    var attrs = styles[.Normal]!
+                    attrs[NSUnderlineStyleAttributeName] = NSUnderlineStyle.StyleSingle.rawValue
+                    italicPart.addAttributes(attrs, range: NSMakeRange(0, italicPart.length))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
         func formatLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
             var done = false
             var mutable = NSMutableAttributedString(attributedString: line)
@@ -153,7 +199,6 @@ extension NSAttributedString
             }
             return mutable
         }
-
         
         func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
             var attributedLine = NSAttributedString(string: line)
@@ -161,6 +206,8 @@ extension NSAttributedString
             attributedLine = formatMonospaceParts(attributedLine, styles)
             attributedLine = formatBoldParts(attributedLine, styles)
             attributedLine = formatItalicParts(attributedLine, styles)
+            attributedLine = formatStrikethroughParts(attributedLine, styles)
+            attributedLine = formatUnderlineParts(attributedLine, styles)
             return attributedLine
         }
         
@@ -379,6 +426,8 @@ extension NSAttributedString
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 4
                 paragraph.paragraphSpacingBefore = 0
+                paragraph.headIndent = 8
+                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
                 sectionAttributedString = formatOrderedList(lines, styles)
@@ -386,6 +435,8 @@ extension NSAttributedString
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 4
                 paragraph.paragraphSpacingBefore = 0
+                paragraph.headIndent = 8
+                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             }
             
