@@ -11,6 +11,8 @@
 // Image vertical align: https://discussions.apple.com/thread/2788687?start=0&tstart=0
 // http://stackoverflow.com/questions/25301404/ios-nstextattachment-image-not-showing/28319519#28319519
 //
+// Dynamic load image: http://stackoverflow.com/questions/25766562/showing-image-from-url-with-placeholder-in-uitextview-with-attributed-string
+//
 
 import Foundation
 import UIKit
@@ -48,7 +50,6 @@ extension NSAttributedString
     private class func checkboxListLineExtractRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
     }
-
     
     enum MarkdownSectionData: Printable {
         case Headline(Int, String)
@@ -89,10 +90,6 @@ extension NSAttributedString
             return NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
         }
 
-        func linkMatchRegExp() -> NSRegularExpression {
-            return NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-        }
-
         func monospaceMatchRegExp() -> NSRegularExpression {
             return NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
         }
@@ -103,6 +100,14 @@ extension NSAttributedString
 
         func underlineMatchRegExp() -> NSRegularExpression {
             return NSRegularExpression(pattern: "__(.*?)__", options: nil, error: nil)!
+        }
+
+        func linkMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
+        }
+        
+        func imageMatchRegExp() -> NSRegularExpression {
+            return NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
         }
 
         func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
@@ -211,9 +216,31 @@ extension NSAttributedString
             }
             return mutable
         }
-        
+
+        func formatImageParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+            var done = false
+            var mutable = NSMutableAttributedString(attributedString: line)
+            while !done {
+                let range = NSMakeRange(0, mutable.length)
+                if let match = imageMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                    let range = match.range
+                    let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                    let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+                    var attachment = NSTextAttachment()
+                    attachment.image = UIImage(named: "big")
+                    var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
+                    textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
+                    mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
+                } else {
+                    done = true
+                }
+            }
+            return mutable
+        }
+
         func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
             var attributedLine = NSAttributedString(string: line)
+            attributedLine = formatImageParts(attributedLine, styles)
             attributedLine = formatLinkParts(attributedLine, styles)
             attributedLine = formatMonospaceParts(attributedLine, styles)
             attributedLine = formatBoldParts(attributedLine, styles)
