@@ -8,6 +8,9 @@
 // Notes
 // See http://www.unicode.org/standard/reports/tr13/tr13-5.html on the distinction between line separator \u{2028} and paragraph separator \u{2029}.
 //
+// Image vertical align: https://discussions.apple.com/thread/2788687?start=0&tstart=0
+// http://stackoverflow.com/questions/25301404/ios-nstextattachment-image-not-showing/28319519#28319519
+//
 
 import Foundation
 import UIKit
@@ -38,6 +41,15 @@ extension NSAttributedString
         return NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
     }
 
+    private class func checkboxListLineMatchRegExp() -> NSRegularExpression {
+        return NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
+    }
+    
+    private class func checkboxListLineExtractRegExp() -> NSRegularExpression {
+        return NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
+    }
+
+    
     enum MarkdownSectionData: Printable {
         case Headline(Int, String)
         case Paragraph([String])
