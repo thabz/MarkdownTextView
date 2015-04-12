@@ -41,15 +41,14 @@ class MarkdownTextStorage : NSTextStorage
     override func replaceCharactersInRange(range: NSRange, withString str: String) {
         if let attributedStringBackend = attributedStringBackend {
             attributedStringBackend.replaceCharactersInRange(range, withString: str)
-            edited(NSTextStorageEditActions.EditedCharacters, range: range, changeInLength: 1)
-        } else {
-            println("asdf")
+            let delta = (str as NSString).length - range.length
+            edited(NSTextStorageEditActions.EditedCharacters, range: range, changeInLength: delta)
         }
     }
 
     override func setAttributes(attrs: [NSObject : AnyObject]?, range: NSRange) {
         attributedStringBackend?.setAttributes(attrs, range: range)
-        edited(NSTextStorageEditActions.EditedAttributes, range: range, changeInLength: range.length)
+        edited(NSTextStorageEditActions.EditedAttributes, range: range, changeInLength: 0)
     }
     
     func addPrefix(prefix: String) {
@@ -625,7 +624,18 @@ class MarkdownTextStorage : NSTextStorage
                     if let downloadedImage = UIImage(data: data) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self.image = downloadedImage
-                            //textStorage.replaceCharactersInRange(NSMakeRange(0, 1), withString: "XX")
+                            textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
+                            let layoutManager = textStorage.layoutManagers.first
+                            println("layoutmanager", layoutManager)
+                            /*
+                            if let layoutManager = textStorage.layoutManagers.first as? NSLayoutManager {
+                                let charsCount = (textStorage.string as NSString).length
+                                let range = NSMakeRange(0, charsCount)
+                                //layoutManager.invalidateDisplayForCharacterRange(range)
+                                layoutManager.invalidateDisplayForGlyphRange(range)
+                                println("Invalidating display")
+                            }
+*/
                         }
                     }
                 }

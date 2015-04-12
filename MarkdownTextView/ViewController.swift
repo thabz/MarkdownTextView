@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var textView: UITextView!
+    var textStorage: MarkdownTextStorage?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,8 +28,7 @@ class ViewController: UIViewController {
             "",
             "```",
             "func square(x) { ",
-            "    // Simple square func",
-            "    // Simple square func",
+            "    // Simple square func!",
             "    return x * x",
             "}",
             "```",
@@ -47,24 +47,34 @@ class ViewController: UIViewController {
         let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
         let joinedMarkdown = "\n".join(markdownExample)
         
-        let myTextStorage = MarkdownTextStorage(markdown: joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        textStorage = MarkdownTextStorage(markdown: joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
         
-//            let containerSize = CGSizeMake(textView.bounds.size.width, CGFloat.max)
-//            let textContainer = NSTextContainer(size: containerSize)
-//            textContainer.widthTracksTextView = true
-//            var layoutManager = self.textView.layoutManager
-//            layoutManager.addTextContainer(textContainer)
-//            myTextStorage.addLayoutManager(layoutManager)
-
-        textView.attributedText = myTextStorage
-        
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        setUpAttributedString()
+//        setUpNewTextView()
     }
 
 
+    func setUpNewTextView() {
+        
+        var layoutManager = NSLayoutManager()
+        textStorage?.addLayoutManager(layoutManager)
+        
+        let containerSize = CGSizeMake(self.view.bounds.size.width, CGFloat.max)
+        let textContainer = NSTextContainer(size: containerSize)
+        textContainer.widthTracksTextView = true
+        textContainer.heightTracksTextView = true
+        layoutManager.addTextContainer(textContainer)
+        
+        var newTextView = UITextView(frame: CGRectInset(self.view.bounds, 0, 0), textContainer: textContainer)
+        newTextView.backgroundColor = UIColor.greenColor()
+        newTextView.editable = false
+        view.addSubview(newTextView)
+        
+        self.textView.hidden = true
+    }
+    
+    func setUpAttributedString() {
+        textView.attributedText = textStorage
+    }
 }
 
