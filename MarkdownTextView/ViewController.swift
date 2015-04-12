@@ -46,7 +46,18 @@ class ViewController: UIViewController {
         let boldFont = UIFont.boldSystemFontOfSize(13)
         let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
         let joinedMarkdown = "\n".join(markdownExample)
-        textView.attributedText = NSAttributedString.attributedStringFromMarkdown(joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        
+        let myTextStorage = MarkdownTextStorage(markdown: joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        
+//            let containerSize = CGSizeMake(textView.bounds.size.width, CGFloat.max)
+//            let textContainer = NSTextContainer(size: containerSize)
+//            textContainer.widthTracksTextView = true
+//            var layoutManager = self.textView.layoutManager
+//            layoutManager.addTextContainer(textContainer)
+//            myTextStorage.addLayoutManager(layoutManager)
+
+        textView.attributedText = myTextStorage
+        
     }
 
     override func didReceiveMemoryWarning() {
