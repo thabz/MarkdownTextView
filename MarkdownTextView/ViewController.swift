@@ -33,7 +33,7 @@ class ViewController: UIViewController {
             "}",
             "```",
             "",
-            "![An image](http://jony.com/png.png)",
+            "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
             "With some text directly under it. ",
             "Normal, *bold*, ~~strikethrough~~, __underline__ and /italic/.",
             "",

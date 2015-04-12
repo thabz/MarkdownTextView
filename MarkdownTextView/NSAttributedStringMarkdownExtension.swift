@@ -226,11 +226,13 @@ extension NSAttributedString
                     let range = match.range
                     let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                     let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                    var attachment = MarkdownTextAttachment()
-                    attachment.image = UIImage(named: "small")
-                    var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
-                    //textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
-                    mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
+                    if let srcURL = NSURL(string: src) {
+                        var attachment = MarkdownTextAttachment(url: srcURL)
+                        //attachment.image = UIImage(named: "small")
+                        var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
+                        //textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
+                        mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
+                    }
                 } else {
                     done = true
                 }
@@ -577,6 +579,20 @@ extension NSAttributedString
     }
     
     class MarkdownTextAttachment : NSTextAttachment {
+
+        convenience init(url: NSURL) {
+            self.init()
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                if let data = NSData(contentsOfURL: url) {
+                    if let downloadedImage = UIImage(data: data) {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.image = downloadedImage
+                        }
+                    }
+                }
+            }
+        }
+
         override func attachmentBoundsForTextContainer(textContainer: NSTextContainer, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
             if let image = image {
                 if image.size.width > lineFrag.width {
@@ -589,29 +605,11 @@ extension NSAttributedString
             }
             return CGRectZero
         }
-        
-        /*
-        override func imageForBounds(imageBounds: CGRect, textContainer: NSTextContainer, characterIndex charIndex: Int) -> UIImage! {
-            return resizeImage(image!, size: imageBounds.size)
-        }
-        */
-        // Reize image. Will not keep aspect, so only really intended for square images.
-        private func resizeImage(image: UIImage, size: CGSize) -> UIImage {
-            var newSize = size
-            let rect = CGRectMake(0, 0, newSize.width, newSize.height)
-            UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-            let context = UIGraphicsGetCurrentContext()
-            CGContextSetInterpolationQuality(context, kCGInterpolationHigh );
-            image.drawInRect(rect)
-            let newImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext();
-            return newImage
-        }
     }
-
 }
 
 extension NSAttributedString {
+    
     func join(parts: [NSAttributedString]) -> NSAttributedString {
         var result = NSMutableAttributedString(string: "")
         for (index, part) in enumerate(parts) {
