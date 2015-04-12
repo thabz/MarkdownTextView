@@ -226,10 +226,10 @@ extension NSAttributedString
                     let range = match.range
                     let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                     let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                    var attachment = NSTextAttachment()
-                    attachment.image = UIImage(named: "big")
+                    var attachment = MarkdownTextAttachment()
+                    attachment.image = UIImage(named: "small")
                     var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
-                    textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
+                    //textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
                     mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
                 } else {
                     done = true
@@ -434,9 +434,6 @@ extension NSAttributedString
             var sectionAttributedString: NSAttributedString
             var paragraph = NSMutableParagraphStyle()
             let newline = NSAttributedString(string: "\u{2029}")
-            // TODO: Sæt en paragraph spacing 8 på ovenstående newline, så alle sections har en spacing. Lige nu mangler Code sections efterfølgende spacing.
-            // TODO: Alternativ, findes der et unicode soft-newline som laver "lineSpacing" men ikke "paragraphSpacing"? Jeps! Se http://www.unicode.org/standard/reports/tr13/tr13-5.html
-            // prøv at joine intern i sektioner med 0x2028 og join sektioner med 0x2029
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines, styles)
@@ -547,7 +544,7 @@ extension NSAttributedString
                 return line.substringWithRange(match.rangeAtIndex(1))
             }
         }
-        assertionFailure("We should be here if we don't match isOrderedListSection")
+        preconditionFailure("We should be here if we don't match isOrderedListSection")
     }
 
     private class func extractUnorderedListLine(line: NSString) -> String {
@@ -559,7 +556,7 @@ extension NSAttributedString
                 return line.substringWithRange(match.rangeAtIndex(1))
             }
         }
-        assertionFailure("We should be here if we don't match isUnorderedListSection")
+        preconditionFailure("We should be here if we don't match isUnorderedListSection")
     }
 
     private class func extractHeaderLine(line: NSString) -> MarkdownSectionData {
@@ -578,6 +575,40 @@ extension NSAttributedString
             return MarkdownSectionData.Headline(1, "")
         }
     }
+    
+    class MarkdownTextAttachment : NSTextAttachment {
+        override func attachmentBoundsForTextContainer(textContainer: NSTextContainer, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
+            if let image = image {
+                if image.size.width > lineFrag.width {
+                    let ratio = image.size.width / image.size.height
+                    let newHeight = lineFrag.width / ratio
+                    return CGRectMake(0, 0, lineFrag.width, newHeight)
+                } else {
+                    return CGRectMake(0, 0, image.size.width, image.size.height)
+                }
+            }
+            return CGRectZero
+        }
+        
+        /*
+        override func imageForBounds(imageBounds: CGRect, textContainer: NSTextContainer, characterIndex charIndex: Int) -> UIImage! {
+            return resizeImage(image!, size: imageBounds.size)
+        }
+        */
+        // Reize image. Will not keep aspect, so only really intended for square images.
+        private func resizeImage(image: UIImage, size: CGSize) -> UIImage {
+            var newSize = size
+            let rect = CGRectMake(0, 0, newSize.width, newSize.height)
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+            let context = UIGraphicsGetCurrentContext()
+            CGContextSetInterpolationQuality(context, kCGInterpolationHigh );
+            image.drawInRect(rect)
+            let newImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext();
+            return newImage
+        }
+    }
+
 }
 
 extension NSAttributedString {
@@ -599,3 +630,4 @@ extension String {
         return joiner.join(parts)
     }
 }
+
