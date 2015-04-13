@@ -57,9 +57,7 @@ class MarkdownTextStorage : NSTextStorage
         
     }
     
-    private func headerLineExtractRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^(#+)\\s*?(.*)", options: nil, error: nil)!
-    }
+    static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*?(.*)", options: nil, error: nil)!
 
     private func blankLineMatchRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
@@ -94,9 +92,7 @@ class MarkdownTextStorage : NSTextStorage
         return NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
     }
     
-    func italicMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
-    }
+    static private let italicMatchRegExp = NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
     
     func monospaceMatchRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
@@ -123,7 +119,7 @@ class MarkdownTextStorage : NSTextStorage
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
-            if let match = italicMatchRegExp().firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+            if let match = MarkdownTextStorage.italicMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
                 let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
@@ -599,7 +595,7 @@ class MarkdownTextStorage : NSTextStorage
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.headerLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.headerLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 hashmarks = line.substringWithRange(match.rangeAtIndex(1))
                 title = line.substringWithRange(match.rangeAtIndex(2))
