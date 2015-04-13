@@ -235,11 +235,8 @@ class MarkdownTextStorage : NSTextStorage
                 let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
                 if let srcURL = NSURL(string: src) {
-                    println(String(format: "Create attachment for %p", arguments: [self]))
                     var attachment = MarkdownTextAttachment(url: srcURL, textStorage: self)
-                    //attachment.image = UIImage(named: "small")
                     var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
-                    //textWithAttachment.appendAttributedString(NSAttributedString(string: "\u{2028}"))
                     mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
                 }
             } else {
@@ -695,23 +692,16 @@ class MarkdownTextView: UITextView {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    override var attributedText: NSAttributedString! {
-        didSet {
-        }
-    }
-    
     var markdownTextStorage: MarkdownTextStorage? {
         didSet {
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
-                println(String(format: "Set up listener for %p", arguments: [markdownTextStorage]))
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
             }
         }
     }
     
     func attributedTextAttachmentChanged(notification: NSNotification) {
-        println("attributedTextAttachmentChanged received")
         self.attributedText = markdownTextStorage
     }
 }
