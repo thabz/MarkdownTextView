@@ -19,7 +19,7 @@
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tjD-Cm-6hd" id="bR2-lf-hFH">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="sdf" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t94-XO-9mH" customClass="MarkdownTextView" customModule="MarkdownTextView" customModuleProvider="target">
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="sdf" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t94-XO-9mH" customClass="MarkdownTextView" customModule="MarkdownTextView" customModuleProvider="target">
                                             <rect key="frame" x="8" y="8" width="584" height="123"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>

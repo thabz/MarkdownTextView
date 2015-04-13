@@ -404,7 +404,6 @@ class MarkdownTextStorage : NSTextStorage
                         curSection = .None
                         lineHandled = true
                     } else if self.endsParagraphSection(line) {
-                        println("Ends paragraph")
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
                         sections.append(sectionData)
                         sectionLines = []
@@ -674,7 +673,9 @@ extension String {
     }
 }
 
-class MarkdownTextView: UITextView {
+class MarkdownTextView: UITextView, UITextViewDelegate {
+    
+    weak var tableView: UITableView?
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -690,19 +691,24 @@ class MarkdownTextView: UITextView {
     
     var markdownTextStorage: MarkdownTextStorage? {
         didSet {
+            println("Set storage")
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
-                self.sizeToFit()
-                self.layoutIfNeeded()
+                NSNotificationCenter.defaultCenter().removeObserver(self)
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
+            } else {
+                tableView = nil
+                self.attributedText = NSAttributedString(string: "")
+                NSNotificationCenter.defaultCenter().removeObserver(self)
             }
         }
     }
     
     func attributedTextAttachmentChanged(notification: NSNotification) {
+        println("Got notification")
         self.attributedText = markdownTextStorage
-        self.sizeToFit()
-        self.layoutIfNeeded()
+        tableView?.beginUpdates()
+        tableView?.endUpdates()
     }
 }
 

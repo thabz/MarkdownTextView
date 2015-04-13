@@ -19,7 +19,6 @@ class TableViewController: UITableViewController {
         "Short line.",
         "* Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        ""
         ],[
         "```",
         "func square(x) { ",
@@ -55,6 +54,10 @@ class TableViewController: UITableViewController {
 
     // MARK: - Table view data source
 
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        return 100
+    }
+    
     override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
@@ -64,20 +67,25 @@ class TableViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let rows = markdownTexts.count
-        return rows
+        return markdownTexts.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
         let markdown = "\n".join(markdownTexts[indexPath.row])
         let markdownTextStorage = MarkdownTextStorage(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        cell.markdownTextView.tableView = self.tableView
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
-        cell.markdownTextView.sizeToFit()
+        //cell.markdownTextView.sizeToFit()
         return cell
     }
 }
 
 class MarkdownCell : UITableViewCell {
     @IBOutlet weak var markdownTextView: MarkdownTextView!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        markdownTextView.markdownTextStorage = nil
+    }
 }
