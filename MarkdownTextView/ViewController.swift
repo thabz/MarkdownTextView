@@ -34,6 +34,7 @@ class ViewController: UIViewController {
             "```",
             "",
             "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
+            "",
             "With some text directly under it. ",
             "Normal, *bold*, ~~strikethrough~~, __underline__ and /italic/.",
             "",
@@ -48,9 +49,13 @@ class ViewController: UIViewController {
         let joinedMarkdown = "\n".join(markdownExample)
         
         textStorage = MarkdownTextStorage(markdown: joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+  
+        textView.attributedText = NSAttributedString(string: "")
         
-        setUpAttributedString()
+//        setUpReusedLayoutManager()
+//        setUpAttributedString()
 //        setUpNewTextView()
+        setUpWithNotifications()
     }
 
 
@@ -75,6 +80,24 @@ class ViewController: UIViewController {
     
     func setUpAttributedString() {
         textView.attributedText = textStorage
+    }
+    
+    func setUpReusedLayoutManager() {
+        let layoutManager = textView.layoutManager
+        let existingTextStorage = layoutManager.textStorage
+        existingTextStorage?.removeLayoutManager(layoutManager)
+        textStorage?.addLayoutManager(layoutManager)
+
+        //textView.attributedText = textStorage
+    }
+    
+    func setUpWithNotifications() {
+        var markdownTextView = MarkdownTextView(frame: self.view.bounds)
+        markdownTextView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        markdownTextView.editable = false
+        markdownTextView.markdownTextStorage = textStorage
+        view.addSubview(markdownTextView)
+        self.textView.hidden = true
     }
 }
 

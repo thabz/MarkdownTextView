@@ -17,6 +17,8 @@
 import Foundation
 import UIKit
 
+let MarkdownTextAttachmentChangedNotification = "MarkdownTextAttachmentChangedNotification"
+
 class MarkdownTextStorage : NSTextStorage
 {
     enum StylesName {
@@ -233,6 +235,7 @@ class MarkdownTextStorage : NSTextStorage
                 let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
                 if let srcURL = NSURL(string: src) {
+                    println(String(format: "Create attachment for %p", arguments: [self]))
                     var attachment = MarkdownTextAttachment(url: srcURL, textStorage: self)
                     //attachment.image = UIImage(named: "small")
                     var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
@@ -624,18 +627,18 @@ class MarkdownTextStorage : NSTextStorage
                     if let downloadedImage = UIImage(data: data) {
                         dispatch_async(dispatch_get_main_queue()) {
                             self.image = downloadedImage
+                            
+                            println(String(format: "Post notification for %p", arguments: [textStorage]))
+                            NSNotificationCenter.defaultCenter().postNotificationName(MarkdownTextAttachmentChangedNotification, object: textStorage, userInfo: ["textAttachment": self])
+                            
                             textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
-                            let layoutManager = textStorage.layoutManagers.first
-                            println("layoutmanager", layoutManager)
-                            /*
                             if let layoutManager = textStorage.layoutManagers.first as? NSLayoutManager {
                                 let charsCount = (textStorage.string as NSString).length
                                 let range = NSMakeRange(0, charsCount)
-                                //layoutManager.invalidateDisplayForCharacterRange(range)
-                                layoutManager.invalidateDisplayForGlyphRange(range)
+                                layoutManager.invalidateDisplayForCharacterRange(range)
+//                                layoutManager.invalidateDisplayForGlyphRange(range)
                                 println("Invalidating display")
                             }
-*/
                         }
                     }
                 }
@@ -675,6 +678,41 @@ extension String {
     func join(parts: [NSAttributedString]) -> NSAttributedString {
         let joiner = NSAttributedString(string: self)
         return joiner.join(parts)
+    }
+}
+
+class MarkdownTextView: UITextView {
+    
+    override init(frame: CGRect, textContainer: NSTextContainer?) {
+        super.init(frame: frame, textContainer: textContainer)
+    }
+
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    deinit {
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+    
+    override var attributedText: NSAttributedString! {
+        didSet {
+        }
+    }
+    
+    var markdownTextStorage: MarkdownTextStorage? {
+        didSet {
+            if let markdownTextStorage = markdownTextStorage {
+                self.attributedText = markdownTextStorage
+                println(String(format: "Set up listener for %p", arguments: [markdownTextStorage]))
+                NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
+            }
+        }
+    }
+    
+    func attributedTextAttachmentChanged(notification: NSNotification) {
+        println("attributedTextAttachmentChanged received")
+        self.attributedText = markdownTextStorage
     }
 }
 
