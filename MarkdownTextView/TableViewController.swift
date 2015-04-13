@@ -48,6 +48,10 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+    }
 
     // MARK: - Table view data source
 
@@ -61,16 +65,15 @@ class TableViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let rows = markdownTexts.count
-        println("Rows", rows)
         return rows
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
         let markdown = "\n".join(markdownTexts[indexPath.row])
-        println("Markdown:", markdown)
         let markdownTextStorage = MarkdownTextStorage(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
+        cell.markdownTextView.sizeToFit()
         return cell
     }
 }

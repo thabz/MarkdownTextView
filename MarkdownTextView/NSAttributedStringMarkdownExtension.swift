@@ -692,6 +692,8 @@ class MarkdownTextView: UITextView {
         didSet {
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
+                self.sizeToFit()
+                self.layoutIfNeeded()
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
             }
         }
@@ -699,6 +701,8 @@ class MarkdownTextView: UITextView {
     
     func attributedTextAttachmentChanged(notification: NSNotification) {
         self.attributedText = markdownTextStorage
+        self.sizeToFit()
+        self.layoutIfNeeded()
     }
 }
 
