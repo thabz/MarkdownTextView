@@ -20,17 +20,17 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="sdf" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t94-XO-9mH" customClass="MarkdownTextView" customModule="MarkdownTextView" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="584" height="123"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <rect key="frame" x="8" y="8" width="592" height="131"/>
+                                            <color key="backgroundColor" red="0.95294123888015747" green="0.94117653369903564" blue="0.84313732385635376" alpha="1" colorSpace="deviceRGB"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         </textView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="bottomMargin" secondItem="t94-XO-9mH" secondAttribute="bottom" id="8fI-GA-3ut"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="t94-XO-9mH" secondAttribute="bottomMargin" id="8fI-GA-3ut"/>
                                         <constraint firstItem="t94-XO-9mH" firstAttribute="top" secondItem="bR2-lf-hFH" secondAttribute="topMargin" id="UcL-b6-BEW"/>
                                         <constraint firstItem="t94-XO-9mH" firstAttribute="leading" secondItem="bR2-lf-hFH" secondAttribute="leadingMargin" id="bFy-Ah-KfG"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="t94-XO-9mH" secondAttribute="trailing" id="t6O-qt-2VN"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="t94-XO-9mH" secondAttribute="trailingMargin" id="t6O-qt-2VN"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>

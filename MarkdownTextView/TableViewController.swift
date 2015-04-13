@@ -32,12 +32,12 @@ class TableViewController: UITableViewController {
         "",
         "With some text directly under it. ",
         ],[
-        
         "Normal, *bold*, ~~strikethrough~~, __underline__ and /italic/.",
         "",
         "1. First item",
         "2. Second item",
-        ""
+        "",
+        "And a small final paragraph, that should span a couple of lines if all goes according to plan.",
         ]]
     let font = UIFont.systemFontOfSize(13)
     let italicFont = UIFont.italicSystemFontOfSize(13)
@@ -76,7 +76,6 @@ class TableViewController: UITableViewController {
         let markdownTextStorage = MarkdownTextStorage(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
         cell.markdownTextView.tableView = self.tableView
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
-        //cell.markdownTextView.sizeToFit()
         return cell
     }
 }
