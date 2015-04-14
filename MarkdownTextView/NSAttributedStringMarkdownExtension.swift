@@ -58,26 +58,11 @@ class MarkdownTextStorage : NSTextStorage
     }
     
     static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*?(.*)", options: nil, error: nil)!
-
-    private func blankLineMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
-    }
-
-    private func orderedListLineMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
-    }
-
-    private func orderedListLineExtractRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
-    }
-    
-    private func unorderedListLineMatchRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\*\\s", options: nil, error: nil)!
-    }
-    
-    private func unorderedListLineExtractRegExp() -> NSRegularExpression {
-        return NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
-    }
+    static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
+    static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
+    static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
+    static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\*\\s", options: nil, error: nil)!
+    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
 
     private func checkboxListLineMatchRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
@@ -86,7 +71,6 @@ class MarkdownTextStorage : NSTextStorage
     private func checkboxListLineExtractRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
     }
-    
     
     func boldMatchRegExp() -> NSRegularExpression {
         return NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
@@ -540,7 +524,7 @@ class MarkdownTextStorage : NSTextStorage
 
     private func isUnorderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = self.unorderedListLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.unorderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -549,7 +533,7 @@ class MarkdownTextStorage : NSTextStorage
 
     private func isOrderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = self.orderedListLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.orderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -558,7 +542,7 @@ class MarkdownTextStorage : NSTextStorage
 
     private func isBlankLine(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = self.blankLineMatchRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.blankLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -570,7 +554,7 @@ class MarkdownTextStorage : NSTextStorage
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.orderedListLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.orderedListLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 return line.substringWithRange(match.rangeAtIndex(1))
             }
@@ -582,7 +566,7 @@ class MarkdownTextStorage : NSTextStorage
         var hashmarks: String?
         var title: String?
         let range = NSMakeRange(0, line.length)
-        if let match = self.unorderedListLineExtractRegExp().firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let match = MarkdownTextStorage.unorderedListLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 return line.substringWithRange(match.rangeAtIndex(1))
             }
