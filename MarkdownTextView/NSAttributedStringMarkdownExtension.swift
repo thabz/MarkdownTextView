@@ -463,7 +463,7 @@ class MarkdownTextStorage : NSTextStorage
             
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
             mutableSection.appendAttributedString(newline)
-            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0, NSBackgroundColorAttributeName: UIColor.greenColor()]
+            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0 /*, NSBackgroundColorAttributeName: UIColor.greenColor() */]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
             //mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
             result.appendAttributedString(mutableSection)
