@@ -641,7 +641,8 @@ class MarkdownTextView: UITextView, UITextViewDelegate {
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.textContainerInset = UIEdgeInsetsMake(-10, 0, -15, 0)
+        self.textContainerInset = UIEdgeInsetsMake(-15, -5, -22, -5)
+        self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
     
     deinit {
