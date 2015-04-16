@@ -67,11 +67,10 @@ public class MarkdownTextStorage : NSTextStorage
     static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*?(.*)", options: nil, error: nil)!
     static private let checkboxListLineMatchRegExp = NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
     static private let checkboxListLineExtractRegExp = NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
-    static private let boldMatchRegExp = NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
-    static private let italicMatchRegExp = NSRegularExpression(pattern: "/(.*?)/", options: nil, error: nil)!
+    static private let boldMatchRegExp = NSRegularExpression(pattern: "(\\*|__)(.*?)\\1", options: nil, error: nil)!
+    static private let italicMatchRegExp = NSRegularExpression(pattern: "(/|_)(.*?)\\1", options: nil, error: nil)!
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
-    static private let underlineMatchRegExp = NSRegularExpression(pattern: "__(.*?)__", options: nil, error: nil)!
     static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     
@@ -82,7 +81,7 @@ public class MarkdownTextStorage : NSTextStorage
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.italicMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
                 let range = match.range
-                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(2)))
                 italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
             } else {
@@ -99,7 +98,7 @@ public class MarkdownTextStorage : NSTextStorage
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.boldMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
                 let range = match.range
-                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(2)))
                 italicPart.addAttributes(styles[.Bold]!, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
             } else {
@@ -136,25 +135,6 @@ public class MarkdownTextStorage : NSTextStorage
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 var attrs = styles[.Normal]!
                 attrs[NSStrikethroughStyleAttributeName] = NSUnderlineStyle.StyleSingle.rawValue
-                italicPart.addAttributes(attrs, range: NSMakeRange(0, italicPart.length))
-                mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
-            } else {
-                done = true
-            }
-        }
-        return mutable
-    }
-    
-    func formatUnderlineParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
-        var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            let range = NSMakeRange(0, mutable.length)
-            if let match = MarkdownTextStorage.underlineMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
-                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
-                var attrs = styles[.Normal]!
-                attrs[NSUnderlineStyleAttributeName] = NSUnderlineStyle.StyleSingle.rawValue
                 italicPart.addAttributes(attrs, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
             } else {
@@ -211,7 +191,6 @@ public class MarkdownTextStorage : NSTextStorage
         attributedLine = formatBoldParts(attributedLine, styles: styles)
         attributedLine = formatItalicParts(attributedLine, styles: styles)
         attributedLine = formatStrikethroughParts(attributedLine, styles: styles)
-        attributedLine = formatUnderlineParts(attributedLine, styles: styles)
         return attributedLine
     }
     

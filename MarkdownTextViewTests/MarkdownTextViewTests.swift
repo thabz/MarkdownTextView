@@ -24,10 +24,24 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testBold() {
         XCTAssertTrue(MarkdownTextStorage(markdown: "*bold*").isBoldAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "__bold__").isBoldAtIndex(0))
         XCTAssertEqual("bold", MarkdownTextStorage(markdown: "*bold*").string)
+        XCTAssertEqual("bold", MarkdownTextStorage(markdown: "__bold__").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
         //XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
-    
+
+    func testItalic() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "/italic/").isItalicAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "_italic_").isItalicAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isItalicAtIndex(2))
+        XCTAssertEqual("italic", MarkdownTextStorage(markdown: "/italic/").string)
+        XCTAssertEqual("italic", MarkdownTextStorage(markdown: "_italic_").string)
+        XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(1))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(2))
+        XCTAssertEqual("a_b_c_d", MarkdownTextStorage(markdown: "a_b_c_d").string)
+    }
+
     func testBackslashEscape() {
     }
 }
@@ -47,5 +61,14 @@ extension MarkdownTextStorage {
         let b = UIFontDescriptorSymbolicTraits.TraitBold
         return (r & b) ? true : false
         */
+    }
+    
+    func isItalicAtIndex(index: Int) -> Bool {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        if let font = attrs[NSFontAttributeName] as? UIFont {
+            return font.fontName.rangeOfString("Italic") != nil
+        } else {
+            return false
+        }
     }
 }

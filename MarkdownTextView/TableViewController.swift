@@ -32,7 +32,7 @@ class TableViewController: UITableViewController {
         "",
         "With some text directly under it. ",
         ],[
-        "Normal, *bold*, ~~strikethrough~~, __underline__ and /italic/.",
+        "Normal, *bold*, ~~strikethrough~~, __bold__, _italic_ and /italic/.",
         "",
         "1. First item",
         "2. Second item",
