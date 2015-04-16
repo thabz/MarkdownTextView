@@ -27,7 +27,6 @@ class TableViewController: UITableViewController {
         "}",
         "```",
         ],[
-        "",
         "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
         "",
         "With some text directly under it. ",

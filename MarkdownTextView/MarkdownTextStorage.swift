@@ -423,7 +423,7 @@ public class MarkdownTextStorage : NSTextStorage
         }
         
         // Convert each section into an NSAttributedString
-        var result = NSMutableAttributedString(string: "\n")
+        var result = NSMutableAttributedString(string: "")
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
             var paragraph = NSMutableParagraphStyle()
@@ -650,7 +650,7 @@ class MarkdownTextView: UITextView, UITextViewDelegate {
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.textContainerInset = UIEdgeInsetsMake(-15, -5, -22, -5)
+        self.textContainerInset = UIEdgeInsetsMake(0, -5, -22, -5)
         self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
     
