@@ -174,10 +174,17 @@ public class MarkdownTextStorage : NSTextStorage
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.rawLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
                 let range = match.range
-                let preample = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(1))
-                let href = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                let fullLinkText = String(format: "%@[%@](%@)", preample, href, href)
-                let replacement = NSAttributedString(string: fullLinkText)
+                let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
+                let hrefString = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+                let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
+                let fullLinkText = String(format: "%@[%@](%@)", preample, hrefFormatted, hrefString)
+                let replacement = NSMutableAttributedString(attributedString: preample)
+                replacement.appendAttributedString(NSAttributedString(string:"["))
+                replacement.appendAttributedString(hrefFormatted)
+                replacement.appendAttributedString(NSAttributedString(string:"]"))
+                replacement.appendAttributedString(NSAttributedString(string:"("))
+                replacement.appendAttributedString(NSAttributedString(string: hrefString))
+                replacement.appendAttributedString(NSAttributedString(string:")"))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
             } else {
                 done = true
@@ -208,7 +215,8 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
-        var attributedLine = NSAttributedString(string: line)
+        var normalStyle = styles[.Normal]
+        var attributedLine = NSAttributedString(string: line, attributes: normalStyle)
         attributedLine = formatImageParts(attributedLine, styles: styles)
         attributedLine = formatRawLinkParts(attributedLine, styles: styles)
         attributedLine = formatLinkParts(attributedLine, styles: styles)
@@ -242,24 +250,27 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatOrderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        var result = NSMutableAttributedString(string: "")
+        var result = NSMutableAttributedString(string: "", attributes: styles[.Normal])
         for (index,line) in enumerate(lines) {
-            var prefixed = NSMutableAttributedString(string: "\(index+1). ")
+            let attrs = styles[.Normal]
+            var prefixed = NSMutableAttributedString(string: "\(index+1). ", attributes: attrs)
             prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
             parts.append(prefixed)
         }
-        var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
+        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let joined = separator.join(parts)
         return joined
     }
     
     func formatUnorderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for line in lines {
-            var prefixed = NSMutableAttributedString(string: "● ")
+            var prefixed = NSMutableAttributedString(string: "● ", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
             parts.append(prefixed)
         }
-        var joined =  NSMutableAttributedString(attributedString: "\u{2028}".join(parts))
+        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let joined = separator.join(parts)
         return joined
     }
     
@@ -499,7 +510,7 @@ public class MarkdownTextStorage : NSTextStorage
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
             attributedSections.append(mutableSection)
         }
-        let paragraphSeparator = NSAttributedString(string: "\u{2029}")
+        let paragraphSeparator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joinedSections = paragraphSeparator.join(attributedSections)
         attributedStringBackend = NSMutableAttributedString(attributedString: joinedSections)
     }

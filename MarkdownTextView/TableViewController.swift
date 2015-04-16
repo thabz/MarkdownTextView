@@ -41,10 +41,18 @@ class TableViewController: UITableViewController {
         "Also it contains a raw URL http://www.kalliope.org/page/ inline"
         ]]
 
-    let font = UIFont.systemFontOfSize(13)
-    let italicFont = UIFont.italicSystemFontOfSize(13)
-    let boldFont = UIFont.boldSystemFontOfSize(13)
-    let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
+    var defaultStyles: StylesDict = {
+        let fontSize = CGFloat(10)
+        let boldFont = UIFont.boldSystemFontOfSize(fontSize)
+        return [
+        MarkdownStylesName.Normal: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)],
+        MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
+        MarkdownStylesName.Italic: [NSFontAttributeName: UIFont.italicSystemFontOfSize(fontSize)],
+        MarkdownStylesName.Monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
+        MarkdownStylesName.Headline1: [NSFontAttributeName: boldFont],
+        MarkdownStylesName.Headline2: [NSFontAttributeName: boldFont],
+        MarkdownStylesName.Headline3: [NSFontAttributeName: boldFont]]
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +83,7 @@ class TableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
         let markdown = "\n".join(markdownTexts[indexPath.row])
-        let markdownTextStorage = MarkdownTextStorage(markdown: markdown)
+        let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
         cell.markdownTextView.tableView = self.tableView
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
         return cell
