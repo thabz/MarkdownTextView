@@ -620,7 +620,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
 }
 
-extension NSAttributedString {
+private extension NSAttributedString {
     
     func join(parts: [NSAttributedString]) -> NSAttributedString {
         var result = NSMutableAttributedString(string: "")
@@ -634,7 +634,7 @@ extension NSAttributedString {
     }
 }
 
-extension String {
+private extension String {
     func join(parts: [NSAttributedString]) -> NSAttributedString {
         let joiner = NSAttributedString(string: self)
         return joiner.join(parts)
