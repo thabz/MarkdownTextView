@@ -8,6 +8,7 @@
 
 import UIKit
 import XCTest
+import MarkdownTextView
 
 class MarkdownTextViewTests: XCTestCase {
     
@@ -21,16 +22,30 @@ class MarkdownTextViewTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    func testBold() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*bold*").isBoldAtIndex(1))
+        println("-" + MarkdownTextStorage(markdown: "*bold*").string + "-")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "a\n*bold*").isBoldAtIndex(5))
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock() {
-            // Put the code you want to measure the time of here.
+    func testBackslashEscape() {
+    }
+}
+
+extension MarkdownTextStorage {
+    func isBoldAtIndex(index: Int) -> Bool {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        if let font = attrs[NSFontAttributeName] as? UIFont {
+            
+            return font.fontName.rangeOfString("Medium") != nil
+        } else {
+            return false
         }
+        /*
+        let traits = font.fontDescriptor().symbolicTraits
+        let r = traits
+        let b = UIFontDescriptorSymbolicTraits.TraitBold
+        return (r & b) ? true : false
+        */
     }
-    
 }

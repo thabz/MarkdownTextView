@@ -19,7 +19,7 @@ import UIKit
 
 let MarkdownTextAttachmentChangedNotification = "MarkdownTextAttachmentChangedNotification"
 
-class MarkdownTextStorage : NSTextStorage
+public class MarkdownTextStorage : NSTextStorage
 {
     enum StylesName {
         case Normal
@@ -32,15 +32,15 @@ class MarkdownTextStorage : NSTextStorage
 
     private var attributedStringBackend: NSMutableAttributedString!
     
-    override var string: String {
+    override public var string: String {
         return attributedStringBackend.string
     }
     
-    override func attributesAtIndex(location: Int, effectiveRange range: NSRangePointer) -> [NSObject : AnyObject] {
+    override public func attributesAtIndex(location: Int, effectiveRange range: NSRangePointer) -> [NSObject : AnyObject] {
         return attributedStringBackend.attributesAtIndex(location, effectiveRange: range) ?? [NSObject: AnyObject]()
     }
     
-    override func replaceCharactersInRange(range: NSRange, withString str: String) {
+    override public func replaceCharactersInRange(range: NSRange, withString str: String) {
         if let attributedStringBackend = attributedStringBackend {
             attributedStringBackend.replaceCharactersInRange(range, withString: str)
             let delta = (str as NSString).length - range.length
@@ -48,7 +48,7 @@ class MarkdownTextStorage : NSTextStorage
         }
     }
 
-    override func setAttributes(attrs: [NSObject : AnyObject]?, range: NSRange) {
+    override public func setAttributes(attrs: [NSObject : AnyObject]?, range: NSRange) {
         attributedStringBackend?.setAttributes(attrs, range: range)
         edited(NSTextStorageEditActions.EditedAttributes, range: range, changeInLength: 0)
     }
@@ -283,8 +283,17 @@ class MarkdownTextStorage : NSTextStorage
         case OrderedList = "ol"
         case None = "none"
     }
+   
+    public convenience init(markdown: String) {
+        let font = UIFont.systemFontOfSize(13)
+        let italicFont = UIFont.italicSystemFontOfSize(13)
+        let boldFont = UIFont.boldSystemFontOfSize(13)
+        let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
+        let black = UIColor.blackColor()
+        self.init(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: black)
+    }
     
-    init(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) {
+    public init(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) {
         
         super.init()
         var sectionLines = [String]()
@@ -472,7 +481,7 @@ class MarkdownTextStorage : NSTextStorage
         attributedStringBackend = result
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required public init(coder aDecoder: NSCoder) {
         self.attributedStringBackend = aDecoder.decodeObjectForKey("attributedStringBackend") as? NSMutableAttributedString
         super.init()
     }

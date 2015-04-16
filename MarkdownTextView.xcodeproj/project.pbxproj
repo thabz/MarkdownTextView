@@ -13,7 +13,7 @@
 		8119992D1ACF9C8200809293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8119992C1ACF9C8200809293 /* Images.xcassets */; };
 		811999301ACF9C8200809293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8119992E1ACF9C8200809293 /* LaunchScreen.xib */; };
 		8119993C1ACF9C8200809293 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; };
-		811999461ACF9EA600809293 /* NSAttributedStringMarkdownExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* NSAttributedStringMarkdownExtension.swift */; };
+		811999461ACF9EA600809293 /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* MarkdownTextStorage.swift */; };
 		817CC4221ADC362A00EAA5D5 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817CC4211ADC362A00EAA5D5 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,7 +38,7 @@
 		811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkdownTextViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8119993A1ACF9C8200809293 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
-		811999451ACF9EA600809293 /* NSAttributedStringMarkdownExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedStringMarkdownExtension.swift; sourceTree = "<group>"; };
+		811999451ACF9EA600809293 /* MarkdownTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownTextStorage.swift; sourceTree = "<group>"; };
 		817CC4211ADC362A00EAA5D5 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -83,7 +83,7 @@
 			children = (
 				811999271ACF9C8200809293 /* ViewController.swift */,
 				817CC4211ADC362A00EAA5D5 /* TableViewController.swift */,
-				811999451ACF9EA600809293 /* NSAttributedStringMarkdownExtension.swift */,
+				811999451ACF9EA600809293 /* MarkdownTextStorage.swift */,
 				811999291ACF9C8200809293 /* Main.storyboard */,
 				811999231ACF9C8200809293 /* Supporting Files */,
 			);
@@ -220,7 +220,7 @@
 			files = (
 				811999281ACF9C8200809293 /* ViewController.swift in Sources */,
 				811999261ACF9C8200809293 /* AppDelegate.swift in Sources */,
-				811999461ACF9EA600809293 /* NSAttributedStringMarkdownExtension.swift in Sources */,
+				811999461ACF9EA600809293 /* MarkdownTextStorage.swift in Sources */,
 				817CC4221ADC362A00EAA5D5 /* TableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
