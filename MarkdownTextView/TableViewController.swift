@@ -18,8 +18,13 @@ class TableViewController: UITableViewController {
         ],[
         "###   Short headline. ### ",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        "- Line three",
-        "+ Line four",
+        "- Line two",
+        "+ Line three",
+        ],[
+            "Examples from /Apple Mail/ on OS X:",
+            "",
+            "![skaermbillede 2015-03-19 kl 10 11 35](https://cloud.githubusercontent.com/assets/157777/6727236/752598ac-ce20-11e4-8f1d-6bd7536caa01.png)",
+            "![skaermbillede 2015-03-19 kl 10 11 44](https://cloud.githubusercontent.com/assets/157777/6727235/75223612-ce20-11e4-8aac-f5bfb2d4dcd7.png)"
         ],[
         "```",
         "func square(x) { ",
@@ -28,6 +33,7 @@ class TableViewController: UITableViewController {
         "}",
         "```",
         ],[
+        "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png) ",
         "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
         "",
         "With some text directly under it. ",
@@ -39,7 +45,17 @@ class TableViewController: UITableViewController {
         "",
         "And a small final paragraph, that should span a couple of lines if all goes according to plan. ",
         "Also it contains a raw URL http://www.kalliope.org/page/ inline"
-        ]]
+        ],[
+            "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png) ",
+            "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
+            "",
+            "With some text directly under it. ",
+        ],[
+            "An a simple single line. ",
+            "An a simple single line. ",
+            "An a simple single line. ",
+        ]
+    ]
 
     var defaultStyles: StylesDict = {
         let fontSize = CGFloat(10)
@@ -83,8 +99,8 @@ class TableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
         let markdown = "\n".join(markdownTexts[indexPath.row])
-        let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
         cell.markdownTextView.tableView = self.tableView
+        let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
         return cell
     }
