@@ -37,7 +37,8 @@ class TableViewController: UITableViewController {
         "1. First item",
         "2. Second item",
         "",
-        "And a small final paragraph, that should span a couple of lines if all goes according to plan.",
+        "And a small final paragraph, that should span a couple of lines if all goes according to plan. ",
+        "Also it contains a raw URL http://www.kalliope.org/ inline"
         ]]
 
     let font = UIFont.systemFontOfSize(13)

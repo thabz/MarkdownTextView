@@ -74,6 +74,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
     static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
+    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[])(https?://\\S+)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     
     func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
@@ -164,6 +165,26 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
+    // Convert raw standalone URLs into [url](url)
+    func formatRawLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            let range = NSMakeRange(0, mutable.length)
+            if let match = MarkdownTextStorage.rawLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let range = match.range
+                let preample = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(1))
+                let href = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+                let fullLinkText = String(format: "%@[%@](%@)", preample, href, href)
+                let replacement = NSAttributedString(string: fullLinkText)
+                mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
+            } else {
+                done = true
+            }
+        }
+        return mutable
+    }
+    
     func formatImageParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
@@ -188,6 +209,7 @@ public class MarkdownTextStorage : NSTextStorage
     func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
         var attributedLine = NSAttributedString(string: line)
         attributedLine = formatImageParts(attributedLine, styles: styles)
+        attributedLine = formatRawLinkParts(attributedLine, styles: styles)
         attributedLine = formatLinkParts(attributedLine, styles: styles)
         attributedLine = formatMonospaceParts(attributedLine, styles: styles)
         attributedLine = formatBoldParts(attributedLine, styles: styles)
