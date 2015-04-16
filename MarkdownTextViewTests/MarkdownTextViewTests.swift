@@ -23,9 +23,9 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testBold() {
-        XCTAssertTrue(MarkdownTextStorage(markdown: "*bold*").isBoldAtIndex(1))
-        println("-" + MarkdownTextStorage(markdown: "*bold*").string + "-")
-        XCTAssertTrue(MarkdownTextStorage(markdown: "a\n*bold*").isBoldAtIndex(5))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*bold*").isBoldAtIndex(0))
+        XCTAssertEqual("bold", MarkdownTextStorage(markdown: "*bold*").string)
+        //XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
     
     func testBackslashEscape() {

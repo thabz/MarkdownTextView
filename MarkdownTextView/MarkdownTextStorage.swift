@@ -12,7 +12,6 @@
 // http://stackoverflow.com/questions/25301404/ios-nstextattachment-image-not-showing/28319519#28319519
 //
 // Dynamic load image: http://stackoverflow.com/questions/25766562/showing-image-from-url-with-placeholder-in-uitextview-with-attributed-string
-// TODO: http://stackoverflow.com/questions/18560412/uitextview-content-inset
 
 import Foundation
 import UIKit
@@ -61,8 +60,8 @@ public class MarkdownTextStorage : NSTextStorage
     static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
     static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
     static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
-    static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\*\\s", options: nil, error: nil)!
-    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\*\\s*?(.*)", options: nil, error: nil)!
+    static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s", options: nil, error: nil)!
+    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*?(.*)", options: nil, error: nil)!
     static private let checkboxListLineMatchRegExp = NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
     static private let checkboxListLineExtractRegExp = NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
     static private let boldMatchRegExp = NSRegularExpression(pattern: "\\*(.*?)\\*", options: nil, error: nil)!
@@ -423,11 +422,11 @@ public class MarkdownTextStorage : NSTextStorage
         }
         
         // Convert each section into an NSAttributedString
+        var attributedSections = [NSAttributedString]()
         var result = NSMutableAttributedString(string: "")
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
             var paragraph = NSMutableParagraphStyle()
-            let newline = NSAttributedString(string: "\u{2029}")
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines, styles: styles)
@@ -471,14 +470,13 @@ public class MarkdownTextStorage : NSTextStorage
             }
             
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
-            mutableSection.appendAttributedString(newline)
-            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0 /*, NSBackgroundColorAttributeName: UIColor.greenColor() */]
+            let attrs = [NSParagraphStyleAttributeName: paragraph, NSKernAttributeName: 0]
             mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
-            //mutableSection.insertAttributedString(NSAttributedString(string: "\(section): "), atIndex: 0)
-            result.appendAttributedString(mutableSection)
+            attributedSections.append(mutableSection)
         }
-
-        attributedStringBackend = result
+        let paragraphSeparator = NSAttributedString(string: "\u{2029}")
+        let joinedSections = paragraphSeparator.join(attributedSections)
+        attributedStringBackend = NSMutableAttributedString(attributedString: joinedSections)
     }
     
     required public init(coder aDecoder: NSCoder) {
@@ -650,7 +648,7 @@ class MarkdownTextView: UITextView, UITextViewDelegate {
 
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.textContainerInset = UIEdgeInsetsMake(0, -5, -22, -5)
+        self.textContainerInset = UIEdgeInsetsMake(0, -5, 0, -5)
         self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
     
