@@ -16,8 +16,7 @@ class TableViewController: UITableViewController {
         "An `NSAttributedString` spread over multiple lines. ",
         "A section spread over multiple lines. ",
         ],[
-        "Short line.",
-        "* Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "###   Short headline. ### ",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         "- Line three",
         "+ Line four",

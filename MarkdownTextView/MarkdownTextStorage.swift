@@ -25,6 +25,9 @@ public class MarkdownTextStorage : NSTextStorage
         case Bold
         case Italic
         case Monospace
+        case Headline1
+        case Headline2
+        case Headline3
     }
 
     typealias StylesDict = [StylesName: [String:AnyObject]]
@@ -56,7 +59,7 @@ public class MarkdownTextStorage : NSTextStorage
         
     }
     
-    static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*?(.*)", options: nil, error: nil)!
+    static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*(.*?)\\s*#*\\s*$", options: nil, error: nil)!
     static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
     static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
     static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
@@ -218,7 +221,14 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatHeadline(size: Int, title: String, styles: StylesDict) -> NSAttributedString {
-        return NSAttributedString(string: title)
+        let stylesName: StylesName
+        switch size {
+        case 1: stylesName = StylesName.Headline1
+        case 2: stylesName = StylesName.Headline2
+        case 3: stylesName = StylesName.Headline3
+        default: stylesName = StylesName.Headline1
+        }
+        return NSAttributedString(string: title, attributes: styles[stylesName])
     }
     
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
@@ -303,7 +313,10 @@ public class MarkdownTextStorage : NSTextStorage
             StylesName.Normal: [NSFontAttributeName: font],
             StylesName.Bold: [NSFontAttributeName: boldFont],
             StylesName.Italic: [NSFontAttributeName: italicFont],
-            StylesName.Monospace: [NSFontAttributeName: monospaceFont]
+            StylesName.Monospace: [NSFontAttributeName: monospaceFont],
+            StylesName.Headline1: [NSFontAttributeName: boldFont],
+            StylesName.Headline2: [NSFontAttributeName: boldFont],
+            StylesName.Headline3: [NSFontAttributeName: boldFont]
         ]
         
         // Group the text into sections
@@ -566,8 +579,8 @@ public class MarkdownTextStorage : NSTextStorage
                 title = line.substringWithRange(match.rangeAtIndex(2))
             }
         }
-        if hashmarks != nil && title != nil {
-            return MarkdownSectionData.Headline((hashmarks! as NSString).length, title!)
+        if let hashmarks = hashmarks, let title = title {
+            return MarkdownSectionData.Headline(count(hashmarks), title)
         } else {
             return MarkdownSectionData.Headline(1, "")
         }
