@@ -12,7 +12,7 @@
 // http://stackoverflow.com/questions/25301404/ios-nstextattachment-image-not-showing/28319519#28319519
 //
 // Dynamic load image: http://stackoverflow.com/questions/25766562/showing-image-from-url-with-placeholder-in-uitextview-with-attributed-string
-//
+// TODO: http://stackoverflow.com/questions/18560412/uitextview-content-inset
 
 import Foundation
 import UIKit
