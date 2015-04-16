@@ -39,6 +39,7 @@ class TableViewController: UITableViewController {
         "",
         "And a small final paragraph, that should span a couple of lines if all goes according to plan.",
         ]]
+
     let font = UIFont.systemFontOfSize(13)
     let italicFont = UIFont.italicSystemFontOfSize(13)
     let boldFont = UIFont.boldSystemFontOfSize(13)
@@ -73,7 +74,7 @@ class TableViewController: UITableViewController {
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
         let markdown = "\n".join(markdownTexts[indexPath.row])
-        let markdownTextStorage = MarkdownTextStorage(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        let markdownTextStorage = MarkdownTextStorage(markdown: markdown)
         cell.markdownTextView.tableView = self.tableView
         cell.markdownTextView.markdownTextStorage = markdownTextStorage
         return cell

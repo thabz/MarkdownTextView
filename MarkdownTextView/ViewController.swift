@@ -48,7 +48,7 @@ class ViewController: UIViewController {
         let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
         let joinedMarkdown = "\n".join(markdownExample)
         
-        textStorage = MarkdownTextStorage(markdown: joinedMarkdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: UIColor.blackColor())
+        textStorage = MarkdownTextStorage(markdown: joinedMarkdown)
   
         textView.attributedText = NSAttributedString(string: "")
         

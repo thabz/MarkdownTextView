@@ -18,20 +18,22 @@ import UIKit
 
 let MarkdownTextAttachmentChangedNotification = "MarkdownTextAttachmentChangedNotification"
 
+public enum MarkdownStylesName {
+    case Normal
+    case Bold
+    case Italic
+    case Monospace
+    case Headline1
+    case Headline2
+    case Headline3
+}
+
+public typealias StylesDict = [MarkdownStylesName: [String:AnyObject]]
+
 public class MarkdownTextStorage : NSTextStorage
 {
-    enum StylesName {
-        case Normal
-        case Bold
-        case Italic
-        case Monospace
-        case Headline1
-        case Headline2
-        case Headline3
-    }
-
-    typealias StylesDict = [StylesName: [String:AnyObject]]
-
+    private var styles: StylesDict
+    
     private var attributedStringBackend: NSMutableAttributedString!
     
     override public var string: String {
@@ -200,12 +202,12 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatHeadline(size: Int, title: String, styles: StylesDict) -> NSAttributedString {
-        let stylesName: StylesName
+        let stylesName: MarkdownStylesName
         switch size {
-        case 1: stylesName = StylesName.Headline1
-        case 2: stylesName = StylesName.Headline2
-        case 3: stylesName = StylesName.Headline3
-        default: stylesName = StylesName.Headline1
+        case 1: stylesName = MarkdownStylesName.Headline1
+        case 2: stylesName = MarkdownStylesName.Headline2
+        case 3: stylesName = MarkdownStylesName.Headline3
+        default: stylesName = MarkdownStylesName.Headline1
         }
         return NSAttributedString(string: title, attributes: styles[stylesName])
     }
@@ -272,32 +274,40 @@ public class MarkdownTextStorage : NSTextStorage
         case None = "none"
     }
    
-    public convenience init(markdown: String) {
+    public init(markdown: String, styles: StylesDict? = nil) {
         let font = UIFont.systemFontOfSize(13)
         let italicFont = UIFont.italicSystemFontOfSize(13)
         let boldFont = UIFont.boldSystemFontOfSize(13)
         let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
         let black = UIColor.blackColor()
-        self.init(markdown: markdown, font: font, monospaceFont: monospaceFont, boldFont: boldFont, italicFont: italicFont, color: black)
-    }
-    
-    public init(markdown: String, font: UIFont, monospaceFont: UIFont, boldFont: UIFont, italicFont: UIFont, color: UIColor) {
+        var defaultStyles: StylesDict = [
+            MarkdownStylesName.Normal: [NSFontAttributeName: font],
+            MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Italic: [NSFontAttributeName: italicFont],
+            MarkdownStylesName.Monospace: [NSFontAttributeName: monospaceFont],
+            MarkdownStylesName.Headline1: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Headline2: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Headline3: [NSFontAttributeName: boldFont]
+        ]
+        if let styles = styles {
+            for (key,value) in styles {
+                defaultStyles[key] = value
+            }
+            self.styles = styles
+        }
+        self.styles = defaultStyles
         
         super.init()
+        
+        parse(markdown)
+    }
+    
+    private func parse(markdown: String) {
+        
         var sectionLines = [String]()
         var curSection: MarkdownSection = MarkdownSection.None
         var sections = [MarkdownSectionData]()
 
-        let styles: StylesDict = [
-            StylesName.Normal: [NSFontAttributeName: font],
-            StylesName.Bold: [NSFontAttributeName: boldFont],
-            StylesName.Italic: [NSFontAttributeName: italicFont],
-            StylesName.Monospace: [NSFontAttributeName: monospaceFont],
-            StylesName.Headline1: [NSFontAttributeName: boldFont],
-            StylesName.Headline2: [NSFontAttributeName: boldFont],
-            StylesName.Headline3: [NSFontAttributeName: boldFont]
-        ]
-        
         // Group the text into sections
         (markdown+"\n\n").enumerateLines { (line,stop) in
             var lineHandled: Bool?
@@ -473,6 +483,7 @@ public class MarkdownTextStorage : NSTextStorage
     
     required public init(coder aDecoder: NSCoder) {
         self.attributedStringBackend = aDecoder.decodeObjectForKey("attributedStringBackend") as? NSMutableAttributedString
+        self.styles = aDecoder.decodeObjectForKey("styles") as! StylesDict
         super.init()
     }
 
@@ -630,7 +641,7 @@ extension String {
     }
 }
 
-class MarkdownTextView: UITextView, UITextViewDelegate {
+public class MarkdownTextView: UITextView, UITextViewDelegate {
     
     weak var tableView: UITableView?
     
@@ -638,7 +649,7 @@ class MarkdownTextView: UITextView, UITextViewDelegate {
         super.init(frame: frame, textContainer: textContainer)
     }
 
-    required init(coder aDecoder: NSCoder) {
+    public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.textContainerInset = UIEdgeInsetsMake(0, -5, 0, -5)
         self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
