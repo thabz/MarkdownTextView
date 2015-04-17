@@ -23,9 +23,9 @@ public enum MarkdownStylesName {
     case Bold
     case Italic
     case Monospace
-    case Headline1
-    case Headline2
-    case Headline3
+    case Headline
+    case Subheadline
+    case Subsubheadline
 }
 
 public typealias StylesDict = [MarkdownStylesName: [String:AnyObject]]
@@ -235,10 +235,10 @@ public class MarkdownTextStorage : NSTextStorage
     func formatHeadline(size: Int, title: String, styles: StylesDict) -> NSAttributedString {
         let stylesName: MarkdownStylesName
         switch size {
-        case 1: stylesName = MarkdownStylesName.Headline1
-        case 2: stylesName = MarkdownStylesName.Headline2
-        case 3: stylesName = MarkdownStylesName.Headline3
-        default: stylesName = MarkdownStylesName.Headline1
+        case 1: stylesName = MarkdownStylesName.Headline
+        case 2: stylesName = MarkdownStylesName.Subheadline
+        case 3: stylesName = MarkdownStylesName.Subsubheadline
+        default: stylesName = MarkdownStylesName.Headline
         }
         return NSAttributedString(string: title, attributes: styles[stylesName])
     }
@@ -319,9 +319,9 @@ public class MarkdownTextStorage : NSTextStorage
             MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
             MarkdownStylesName.Italic: [NSFontAttributeName: italicFont],
             MarkdownStylesName.Monospace: [NSFontAttributeName: monospaceFont],
-            MarkdownStylesName.Headline1: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Headline2: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Headline3: [NSFontAttributeName: boldFont]
+            MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont]
         ]
         if let styles = styles {
             for (key,value) in styles {
