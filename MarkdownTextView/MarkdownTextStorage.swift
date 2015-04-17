@@ -621,11 +621,13 @@ public class MarkdownTextStorage : NSTextStorage
                 if let data = NSData(contentsOfURL: url) {
                     if let downloadedImage = UIImage(data: data) {
                         dispatch_async(dispatch_get_main_queue()) {
+                            println(String(format: "Image sized %.0fx%.0f", downloadedImage.size.width, downloadedImage.size.height))
                             self.image = downloadedImage
                             
                             NSNotificationCenter.defaultCenter().postNotificationName(MarkdownTextAttachmentChangedNotification, object: textStorage, userInfo: ["textAttachment": self])
                             
-                            textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
+                            //textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
+                            /*
                             if let layoutManager = textStorage.layoutManagers.first as? NSLayoutManager {
                                 let charsCount = (textStorage.string as NSString).length
                                 let range = NSMakeRange(0, charsCount)
@@ -633,6 +635,7 @@ public class MarkdownTextStorage : NSTextStorage
 //                                layoutManager.invalidateDisplayForGlyphRange(range)
                                 println("Invalidating display")
                             }
+                            */
                         }
                     }
                 }
