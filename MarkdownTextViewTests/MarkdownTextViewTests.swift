@@ -43,6 +43,19 @@ class MarkdownTextViewTests: XCTestCase {
     }
 
     func testBackslashEscape() {
+        XCTAssertTrue(true)
+    }
+    
+    func testNormalLinks() {
+        XCTAssertTrue(count(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string) == 4)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[XXX](http://www.kalliope.org/suburl/)  ").isLinkAtIndex(1))
+    }
+    
+    func testRawLinks() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "XXX http://www.kalliope.org/suburl/").isLinkAtIndex(5))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").isLinkAtIndex(5))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(5))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl/").isLinkAtIndex(5))
     }
 }
 
@@ -71,4 +84,10 @@ extension MarkdownTextStorage {
             return false
         }
     }
+    
+    func isLinkAtIndex(index: Int) -> Bool {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        return attrs[NSLinkAttributeName] != nil
+    }
+
 }

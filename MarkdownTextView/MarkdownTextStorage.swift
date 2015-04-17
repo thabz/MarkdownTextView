@@ -74,7 +74,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
     static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[])(https?://\\S+)", options: nil, error: nil)!
+    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[]|^)(https?://\\S+)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     
     func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
