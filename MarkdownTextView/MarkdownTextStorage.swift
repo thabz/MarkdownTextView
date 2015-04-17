@@ -67,6 +67,8 @@ public class MarkdownTextStorage : NSTextStorage
     static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
     static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s", options: nil, error: nil)!
     static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*?(.*)", options: nil, error: nil)!
+    static private let checkedListLineMatchRegExp = NSRegularExpression(pattern: "^- \\[[\\sxX]\\]\\s", options: nil, error: nil)!
+    static private let checkedListLineExtractRegExp = NSRegularExpression(pattern: "^- \\[([\\sxX])\\]\\s*(.*)", options: nil, error: nil)!
     static private let checkboxListLineMatchRegExp = NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
     static private let checkboxListLineExtractRegExp = NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
     static private let boldMatchRegExp = NSRegularExpression(pattern: "(\\*|__)(.*?)\\1", options: nil, error: nil)!
@@ -243,6 +245,7 @@ public class MarkdownTextStorage : NSTextStorage
         return NSAttributedString(string: title, attributes: styles[stylesName])
     }
     
+    
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
         let formattedLines = lines.map { return self.formatParagraphLine($0, styles: styles) }
         return "".join(formattedLines)
@@ -274,6 +277,19 @@ public class MarkdownTextStorage : NSTextStorage
         return joined
     }
     
+    func formatCheckedList(checks: [Bool], lines: [String], styles: StylesDict) -> NSAttributedString {
+        var parts = [NSAttributedString]()
+        for (index,line) in enumerate(lines) {
+            let prefixString = checks[index] ? "☑︎ " : "☐ "
+            var prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
+            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            parts.append(prefixed)
+        }
+        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let joined = separator.join(parts)
+        return joined
+    }
+    
     func formatCodeLines(lines: [String], styles: StylesDict) -> NSAttributedString {
         var joinedLines = "\u{2028}".join(lines)
         return NSAttributedString(string: joinedLines, attributes: styles[.Monospace])
@@ -285,6 +301,7 @@ public class MarkdownTextStorage : NSTextStorage
         case Code([String])
         case UnorderedList([String])
         case OrderedList([String])
+        case CheckedList([Bool], [String])
         
         var description: String {
             get {
@@ -294,6 +311,7 @@ public class MarkdownTextStorage : NSTextStorage
                 case .Code(_): return "pre"
                 case .UnorderedList(_): return "ul"
                 case .OrderedList(_): return "ol"
+                case .CheckedList(_,_): return "olc"
                 }
             }
         }
@@ -306,6 +324,7 @@ public class MarkdownTextStorage : NSTextStorage
         case UnorderedList = "ul"
         case OrderedList = "ol"
         case None = "none"
+        case CheckedList = "olc"
     }
    
     public init(markdown: String, styles: StylesDict? = nil) {
@@ -339,6 +358,7 @@ public class MarkdownTextStorage : NSTextStorage
     private func parse(markdown: String) {
         
         var sectionLines = [String]()
+        var sectionBools = [Bool]()
         var curSection: MarkdownSection = MarkdownSection.None
         var sections = [MarkdownSectionData]()
 
@@ -370,6 +390,9 @@ public class MarkdownTextStorage : NSTextStorage
                         sections.append(headerData)
                         curSection = .None
                         lineHandled = true
+                    } else if self.isCheckedListSection(line) {
+                        curSection = .CheckedList
+                        lineHandled = false
                     } else if self.isOrderedListSection(line) {
                         curSection = .OrderedList
                         lineHandled = false
@@ -394,6 +417,9 @@ public class MarkdownTextStorage : NSTextStorage
                         } else if curSection == .UnorderedList {
                             let sectionData = MarkdownSectionData.UnorderedList(sectionLines)
                             sections.append(sectionData)
+                        } else if curSection == .CheckedList {
+                            let sectionData = MarkdownSectionData.CheckedList(sectionBools, sectionLines)
+                            sections.append(sectionData)
                         } else if curSection == .OrderedList {
                             let sectionData = MarkdownSectionData.OrderedList(sectionLines)
                             sections.append(sectionData)
@@ -412,6 +438,13 @@ public class MarkdownTextStorage : NSTextStorage
                         sectionLines = []
                         curSection = .None
                         lineHandled = true
+                    } else if self.isCheckedListSection(line) {
+                        let sectionData = MarkdownSectionData.Paragraph(sectionLines)
+                        sections.append(sectionData)
+                        sectionLines = []
+                        sectionBools = []
+                        curSection = .CheckedList
+                        lineHandled = false
                     } else if self.isOrderedListSection(line) {
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
                         sections.append(sectionData)
@@ -440,8 +473,22 @@ public class MarkdownTextStorage : NSTextStorage
                         curSection = .None
                         lineHandled = false
                     }
+                case .CheckedList:
+                    if self.isCheckedListSection(line) {
+                        let (listBool, listLine) = self.extractCheckedListLine(line)
+                        sectionLines.append(listLine)
+                        sectionBools.append(listBool)
+                        lineHandled = true
+                    } else {
+                        let sectionData = MarkdownSectionData.CheckedList(sectionBools,sectionLines)
+                        sections.append(sectionData)
+                        sectionLines = []
+                        sectionBools = []
+                        curSection = .None
+                        lineHandled = false
+                    }
                 case .UnorderedList:
-                    if self.isUnorderedListSection(line) {
+                    if self.isUnorderedListSection(line) && !self.isCheckedListSection(line) {
                         let listLine = self.extractUnorderedListLine(line)
                         sectionLines.append(listLine)
                         lineHandled = true
@@ -503,6 +550,22 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.headIndent = 8
                 paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
+            case .CheckedList(let checks, let lines):
+                sectionAttributedString = formatCheckedList(checks, lines: lines, styles: styles)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 6
+                paragraph.lineSpacing = 4
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.headIndent = 8
+                paragraph.firstLineHeadIndent = 8
+                paragraph.lineBreakMode = .ByWordWrapping
+            case .Headline(let size, let title):
+                sectionAttributedString = formatHeadline(size, title: title, styles:styles)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 8
+                paragraph.lineSpacing = 0
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
             }
             
             var mutableSection = NSMutableAttributedString(attributedString: sectionAttributedString)
@@ -559,6 +622,15 @@ public class MarkdownTextStorage : NSTextStorage
         }
     }
 
+    private func isCheckedListSection(line: NSString) -> Bool {
+        let range = NSMakeRange(0, line.length)
+        if let match = MarkdownTextStorage.checkedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     private func isBlankLine(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
         if let match = MarkdownTextStorage.blankLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
@@ -591,6 +663,24 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
         preconditionFailure("We should be here if we don't match isUnorderedListSection")
+    }
+
+    private func extractCheckedListLine(line: NSString) -> (Bool, String) {
+        var check: String?
+        var title: String?
+        let range = NSMakeRange(0, line.length)
+        if let match = MarkdownTextStorage.checkedListLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+            if match.range.location != NSNotFound {
+                check = line.substringWithRange(match.rangeAtIndex(1))
+                title = line.substringWithRange(match.rangeAtIndex(2))
+            }
+        }
+        if let check = check, let title = title {
+            var checkBool: Bool = check == "x" || check == "X"
+            return (checkBool, title)
+        } else {
+            return (false, "")
+        }
     }
 
     private func extractHeaderLine(line: NSString) -> MarkdownSectionData {
