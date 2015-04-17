@@ -65,9 +65,9 @@ class TableViewController: UITableViewController {
         MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
         MarkdownStylesName.Italic: [NSFontAttributeName: UIFont.italicSystemFontOfSize(fontSize)],
         MarkdownStylesName.Monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
-        MarkdownStylesName.Headline1: [NSFontAttributeName: boldFont],
-        MarkdownStylesName.Headline2: [NSFontAttributeName: boldFont],
-        MarkdownStylesName.Headline3: [NSFontAttributeName: boldFont]]
+        MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
+        MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
+        MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont]]
     }()
 
     override func viewDidLoad() {
