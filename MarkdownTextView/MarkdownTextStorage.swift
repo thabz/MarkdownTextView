@@ -77,6 +77,8 @@ public class MarkdownTextStorage : NSTextStorage
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
     static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[]|^)(https?://\\S+)", options: nil, error: nil)!
+    static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
+    static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     
     func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
@@ -179,7 +181,6 @@ public class MarkdownTextStorage : NSTextStorage
                 let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
                 let hrefString = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
                 let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
-                let fullLinkText = String(format: "%@[%@](%@)", preample, hrefFormatted, hrefString)
                 let replacement = NSMutableAttributedString(attributedString: preample)
                 replacement.appendAttributedString(NSAttributedString(string:"["))
                 replacement.appendAttributedString(hrefFormatted)
@@ -195,6 +196,65 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
+    // Convert issues refs (#123) into [#123](http://issue/123)
+    func formatIssueLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            let range = NSMakeRange(0, mutable.length)
+            if let match = MarkdownTextStorage.issueLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
+                let postample = mutable.attributedSubstringFromRange(match.rangeAtIndex(3))
+                let issueNumber = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
+                let href = String(format: "http://issue/%@", issueNumber.string)
+                let title = String(format: "#%@", issueNumber.string)
+                
+                let replacement = NSMutableAttributedString(attributedString: preample)
+                replacement.appendAttributedString(NSAttributedString(string: "["))
+                replacement.appendAttributedString(NSAttributedString(string: title))
+                replacement.appendAttributedString(NSAttributedString(string: "]"))
+                replacement.appendAttributedString(NSAttributedString(string: "("))
+                replacement.appendAttributedString(NSAttributedString(string: href))
+                replacement.appendAttributedString(NSAttributedString(string: ")"))
+                replacement.appendAttributedString(postample)
+                mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
+            } else {
+                done = true
+            }
+        }
+        return mutable
+    }
+
+    // Convert commit refs (cafebabe) into [cafebab](http://commit/cafebabe)
+    func formatCommitLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            let range = NSMakeRange(0, mutable.length)
+            if let match = MarkdownTextStorage.commitLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
+                let postample = mutable.attributedSubstringFromRange(match.rangeAtIndex(3))
+                let sha = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
+                let shortSha = sha.string.substringToIndex(advance(sha.string.startIndex, 7))
+                let href = String(format: "http://commit/%@", sha.string)
+                let title = String(format: "%@", shortSha)
+                
+                let replacement = NSMutableAttributedString(attributedString: preample)
+                replacement.appendAttributedString(NSAttributedString(string: "["))
+                replacement.appendAttributedString(NSAttributedString(string: title))
+                replacement.appendAttributedString(NSAttributedString(string: "]"))
+                replacement.appendAttributedString(NSAttributedString(string: "("))
+                replacement.appendAttributedString(NSAttributedString(string: href))
+                replacement.appendAttributedString(NSAttributedString(string: ")"))
+                replacement.appendAttributedString(postample)
+                mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
+            } else {
+                done = true
+            }
+        }
+        return mutable
+    }
+
     func formatImageParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
@@ -221,6 +281,8 @@ public class MarkdownTextStorage : NSTextStorage
         var attributedLine = NSAttributedString(string: line, attributes: normalStyle)
         attributedLine = formatImageParts(attributedLine, styles: styles)
         attributedLine = formatRawLinkParts(attributedLine, styles: styles)
+        attributedLine = formatIssueLinkParts(attributedLine, styles: styles)
+        attributedLine = formatCommitLinkParts(attributedLine, styles: styles)
         attributedLine = formatLinkParts(attributedLine, styles: styles)
         attributedLine = formatMonospaceParts(attributedLine, styles: styles)
         attributedLine = formatBoldParts(attributedLine, styles: styles)

@@ -57,6 +57,30 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(5))
         XCTAssertFalse(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl/").isLinkAtIndex(5))
     }
+
+    func testIssueLinks() {
+        println(MarkdownTextStorage(markdown: "#123").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "#123").isLinkAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(1))
+        XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(2))
+        XCTAssertEqual("(#123)", MarkdownTextStorage(markdown: "(#123)").string, "Should keep prefix and postfix")
+        XCTAssertEqual("#123?", MarkdownTextStorage(markdown: "#123?").string, "Should postfix")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "#acd").isLinkAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "#123x").isLinkAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "#123?").isLinkAtIndex(0))
+    }
+
+    func testCommitLinks() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: " deadbeef ").isLinkAtIndex(1))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "deadbeef").isLinkAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: " cafebabes ").isLinkAtIndex(1))
+        XCTAssertTrue(count(MarkdownTextStorage(markdown: " deadbee ").string) == 9, "Should keep prefix and postfix")
+        XCTAssertEqual("(deadbee)", MarkdownTextStorage(markdown: "(deadbeefcafebabe)").string, "Should keep prefix and postfix")
+        XCTAssertTrue(count(MarkdownTextStorage(markdown: "cafebabedeadbeef").string) == 7, "Should truncate link text to 7 hex chars")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "deadbe").isLinkAtIndex(0), "Must be 7 hex chars to mach")
+    }
+
 }
 
 extension MarkdownTextStorage {
