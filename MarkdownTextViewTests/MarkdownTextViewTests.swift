@@ -78,7 +78,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(count(MarkdownTextStorage(markdown: " deadbee ").string) == 9, "Should keep prefix and postfix")
         XCTAssertEqual("(deadbee)", MarkdownTextStorage(markdown: "(deadbeefcafebabe)").string, "Should keep prefix and postfix")
         XCTAssertTrue(count(MarkdownTextStorage(markdown: "cafebabedeadbeef").string) == 7, "Should truncate link text to 7 hex chars")
-        XCTAssertFalse(MarkdownTextStorage(markdown: "deadbe").isLinkAtIndex(0), "Must be 7 hex chars to mach")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "deadbe").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 6.")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f53").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Like 40.")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f530").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 41.")
     }
 
 }
