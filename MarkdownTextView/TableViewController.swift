@@ -22,7 +22,7 @@ class TableViewController: UITableViewController {
         ],[
         "###   Short headline. ### ",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-        "- Line two",
+        "- Link to commit deadbeef and issue #1.",
         "+ Line three",
         ],[
             "Examples from /Apple Mail/ on OS X:",
