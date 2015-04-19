@@ -23,6 +23,7 @@ public enum MarkdownStylesName {
     case Bold
     case Italic
     case Monospace
+    case Quote
     case Headline
     case Subheadline
     case Subsubheadline
@@ -70,8 +71,8 @@ public class MarkdownTextStorage : NSTextStorage
     static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*?(.*)", options: nil, error: nil)!
     static private let checkedListLineMatchRegExp = NSRegularExpression(pattern: "^- \\[[\\sxX]\\]\\s", options: nil, error: nil)!
     static private let checkedListLineExtractRegExp = NSRegularExpression(pattern: "^- \\[([\\sxX])\\]\\s*(.*)", options: nil, error: nil)!
-    static private let checkboxListLineMatchRegExp = NSRegularExpression(pattern: "^\\[[x\\s]\\]\\s", options: .CaseInsensitive, error: nil)!
-    static private let checkboxListLineExtractRegExp = NSRegularExpression(pattern: "^\\[([x\\s])\\]\\s*?(.*)", options: .CaseInsensitive, error: nil)!
+    static private let quoteLineMatchRegExp = NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive, error: nil)!
+    static private let quoteLineExtractRegExp = NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive, error: nil)!
     static private let boldMatchRegExp = NSRegularExpression(pattern: "(\\*|__)(.*?)\\1", options: nil, error: nil)!
     static private let italicMatchRegExp = NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_|/)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_/]|$)", options: nil, error: nil)!
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
@@ -355,7 +356,20 @@ public class MarkdownTextStorage : NSTextStorage
         let joined = separator.join(parts)
         return joined
     }
-    
+
+    func formatQuoteList(levels: [Int], lines: [String], styles: StylesDict) -> NSAttributedString {
+        var parts = [NSAttributedString]()
+        for (index,line) in enumerate(lines) {
+            var prefixed = NSMutableAttributedString(string: "", attributes: styles[.Normal])
+            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            prefixed.addAttributes(styles[.Quote]!, range: NSMakeRange(0, prefixed.length))
+            parts.append(prefixed)
+        }
+        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Quote])
+        let joined = separator.join(parts)
+        return joined
+    }
+
     func formatCodeLines(lines: [String], styles: StylesDict) -> NSAttributedString {
         var joinedLines = "\u{2028}".join(lines)
         return NSAttributedString(string: joinedLines, attributes: styles[.Monospace])
@@ -368,6 +382,7 @@ public class MarkdownTextStorage : NSTextStorage
         case UnorderedList([String])
         case OrderedList([String])
         case CheckedList([Bool], [String])
+        case Quote([Int], [String])
         
         var description: String {
             get {
@@ -378,6 +393,7 @@ public class MarkdownTextStorage : NSTextStorage
                 case .UnorderedList(_): return "ul"
                 case .OrderedList(_): return "ol"
                 case .CheckedList(_,_): return "olc"
+                case .Quote(_, _): return "q"
                 }
             }
         }
@@ -391,6 +407,7 @@ public class MarkdownTextStorage : NSTextStorage
         case OrderedList = "ol"
         case None = "none"
         case CheckedList = "olc"
+        case Quote = "q"
     }
    
     public init(markdown: String, styles: StylesDict? = nil) {
@@ -403,6 +420,7 @@ public class MarkdownTextStorage : NSTextStorage
             MarkdownStylesName.Normal: [NSFontAttributeName: font],
             MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
             MarkdownStylesName.Italic: [NSFontAttributeName: italicFont],
+            MarkdownStylesName.Quote: [NSFontAttributeName: font, NSForegroundColorAttributeName: UIColor.grayColor()],
             MarkdownStylesName.Monospace: [NSFontAttributeName: monospaceFont],
             MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
             MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
@@ -426,6 +444,7 @@ public class MarkdownTextStorage : NSTextStorage
         
         var sectionLines = [String]()
         var sectionBools = [Bool]()
+        var sectionInts = [Int]() // Used for indents in quotes
         var curSection: MarkdownSection = MarkdownSection.None
         var sections = [MarkdownSectionData]()
 
@@ -466,6 +485,9 @@ public class MarkdownTextStorage : NSTextStorage
                     } else if self.isUnorderedListSection(line) {
                         curSection = .UnorderedList
                         lineHandled = false
+                    } else if self.isQuoteSection(line) {
+                        curSection = .Quote
+                        lineHandled = false
                     } else if self.isBlankLine(line) {
                         //println("Ignoring blank line")
                         lineHandled = true
@@ -486,6 +508,9 @@ public class MarkdownTextStorage : NSTextStorage
                             sections.append(sectionData)
                         } else if curSection == .CheckedList {
                             let sectionData = MarkdownSectionData.CheckedList(sectionBools, sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .Quote {
+                            let sectionData = MarkdownSectionData.Quote(sectionInts, sectionLines)
                             sections.append(sectionData)
                         } else if curSection == .OrderedList {
                             let sectionData = MarkdownSectionData.OrderedList(sectionLines)
@@ -511,6 +536,13 @@ public class MarkdownTextStorage : NSTextStorage
                         sectionLines = []
                         sectionBools = []
                         curSection = .CheckedList
+                        lineHandled = false
+                    } else if self.isQuoteSection(line) {
+                        let sectionData = MarkdownSectionData.Paragraph(sectionLines)
+                        sections.append(sectionData)
+                        sectionLines = []
+                        sectionInts = []
+                        curSection = .Quote
                         lineHandled = false
                     } else if self.isOrderedListSection(line) {
                         let sectionData = MarkdownSectionData.Paragraph(sectionLines)
@@ -566,6 +598,20 @@ public class MarkdownTextStorage : NSTextStorage
                         curSection = .None
                         lineHandled = false
                     }
+                case .Quote:
+                    if self.isQuoteSection(line) {
+                        let (level, listLine) = self.extractQuoteLine(line)
+                        sectionLines.append(listLine)
+                        sectionInts.append(level)
+                        lineHandled = true
+                    } else {
+                        let sectionData = MarkdownSectionData.Quote(sectionInts,sectionLines)
+                        sections.append(sectionData)
+                        sectionLines = []
+                        sectionInts = []
+                        curSection = .None
+                        lineHandled = false
+                    }
                 }
             } while lineHandled == false
             assert(lineHandled != nil, "linedHandled bool was not set after processing line (\(line))")
@@ -589,7 +635,7 @@ public class MarkdownTextStorage : NSTextStorage
                 sectionAttributedString = formatCodeLines(lines, styles: styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
-                paragraph.lineSpacing = 0
+                paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
@@ -603,7 +649,7 @@ public class MarkdownTextStorage : NSTextStorage
                 sectionAttributedString = formatUnorderedList(lines, styles: styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
-                paragraph.lineSpacing = 4
+                paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.headIndent = 8
                 paragraph.firstLineHeadIndent = 8
@@ -612,7 +658,7 @@ public class MarkdownTextStorage : NSTextStorage
                 sectionAttributedString = formatOrderedList(lines, styles: styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
-                paragraph.lineSpacing = 4
+                paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.headIndent = 8
                 paragraph.firstLineHeadIndent = 8
@@ -621,7 +667,7 @@ public class MarkdownTextStorage : NSTextStorage
                 sectionAttributedString = formatCheckedList(checks, lines: lines, styles: styles)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
-                paragraph.lineSpacing = 4
+                paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.headIndent = 8
                 paragraph.firstLineHeadIndent = 8
@@ -632,6 +678,15 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
+                paragraph.lineBreakMode = .ByWordWrapping
+            case .Quote(let levels, let lines):
+                sectionAttributedString = formatQuoteList(levels, lines: lines, styles:styles)
+                paragraph.alignment = .Natural
+                paragraph.paragraphSpacing = 6
+                paragraph.lineSpacing = 2
+                paragraph.paragraphSpacingBefore = 0
+                paragraph.headIndent = 8
+                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             }
             
@@ -698,6 +753,15 @@ public class MarkdownTextStorage : NSTextStorage
         }
     }
 
+    private func isQuoteSection(line: NSString) -> Bool {
+        let range = NSMakeRange(0, line.length)
+        if let match = MarkdownTextStorage.quoteLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+            return true
+        } else {
+            return false
+        }
+    }
+
     private func isBlankLine(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
         if let match = MarkdownTextStorage.blankLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
@@ -747,6 +811,24 @@ public class MarkdownTextStorage : NSTextStorage
             return (checkBool, title)
         } else {
             return (false, "")
+        }
+    }
+
+    private func extractQuoteLine(line: NSString) -> (Int, String) {
+        var level: Int?
+        var title: String?
+        let range = NSMakeRange(0, line.length)
+        if let match = MarkdownTextStorage.quoteLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+            if match.range.location != NSNotFound {
+                let lessthans = line.substringWithRange(match.rangeAtIndex(1))
+                level = count(lessthans)
+                title = line.substringWithRange(match.rangeAtIndex(2))
+            }
+        }
+        if let level = level, let title = title {
+            return (level, title)
+        } else {
+            return (1, "")
         }
     }
 

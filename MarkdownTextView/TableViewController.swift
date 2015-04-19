@@ -25,6 +25,11 @@ class TableViewController: UITableViewController {
         "- Link to commit deadbeef and issue #1.",
         "+ Line three",
         ],[
+            "#### Demonstrating quotes",
+            "> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            "> Link to commit deadbeef and issue #1.",
+            "And this marks the end of the quote section."
+        ],[
             "Examples from /Apple Mail/ on OS X:",
             "",
             "![skaermbillede 2015-03-19 kl 10 11 35](https://cloud.githubusercontent.com/assets/157777/6727236/752598ac-ce20-11e4-8f1d-6bd7536caa01.png)",
@@ -65,13 +70,15 @@ class TableViewController: UITableViewController {
         let fontSize = CGFloat(10)
         let boldFont = UIFont.boldSystemFontOfSize(fontSize)
         return [
-        MarkdownStylesName.Normal: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)],
-        MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
-        MarkdownStylesName.Italic: [NSFontAttributeName: UIFont.italicSystemFontOfSize(fontSize)],
-        MarkdownStylesName.Monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
-        MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
-        MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
-        MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont]]
+            MarkdownStylesName.Normal: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)],
+            MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Italic: [NSFontAttributeName: UIFont.italicSystemFontOfSize(fontSize)],
+            MarkdownStylesName.Quote: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize), NSForegroundColorAttributeName: UIColor.grayColor()],
+            MarkdownStylesName.Monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
+            MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subsubsubheadline: [NSFontAttributeName: boldFont]]
     }()
     
     var markdownTextStorages = [MarkdownTextStorage]()
