@@ -312,7 +312,8 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
         let formattedLines = lines.map { return self.formatParagraphLine($0, styles: styles) }
-        return "".join(formattedLines)
+        let separator = NSAttributedString(string: " ", attributes: styles[.Normal])
+        return separator.join(formattedLines)
     }
     
     func formatOrderedList(lines: [String], styles: StylesDict) -> NSAttributedString {

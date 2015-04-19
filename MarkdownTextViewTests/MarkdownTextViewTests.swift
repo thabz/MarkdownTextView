@@ -83,6 +83,10 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertFalse(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f530").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 41.")
     }
 
+    func testParagraphs() {
+        XCTAssertEqual("Five Guy Burgers", MarkdownTextStorage(markdown: "Five\nGuy\nBurgers").string, "Should join lines.")
+    }
+    
 }
 
 extension MarkdownTextStorage {
