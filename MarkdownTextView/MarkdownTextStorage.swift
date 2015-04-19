@@ -26,6 +26,7 @@ public enum MarkdownStylesName {
     case Headline
     case Subheadline
     case Subsubheadline
+    case Subsubsubheadline
 }
 
 public typealias StylesDict = [MarkdownStylesName: [String:AnyObject]]
@@ -302,6 +303,7 @@ public class MarkdownTextStorage : NSTextStorage
         case 1: stylesName = MarkdownStylesName.Headline
         case 2: stylesName = MarkdownStylesName.Subheadline
         case 3: stylesName = MarkdownStylesName.Subsubheadline
+        case 4: stylesName = MarkdownStylesName.Subsubsubheadline
         default: stylesName = MarkdownStylesName.Headline
         }
         return NSAttributedString(string: title, attributes: styles[stylesName])
@@ -402,7 +404,8 @@ public class MarkdownTextStorage : NSTextStorage
             MarkdownStylesName.Monospace: [NSFontAttributeName: monospaceFont],
             MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
             MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont]
+            MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.Subsubsubheadline: [NSFontAttributeName: boldFont]
         ]
         if let styles = styles {
             for (key,value) in styles {
@@ -647,7 +650,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
 
     private func beginsHeaderSection(line: String) -> Bool {
-        return line.hasPrefix("# ") || line.hasPrefix("## ") || line.hasPrefix("### ")
+        return line.hasPrefix("# ") || line.hasPrefix("## ") || line.hasPrefix("### ") || line.hasPrefix("#### ")
     }
     
     private func beginsCodeSection(line: String) -> Bool {
