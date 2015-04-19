@@ -73,9 +73,16 @@ class TableViewController: UITableViewController {
         MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
         MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont]]
     }()
+    
+    var markdownTextStorages = [MarkdownTextStorage]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        for section in markdownTexts {
+            let markdown = "\n".join(section)
+            let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
+            markdownTextStorages.append(markdownTextStorage)
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -102,10 +109,8 @@ class TableViewController: UITableViewController {
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
-        let markdown = "\n".join(markdownTexts[indexPath.row])
         cell.markdownTextView.tableView = self.tableView
-        let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
-        cell.markdownTextView.markdownTextStorage = markdownTextStorage
+        cell.markdownTextView.markdownTextStorage = markdownTextStorages[indexPath.row]
         return cell
     }
 }
@@ -114,7 +119,7 @@ class MarkdownCell : UITableViewCell {
     @IBOutlet weak var markdownTextView: MarkdownTextView!
     
     override func prepareForReuse() {
-        super.prepareForReuse()
         markdownTextView.markdownTextStorage = nil
+        super.prepareForReuse()
     }
 }
