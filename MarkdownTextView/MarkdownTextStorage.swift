@@ -939,11 +939,13 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
         didSet {
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
+                self.invalidateIntrinsicContentSize()
                 NSNotificationCenter.defaultCenter().removeObserver(self)
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
             } else {
                 tableView = nil
-                self.attributedText = NSAttributedString(string: "")
+                self.attributedText = nil
+                self.invalidateIntrinsicContentSize()
                 NSNotificationCenter.defaultCenter().removeObserver(self)
             }
         }
@@ -951,6 +953,7 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
     
     func attributedTextAttachmentChanged(notification: NSNotification) {
         self.attributedText = markdownTextStorage
+        self.invalidateIntrinsicContentSize()
         tableView?.beginUpdates()
         tableView?.endUpdates()
     }
