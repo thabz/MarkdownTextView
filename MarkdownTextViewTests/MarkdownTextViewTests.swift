@@ -65,6 +65,10 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").isLinkAtIndex(5))
         XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(5))
         XCTAssertFalse(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl/").isLinkAtIndex(5))
+        XCTAssertEqual("http://www.kalliope.org/suburl/", MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").linkAtIndex(0) ?? "No link found")
+        let linkInludingSha = MarkdownTextStorage(markdown: "http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772")
+        XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.string)
     }
 
     func testIssueLinks() {
@@ -90,6 +94,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertFalse(MarkdownTextStorage(markdown: "deadbe").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 6.")
         XCTAssertTrue(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f53").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Like 40.")
         XCTAssertFalse(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f530").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 41.")
+        
     }
 
     func testParagraphs() {
@@ -136,6 +141,11 @@ extension MarkdownTextStorage {
     func isLinkAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         return attrs[NSLinkAttributeName] != nil
+    }
+    
+    func linkAtIndex(index: Int) -> String? {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        return attrs[NSLinkAttributeName] as? String
     }
 
 }
