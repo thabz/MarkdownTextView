@@ -704,8 +704,8 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
-                paragraph.headIndent = 8
-                paragraph.firstLineHeadIndent = 8
+                paragraph.headIndent = bulletTextIndent
+                paragraph.firstLineHeadIndent = bulletTextIndent
                 paragraph.lineBreakMode = .ByWordWrapping
             }
             
