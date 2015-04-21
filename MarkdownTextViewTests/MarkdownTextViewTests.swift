@@ -48,9 +48,15 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testNormalLinks() {
         XCTAssertTrue(count(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string) == 4)
+        let boldLink = MarkdownTextStorage(markdown: "[*Bold* link](http://www.kalliope.org/suburl/)")
+        XCTAssertEqual("Bold link", boldLink.string)
+        XCTAssertTrue(boldLink.isBoldAtIndex(0))
+        XCTAssertTrue(boldLink.isLinkAtIndex(0))
+        XCTAssertFalse(boldLink.isBoldAtIndex(6))
+        XCTAssertTrue(boldLink.isLinkAtIndex(6))
         XCTAssertTrue(MarkdownTextStorage(markdown: "[XXX](http://www.kalliope.org/suburl/)  ").isLinkAtIndex(1))
         // The following test exposes issue #18. The "#3835772" part gets recognized as a commit sha which causes problems.
-        //XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772)").string.rangeOfString(")") == nil)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772)").string.rangeOfString(")") == nil)
         XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#383)").string.rangeOfString(")") == nil)
     }
     
@@ -106,7 +112,6 @@ extension MarkdownTextStorage {
     func isBoldAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            
             return font.fontName.rangeOfString("Medium") != nil
         } else {
             return false

@@ -155,21 +155,27 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
-        var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            let range = NSMakeRange(0, mutable.length)
-            if let match = MarkdownTextStorage.linkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
-                let text = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
-                let href = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                text.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, text.length))
-                mutable.replaceCharactersInRange(match.range, withAttributedString: text)
+        var result = NSMutableAttributedString(string: "")
+        self.splitString(line.string, regexp: MarkdownTextStorage.linkMatchRegExp) {
+            (substring, range, match, delimiter) -> Void in
+            if delimiter {
+                var linked = NSMutableAttributedString(attributedString: line.attributedSubstringFromRange(match!.rangeAtIndex(1)))
+                let href = (line.string as NSString).substringWithRange(match!.rangeAtIndex(2))
+                linked.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, linked.length))
+                result.appendAttributedString(linked)
             } else {
-                done = true
+                var attributedLine = NSAttributedString(string: substring as String, attributes: styles[.Normal])
+                attributedLine = self.formatImageParts(attributedLine, styles: styles)
+                attributedLine = self.formatRawLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatIssueLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatBoldParts(attributedLine, styles: styles)
+                attributedLine = self.formatItalicParts(attributedLine, styles: styles)
+                attributedLine = self.formatStrikethroughParts(attributedLine, styles: styles)
+                result.appendAttributedString(attributedLine)
             }
         }
-        return mutable
+        return result
     }
     
     // Convert raw standalone URLs into [url](url)
@@ -230,32 +236,27 @@ public class MarkdownTextStorage : NSTextStorage
 
     // Convert commit refs (cafebabe) into [cafebab](http://commit/cafebabe)
     func formatCommitLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
-        var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            let range = NSMakeRange(0, mutable.length)
-            if let match = MarkdownTextStorage.commitLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
-                let postample = mutable.attributedSubstringFromRange(match.rangeAtIndex(3))
-                let sha = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
+        var result = NSMutableAttributedString(string: "")
+        self.splitString(line.string, regexp: MarkdownTextStorage.commitLinkMatchRegExp) {
+            (substring, range, match, delimiter) -> Void in
+            if delimiter {
+                let preample = line.attributedSubstringFromRange(match!.rangeAtIndex(1))
+                let postample = line.attributedSubstringFromRange(match!.rangeAtIndex(3))
+                let sha = line.attributedSubstringFromRange(match!.rangeAtIndex(2))
                 let shortShaString = sha.string.substringToIndex(advance(sha.string.startIndex, 7))
-                let shortShaAttributed = NSAttributedString(string: shortShaString, attributes: sha.attributesAtIndex(0, effectiveRange: nil))
+                let shortShaAttributed = NSMutableAttributedString(string: shortShaString, attributes: sha.attributesAtIndex(0, effectiveRange: nil))
                 let href = String(format: "http://commit/%@", sha.string)
-                
+                shortShaAttributed.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, shortShaAttributed.length))
                 let replacement = NSMutableAttributedString(attributedString: preample)
-                replacement.appendAttributedString(NSAttributedString(string: "["))
                 replacement.appendAttributedString(shortShaAttributed)
-                replacement.appendAttributedString(NSAttributedString(string: "]"))
-                replacement.appendAttributedString(NSAttributedString(string: "("))
-                replacement.appendAttributedString(NSAttributedString(string: href))
-                replacement.appendAttributedString(NSAttributedString(string: ")"))
                 replacement.appendAttributedString(postample)
-                mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
+                result.appendAttributedString(replacement)
             } else {
-                done = true
+                let middle = line.attributedSubstringFromRange(range)
+                result.appendAttributedString(middle)
             }
         }
-        return mutable
+        return result
     }
 
     func formatImageParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
