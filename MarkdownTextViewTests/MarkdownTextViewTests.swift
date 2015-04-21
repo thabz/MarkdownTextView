@@ -91,6 +91,10 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testInlineCode() {
+        XCTAssertEqual("ABC", MarkdownTextStorage(markdown: "`ABC`").string)
+        XCTAssertEqual("*ABC*", MarkdownTextStorage(markdown: "`*ABC*`").string)
+        XCTAssertEqual("A *bold* B", MarkdownTextStorage(markdown: "A `*bold*` B").string)
+        XCTAssertEqual("A *bold* B /italic/", MarkdownTextStorage(markdown: "A `*bold*` B `/italic/`").string)
         XCTAssertEqual("A *bold* B", MarkdownTextStorage(markdown: "A `*bold*` B").string)
         XCTAssertEqual("[Link](http://apple.com/)", MarkdownTextStorage(markdown: "`[Link](http://apple.com/)`").string)
         XCTAssertEqual("A [Link](http://apple.com/) B", MarkdownTextStorage(markdown: "A `[Link](http://apple.com/)` B").string)
