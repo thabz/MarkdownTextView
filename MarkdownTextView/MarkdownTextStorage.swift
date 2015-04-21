@@ -164,15 +164,7 @@ public class MarkdownTextStorage : NSTextStorage
                 linked.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, linked.length))
                 result.appendAttributedString(linked)
             } else {
-                var attributedLine = NSAttributedString(string: substring as String, attributes: styles[.Normal])
-                attributedLine = self.formatImageParts(attributedLine, styles: styles)
-                attributedLine = self.formatRawLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatIssueLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatBoldParts(attributedLine, styles: styles)
-                attributedLine = self.formatItalicParts(attributedLine, styles: styles)
-                attributedLine = self.formatStrikethroughParts(attributedLine, styles: styles)
-                result.appendAttributedString(attributedLine)
+                result.appendAttributedString(line.attributedSubstringFromRange(range))
             }
         }
         return result
@@ -297,8 +289,8 @@ public class MarkdownTextStorage : NSTextStorage
                 attributedLine = self.formatImageParts(attributedLine, styles: styles)
                 attributedLine = self.formatRawLinkParts(attributedLine, styles: styles)
                 attributedLine = self.formatIssueLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
                 attributedLine = self.formatLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
                 attributedLine = self.formatBoldParts(attributedLine, styles: styles)
                 attributedLine = self.formatItalicParts(attributedLine, styles: styles)
                 attributedLine = self.formatStrikethroughParts(attributedLine, styles: styles)

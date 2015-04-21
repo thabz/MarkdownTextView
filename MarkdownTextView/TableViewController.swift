@@ -77,7 +77,7 @@ class TableViewController: UITableViewController {
     ]
 
     var defaultStyles: StylesDict = {
-        let fontSize = CGFloat(10)
+        let fontSize = CGFloat(13)
         let boldFont = UIFont.boldSystemFontOfSize(fontSize)
         return [
             MarkdownStylesName.Normal: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)],
