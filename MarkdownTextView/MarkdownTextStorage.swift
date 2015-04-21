@@ -992,6 +992,7 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
 
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        // UITextView has a 5 point left and right inset somewhere I'd like to avoid.
         self.textContainerInset = UIEdgeInsetsMake(0, -5, 0, -5)
         self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
     }
