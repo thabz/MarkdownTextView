@@ -66,9 +66,9 @@ public class MarkdownTextStorage : NSTextStorage
     static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*(.*?)\\s*#*\\s*$", options: nil, error: nil)!
     static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
     static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
-    static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*?(.*)", options: nil, error: nil)!
+    static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*(.*)", options: nil, error: nil)!
     static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s", options: nil, error: nil)!
-    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*?(.*)", options: nil, error: nil)!
+    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*(.*)", options: nil, error: nil)!
     static private let checkedListLineMatchRegExp = NSRegularExpression(pattern: "^- \\[[\\sxX]\\]\\s", options: nil, error: nil)!
     static private let checkedListLineExtractRegExp = NSRegularExpression(pattern: "^- \\[([\\sxX])\\]\\s*(.*)", options: nil, error: nil)!
     static private let quoteLineMatchRegExp = NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive, error: nil)!
@@ -322,12 +322,11 @@ public class MarkdownTextStorage : NSTextStorage
         var parts = [NSAttributedString]()
         var result = NSMutableAttributedString(string: "", attributes: styles[.Normal])
         for (index,line) in enumerate(lines) {
-            let attrs = styles[.Normal]
-            var prefixed = NSMutableAttributedString(string: "\(index+1). ", attributes: attrs)
+            var prefixed = NSMutableAttributedString(string: "\t\(index+1).\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
             parts.append(prefixed)
         }
-        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
         return joined
     }
@@ -335,11 +334,11 @@ public class MarkdownTextStorage : NSTextStorage
     func formatUnorderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for line in lines {
-            var prefixed = NSMutableAttributedString(string: "● ", attributes: styles[.Normal])
+            var prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
             parts.append(prefixed)
         }
-        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
         return joined
     }
@@ -347,12 +346,12 @@ public class MarkdownTextStorage : NSTextStorage
     func formatCheckedList(checks: [Bool], lines: [String], styles: StylesDict) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for (index,line) in enumerate(lines) {
-            let prefixString = checks[index] ? "☑︎ " : "☐ "
+            let prefixString = checks[index] ? "\t☑︎\t" : "\t☐\t"
             var prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
             parts.append(prefixed)
         }
-        let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Normal])
+        let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
         return joined
     }
@@ -620,9 +619,11 @@ public class MarkdownTextStorage : NSTextStorage
         // Convert each section into an NSAttributedString
         var attributedSections = [NSAttributedString]()
         var result = NSMutableAttributedString(string: "")
+        var bulletIndent: CGFloat = 20
+        var bulletTextIndent: CGFloat = 25
         for (index,section) in enumerate(sections) {
             var sectionAttributedString: NSAttributedString
-            var paragraph = NSMutableParagraphStyle()
+            var paragraph = NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines, styles: styles)
@@ -647,30 +648,42 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.lineBreakMode = .ByWordWrapping
             case .UnorderedList(let lines):
                 sectionAttributedString = formatUnorderedList(lines, styles: styles)
+                paragraph.tabStops = [
+                    NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                    NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                paragraph.defaultTabInterval = bulletIndent
+                paragraph.firstLineHeadIndent = 0
+                paragraph.headIndent = bulletTextIndent
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 6
+                paragraph.paragraphSpacing = 2
                 paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
-                paragraph.headIndent = 8
-                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
                 sectionAttributedString = formatOrderedList(lines, styles: styles)
+                paragraph.tabStops = [
+                    NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                    NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                paragraph.defaultTabInterval = bulletIndent
+                paragraph.firstLineHeadIndent = 0
+                paragraph.headIndent = bulletTextIndent
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 6
+                paragraph.paragraphSpacing = 2
                 paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
-                paragraph.headIndent = 8
-                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             case .CheckedList(let checks, let lines):
                 sectionAttributedString = formatCheckedList(checks, lines: lines, styles: styles)
+                paragraph.tabStops = [
+                    NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                    NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                paragraph.defaultTabInterval = bulletIndent
+                paragraph.firstLineHeadIndent = 0
+                paragraph.headIndent = bulletTextIndent
                 paragraph.alignment = .Natural
-                paragraph.paragraphSpacing = 6
+                paragraph.paragraphSpacing = 2
                 paragraph.lineSpacing = 2
                 paragraph.paragraphSpacingBefore = 0
-                paragraph.headIndent = 8
-                paragraph.firstLineHeadIndent = 8
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
                 sectionAttributedString = formatHeadline(size, title: title, styles:styles)
