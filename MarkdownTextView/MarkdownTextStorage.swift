@@ -281,17 +281,30 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
         var normalStyle = styles[.Normal]
-        var attributedLine = NSAttributedString(string: line, attributes: normalStyle)
-        attributedLine = formatImageParts(attributedLine, styles: styles)
-        attributedLine = formatRawLinkParts(attributedLine, styles: styles)
-        attributedLine = formatIssueLinkParts(attributedLine, styles: styles)
-        attributedLine = formatCommitLinkParts(attributedLine, styles: styles)
-        attributedLine = formatLinkParts(attributedLine, styles: styles)
-        attributedLine = formatMonospaceParts(attributedLine, styles: styles)
-        attributedLine = formatBoldParts(attributedLine, styles: styles)
-        attributedLine = formatItalicParts(attributedLine, styles: styles)
-        attributedLine = formatStrikethroughParts(attributedLine, styles: styles)
-        return attributedLine
+        
+        // Split code sections out
+        var result = NSMutableAttributedString(string: "")
+        self.splitString(line, regexp: MarkdownTextStorage.monospaceMatchRegExp) {
+            (substring, range, match, delimiter) -> Void in
+            if delimiter {
+                let insidePingsRange = match!.rangeAtIndex(1)
+                let insidePingsString = (line as NSString).substringWithRange(insidePingsRange)
+                var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: styles[.Monospace])
+                result.appendAttributedString(monospaceString)
+            } else {
+                var attributedLine = NSAttributedString(string: substring as String, attributes: styles[.Normal])
+                attributedLine = self.formatImageParts(attributedLine, styles: styles)
+                attributedLine = self.formatRawLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatIssueLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatLinkParts(attributedLine, styles: styles)
+                attributedLine = self.formatBoldParts(attributedLine, styles: styles)
+                attributedLine = self.formatItalicParts(attributedLine, styles: styles)
+                attributedLine = self.formatStrikethroughParts(attributedLine, styles: styles)
+                result.appendAttributedString(attributedLine)
+            }
+        }
+        return result
     }
     
     func formatCodeLine(line: String, font: UIFont, styles: StylesDict) -> NSAttributedString {
@@ -860,6 +873,45 @@ public class MarkdownTextStorage : NSTextStorage
         } else {
             return MarkdownSectionData.Headline(1, "")
         }
+    }
+    
+    private func splitString(string: NSString, regexp: NSRegularExpression, callback: (substring: NSString, range: NSRange, match: NSTextCheckingResult?, delimiter: Bool) -> Void) {
+        let allStringRange = NSMakeRange(0, string.length)
+        var matches = regexp.matchesInString(string as String, options: nil, range: allStringRange) as! [NSTextCheckingResult]
+        if matches.count == 0 {
+            callback(substring: string, range: allStringRange, match: nil, delimiter: false)
+        } else {
+            // Handle string before first match
+            let firstMatchRange = matches.first!.range
+            let lastMatchRange = matches.last!.range
+            if firstMatchRange.location > 0 {
+                let preMatchRange = NSMakeRange(0, firstMatchRange.location)
+                callback(substring: string.substringWithRange(preMatchRange), range: preMatchRange, match: nil, delimiter: false)
+            }
+
+            for (i, checkingResult) in enumerate(matches) {
+                // Handle delimiter string
+                let delimiterRange = checkingResult.range
+                callback(substring: string.substringWithRange(delimiterRange), range: delimiterRange,  match: checkingResult, delimiter: true)
+                
+                // Handle string until next delimiter match
+                if i < matches.count - 1 {
+                    let nextDelimiterMatch = matches[i + 1]
+                    let stringRangeStart = delimiterRange.location + delimiterRange.length
+                    let stringRangeEnd = nextDelimiterMatch.range.location
+                    let stringRange = NSMakeRange(stringRangeStart, stringRangeEnd - stringRangeStart)
+                    callback(substring: string.substringWithRange(stringRange), range: stringRange, match: nil, delimiter: false)
+                }
+            }
+            // Handle string after last match
+            let postMatchStart = lastMatchRange.location + lastMatchRange.length
+            if postMatchStart < string.length {
+                let postMatchRange = NSMakeRange(postMatchStart, string.length - postMatchStart)
+                callback(substring: string.substringWithRange(postMatchRange), range: postMatchRange, match: nil, delimiter: false)
+            }
+
+        }
+        
     }
     
     class MarkdownTextAttachment : NSTextAttachment {
