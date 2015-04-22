@@ -24,6 +24,9 @@ class TableViewController: UITableViewController {
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         "- Link to commit deadbeef and issue #1. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         "+ Line.",
+        "There should be nice spacing between this paragrah and the list above.",
+            "",
+            "And a slight text after. There should be nice spacing between this paragrah and the list above."
         ],[
             "#### Demonstrating quotes",
             "> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
