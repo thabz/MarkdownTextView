@@ -908,31 +908,39 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     class MarkdownTextAttachment : NSTextAttachment {
-
+        
+        static let cache: NSCache = NSCache()
+        
         var textStorage: MarkdownTextStorage?
         
         convenience init(url: NSURL, textStorage: MarkdownTextStorage) {
             self.init()
-            self.textStorage = textStorage
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-                if let data = NSData(contentsOfURL: url) {
-                    if let downloadedImage = UIImage(data: data) {
-                        dispatch_async(dispatch_get_main_queue()) {
-                            println(String(format: "Image sized %.0fx%.0f", downloadedImage.size.width, downloadedImage.size.height))
-                            self.image = downloadedImage
-                            
-                            NSNotificationCenter.defaultCenter().postNotificationName(MarkdownTextAttachmentChangedNotification, object: textStorage, userInfo: ["textAttachment": self])
-                            
-                            //textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
-                            /*
-                            if let layoutManager = textStorage.layoutManagers.first as? NSLayoutManager {
+            let cache = MarkdownTextAttachment.cache
+            if let image = cache.objectForKey(url) as? UIImage {
+                println("Using cached image for \(url.absoluteString ?? nil)")
+                self.image = image
+            } else {
+                self.textStorage = textStorage
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+                    if let data = NSData(contentsOfURL: url) {
+                        if let downloadedImage = UIImage(data: data) {
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.image = downloadedImage
+                                cache.setObject(downloadedImage, forKey: url)
+                                
+                                NSNotificationCenter.defaultCenter().postNotificationName(MarkdownTextAttachmentChangedNotification, object: textStorage, userInfo: ["textAttachment": self])
+                                
+                                //textStorage.replaceCharactersInRange(NSMakeRange(1, 2), withString: "XXY")
+                                /*
+                                if let layoutManager = textStorage.layoutManagers.first as? NSLayoutManager {
                                 let charsCount = (textStorage.string as NSString).length
                                 let range = NSMakeRange(0, charsCount)
                                 layoutManager.invalidateDisplayForCharacterRange(range)
-//                                layoutManager.invalidateDisplayForGlyphRange(range)
+                                //                                layoutManager.invalidateDisplayForGlyphRange(range)
                                 println("Invalidating display")
+                                }
+                                */
                             }
-                            */
                         }
                     }
                 }
