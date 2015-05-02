@@ -83,7 +83,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
     
-    func formatItalicParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -101,7 +101,7 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
-    func formatBoldParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatBoldParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -118,7 +118,7 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
-    func formatMonospaceParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatMonospaceParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -135,7 +135,7 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
-    func formatStrikethroughParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatStrikethroughParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -154,7 +154,7 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
-    func formatLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatLinkParts(line: NSAttributedString) -> NSAttributedString {
         var result = NSMutableAttributedString(string: "")
         self.splitString(line.string, regexp: MarkdownTextStorage.linkMatchRegExp) {
             (substring, range, match, delimiter) -> Void in
@@ -171,7 +171,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     // Convert raw standalone URLs into [url](url)
-    func formatRawLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatRawLinkParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -197,7 +197,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     // Convert issues refs (#123) into [#123](http://issue/123)
-    func formatIssueLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatIssueLinkParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -227,7 +227,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
 
     // Convert commit refs (cafebabe) into [cafebab](http://commit/cafebabe)
-    func formatCommitLinkParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatCommitLinkParts(line: NSAttributedString) -> NSAttributedString {
         var result = NSMutableAttributedString(string: "")
         self.splitString(line.string, regexp: MarkdownTextStorage.commitLinkMatchRegExp) {
             (substring, range, match, delimiter) -> Void in
@@ -251,7 +251,7 @@ public class MarkdownTextStorage : NSTextStorage
         return result
     }
 
-    func formatImageParts(line: NSAttributedString, styles: StylesDict) -> NSAttributedString {
+    func formatImageParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
         while !done {
@@ -272,7 +272,7 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
-    func formatParagraphLine(line: String, styles: StylesDict) -> NSAttributedString {
+    func formatParagraphLine(line: String) -> NSAttributedString {
         var normalStyle = styles[.Normal]
         
         // Split code sections out
@@ -282,30 +282,30 @@ public class MarkdownTextStorage : NSTextStorage
             if delimiter {
                 let insidePingsRange = match!.rangeAtIndex(1)
                 let insidePingsString = (line as NSString).substringWithRange(insidePingsRange)
-                var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: styles[.Monospace])
+                var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
                 result.appendAttributedString(monospaceString)
             } else {
-                var attributedLine = NSAttributedString(string: substring as String, attributes: styles[.Normal])
-                attributedLine = self.formatImageParts(attributedLine, styles: styles)
-                attributedLine = self.formatRawLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatIssueLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatCommitLinkParts(attributedLine, styles: styles)
-                attributedLine = self.formatBoldParts(attributedLine, styles: styles)
-                attributedLine = self.formatItalicParts(attributedLine, styles: styles)
-                attributedLine = self.formatStrikethroughParts(attributedLine, styles: styles)
+                var attributedLine = NSAttributedString(string: substring as String, attributes: self.styles[.Normal])
+                attributedLine = self.formatImageParts(attributedLine)
+                attributedLine = self.formatRawLinkParts(attributedLine)
+                attributedLine = self.formatIssueLinkParts(attributedLine)
+                attributedLine = self.formatLinkParts(attributedLine)
+                attributedLine = self.formatCommitLinkParts(attributedLine)
+                attributedLine = self.formatBoldParts(attributedLine)
+                attributedLine = self.formatItalicParts(attributedLine)
+                attributedLine = self.formatStrikethroughParts(attributedLine)
                 result.appendAttributedString(attributedLine)
             }
         }
         return result
     }
     
-    func formatCodeLine(line: String, font: UIFont, styles: StylesDict) -> NSAttributedString {
+    func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
         let attributes = [NSFontAttributeName: font]
         return NSAttributedString(string: line, attributes: attributes)
     }
     
-    func formatHeadline(size: Int, title: String, styles: StylesDict) -> NSAttributedString {
+    func formatHeadline(size: Int, title: String) -> NSAttributedString {
         let stylesName: MarkdownStylesName
         switch size {
         case 1: stylesName = MarkdownStylesName.Headline
@@ -319,17 +319,17 @@ public class MarkdownTextStorage : NSTextStorage
     
     
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
-        let formattedLines = lines.map { return self.formatParagraphLine($0, styles: styles) }
+        let formattedLines = lines.map { return self.formatParagraphLine($0) }
         let separator = NSAttributedString(string: " ", attributes: styles[.Normal])
         return separator.join(formattedLines)
     }
     
-    func formatOrderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
+    func formatOrderedList(lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
         var result = NSMutableAttributedString(string: "", attributes: styles[.Normal])
         for (index,line) in enumerate(lines) {
             var prefixed = NSMutableAttributedString(string: "\t\(index+1).\t", attributes: styles[.Normal])
-            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            prefixed.appendAttributedString(formatParagraphLine(line))
             parts.append(prefixed)
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
@@ -337,11 +337,11 @@ public class MarkdownTextStorage : NSTextStorage
         return joined
     }
     
-    func formatUnorderedList(lines: [String], styles: StylesDict) -> NSAttributedString {
+    func formatUnorderedList(lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for line in lines {
             var prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.Normal])
-            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            prefixed.appendAttributedString(formatParagraphLine(line))
             parts.append(prefixed)
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
@@ -349,12 +349,12 @@ public class MarkdownTextStorage : NSTextStorage
         return joined
     }
     
-    func formatCheckedList(checks: [Bool], lines: [String], styles: StylesDict) -> NSAttributedString {
+    func formatCheckedList(checks: [Bool], lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for (index,line) in enumerate(lines) {
             let prefixString = checks[index] ? "\t☑︎\t" : "\t☐\t"
             var prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
-            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            prefixed.appendAttributedString(formatParagraphLine(line))
             parts.append(prefixed)
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
@@ -362,11 +362,11 @@ public class MarkdownTextStorage : NSTextStorage
         return joined
     }
 
-    func formatQuoteList(levels: [Int], lines: [String], styles: StylesDict) -> NSAttributedString {
+    func formatQuoteList(levels: [Int], lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for (index,line) in enumerate(lines) {
             var prefixed = NSMutableAttributedString(string: "", attributes: styles[.Normal])
-            prefixed.appendAttributedString(formatParagraphLine(line, styles: styles))
+            prefixed.appendAttributedString(formatParagraphLine(line))
             prefixed.addAttributes(styles[.Quote]!, range: NSMakeRange(0, prefixed.length))
             parts.append(prefixed)
         }
@@ -436,7 +436,6 @@ public class MarkdownTextStorage : NSTextStorage
             for (key,value) in styles {
                 defaultStyles[key] = value
             }
-            self.styles = styles
         }
         self.styles = defaultStyles
         
@@ -646,14 +645,14 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
-                sectionAttributedString = formatHeadline(size, title: title, styles:styles)
+                sectionAttributedString = formatHeadline(size, title: title)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .UnorderedList(let lines):
-                sectionAttributedString = formatUnorderedList(lines, styles: styles)
+                sectionAttributedString = formatUnorderedList(lines)
                 paragraph.tabStops = [
                     NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
                     NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
@@ -666,7 +665,7 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .OrderedList(let lines):
-                sectionAttributedString = formatOrderedList(lines, styles: styles)
+                sectionAttributedString = formatOrderedList(lines)
                 paragraph.tabStops = [
                     NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
                     NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
@@ -679,7 +678,7 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .CheckedList(let checks, let lines):
-                sectionAttributedString = formatCheckedList(checks, lines: lines, styles: styles)
+                sectionAttributedString = formatCheckedList(checks, lines: lines)
                 paragraph.tabStops = [
                     NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
                     NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
@@ -692,14 +691,14 @@ public class MarkdownTextStorage : NSTextStorage
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Headline(let size, let title):
-                sectionAttributedString = formatHeadline(size, title: title, styles:styles)
+                sectionAttributedString = formatHeadline(size, title: title)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 8
                 paragraph.lineSpacing = 0
                 paragraph.paragraphSpacingBefore = 0
                 paragraph.lineBreakMode = .ByWordWrapping
             case .Quote(let levels, let lines):
-                sectionAttributedString = formatQuoteList(levels, lines: lines, styles:styles)
+                sectionAttributedString = formatQuoteList(levels, lines: lines)
                 paragraph.alignment = .Natural
                 paragraph.paragraphSpacing = 6
                 paragraph.lineSpacing = 2
