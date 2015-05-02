@@ -11,6 +11,10 @@ import UIKit
 class TableViewController: UITableViewController {
 
     let markdownTexts = [[
+        "Paragrah",
+        "### Header between",
+        "Paragraph"
+        ],[
         "Go download [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
         "",
         "An `NSAttributedString` spread over multiple lines. ",

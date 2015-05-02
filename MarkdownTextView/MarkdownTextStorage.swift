@@ -552,7 +552,7 @@ public class MarkdownTextStorage : NSTextStorage
                         sectionLines.append(line)
                     }
                     lineHandled = true
-                case .Headline: break /* Can't be here */
+                case .Headline: fallthrough
                 case .None:
                     if self.beginsCodeSection(line) {
                         curSection = .Code
@@ -606,6 +606,26 @@ public class MarkdownTextStorage : NSTextStorage
                         curSection = .Code
                         lineHandled = true
                     } else if self.beginsHeaderSection(line) {
+                        if curSection == .Paragraph {
+                            let sectionData = MarkdownSectionData.Paragraph(sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .Code {
+                            let sectionData = MarkdownSectionData.Code(sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .UnorderedList {
+                            let sectionData = MarkdownSectionData.UnorderedList(sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .CheckedList {
+                            let sectionData = MarkdownSectionData.CheckedList(sectionBools, sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .Quote {
+                            let sectionData = MarkdownSectionData.Quote(sectionInts, sectionLines)
+                            sections.append(sectionData)
+                        } else if curSection == .OrderedList {
+                            let sectionData = MarkdownSectionData.OrderedList(sectionLines)
+                            sections.append(sectionData)
+                        }
+                        sectionLines = []
                         let headerData = self.extractHeaderLine(line)
                         sections.append(headerData)
                         curSection = .None
