@@ -16,9 +16,11 @@ class TableViewController: UITableViewController {
         "An `NSAttributedString` spread over multiple lines. ",
         "A section spread over multiple lines. ",
         ],[
+            "A checked list",
             "- [x] Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
             "- [ ] Line two. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
             "- [X] Line.",
+            "With a new paragraph after"
         ],[
         "###   Short headline. ### ",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",

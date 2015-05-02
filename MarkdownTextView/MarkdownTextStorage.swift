@@ -344,74 +344,78 @@ public class MarkdownTextStorage : NSTextStorage
         var parts = [NSAttributedString]()
         var result = NSMutableAttributedString(string: "", attributes: styles[.Normal])
         for (index,line) in enumerate(lines) {
+            let isLastLine = index == lines.count - 1
             var prefixed = NSMutableAttributedString(string: "\t\(index+1).\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            parts.append(prefixed)
+            var paragraph = copyDefaultParagrapStyle()
+            paragraph.tabStops = [
+                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+            paragraph.defaultTabInterval = bulletIndent
+            paragraph.firstLineHeadIndent = 0
+            paragraph.headIndent = bulletTextIndent
+            paragraph.alignment = .Natural
+            paragraph.paragraphSpacing = isLastLine ? 8 : 2
+            paragraph.lineSpacing = 2
+            paragraph.paragraphSpacingBefore = 0
+            paragraph.lineBreakMode = .ByWordWrapping
+            
+            parts.append(applyParagraphStyle(prefixed, paragraphStyle: paragraph))
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
-        var paragraph = copyDefaultParagrapStyle()
-        paragraph.tabStops = [
-            NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-            NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
-        paragraph.defaultTabInterval = bulletIndent
-        paragraph.firstLineHeadIndent = 0
-        paragraph.headIndent = bulletTextIndent
-        paragraph.alignment = .Natural
-        paragraph.paragraphSpacing = 2
-        paragraph.lineSpacing = 2
-        paragraph.paragraphSpacingBefore = 0
-        paragraph.lineBreakMode = .ByWordWrapping
-        return applyParagraphStyle(joined, paragraphStyle: paragraph)
+        return joined
     }
     
     func formatUnorderedList(lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        for line in lines {
+        for (index, line) in enumerate(lines) {
+            let isLastLine = index == lines.count - 1
             var prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            parts.append(prefixed)
+            var paragraph = copyDefaultParagrapStyle()
+            paragraph.tabStops = [
+                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+            paragraph.defaultTabInterval = bulletIndent
+            paragraph.firstLineHeadIndent = 0
+            paragraph.headIndent = bulletTextIndent
+            paragraph.alignment = .Natural
+            paragraph.paragraphSpacing = isLastLine ? 8 : 2
+            paragraph.lineSpacing = 2
+            paragraph.paragraphSpacingBefore = 0
+            paragraph.lineBreakMode = .ByWordWrapping
+            parts.append(applyParagraphStyle(prefixed, paragraphStyle: paragraph))
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
-        var paragraph = copyDefaultParagrapStyle()
-        paragraph.tabStops = [
-            NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-            NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
-        paragraph.defaultTabInterval = bulletIndent
-        paragraph.firstLineHeadIndent = 0
-        paragraph.headIndent = bulletTextIndent
-        paragraph.alignment = .Natural
-        paragraph.paragraphSpacing = 2
-        paragraph.lineSpacing = 2
-        paragraph.paragraphSpacingBefore = 0
-        paragraph.lineBreakMode = .ByWordWrapping
-        return applyParagraphStyle(joined, paragraphStyle: paragraph)
+        return joined
     }
     
     func formatCheckedList(checks: [Bool], lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
         for (index,line) in enumerate(lines) {
+            let isLastLine = index == lines.count - 1
             let prefixString = checks[index] ? "\t☑︎\t" : "\t☐\t"
             var prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            parts.append(prefixed)
+            var paragraph = copyDefaultParagrapStyle()
+            paragraph.tabStops = [
+                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
+                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+            paragraph.defaultTabInterval = bulletIndent
+            paragraph.firstLineHeadIndent = 0
+            paragraph.headIndent = bulletTextIndent
+            paragraph.alignment = .Natural
+            paragraph.paragraphSpacing = isLastLine ? 8 : 2
+            paragraph.lineSpacing = 2
+            paragraph.paragraphSpacingBefore = 0
+            paragraph.lineBreakMode = .ByWordWrapping
+            parts.append(applyParagraphStyle(prefixed, paragraphStyle: paragraph))
         }
         let separator = NSAttributedString(string: "\u{2029}", attributes: styles[.Normal])
         let joined = separator.join(parts)
-        var paragraph = copyDefaultParagrapStyle()
-        paragraph.tabStops = [
-            NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-            NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
-        paragraph.defaultTabInterval = bulletIndent
-        paragraph.firstLineHeadIndent = 0
-        paragraph.headIndent = bulletTextIndent
-        paragraph.alignment = .Natural
-        paragraph.paragraphSpacing = 2
-        paragraph.lineSpacing = 2
-        paragraph.paragraphSpacingBefore = 0
-        paragraph.lineBreakMode = .ByWordWrapping
-        return applyParagraphStyle(joined, paragraphStyle: paragraph)
+        return joined
     }
 
     func formatQuoteList(levels: [Int], lines: [String]) -> NSAttributedString {
