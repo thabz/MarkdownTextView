@@ -36,7 +36,7 @@ class ViewController: UIViewController {
             "![An image](http://www.kalliope.org/gfx/icons/iphone-icon.png)",
             "",
             "With some text directly under it. ",
-            "Normal, *bold*, ~~strikethrough~~, __underline__ and /italic/.",
+            "Normal, *italic*, ~~strikethrough~~, __bold__ and _italic_.",
             "",
             "1. First item",
             "2. Second item",
