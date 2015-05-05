@@ -126,7 +126,12 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testBackslashEscaping() {
-        XCTAssertEqual("X*X", MarkdownTextStorage(markdown: "\\*").string)
+        XCTAssertEqual("*", MarkdownTextStorage(markdown: "\\*").string)
+        XCTAssertEqual("X\\Y", MarkdownTextStorage(markdown: "X\\\\Y").string)
+        XCTAssertEqual("B * A", MarkdownTextStorage(markdown: "B *\\** A").string)
+        XCTAssertEqual("[]", MarkdownTextStorage(markdown: "\\[\\]").string)
+        XCTAssertFalse(MarkdownTextStorage(markdown: "\\*A\\*").isBoldAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*\\**").isItalicAtIndex(0))
     }
     
 }

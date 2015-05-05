@@ -84,7 +84,6 @@ public class MarkdownTextStorage : NSTextStorage
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    static private let escapesRegExp = NSRegularExpression(pattern: "(\\\\\\`|\\\\(\\*)|\\\\\\_|\\\\\\{|\\\\\\}|\\\\\\[|\\\\\\]|\\\\\\(|\\\\\\)|\\\\\\>|\\\\\\#|\\\\\\+|\\\\\\-|\\\\\\.|\\\\\\!|\\\\\\/)", options: nil, error: nil)!
     func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
@@ -102,6 +101,26 @@ public class MarkdownTextStorage : NSTextStorage
         }
         return mutable
     }
+    static private var escapeTable = [String:String]() // \[ -> \u{1A}\[\u{1A}
+    static private var invertedEscapeTable = [String:String]() // \u{1A}[\u{1A} -> [
+    static private var invertedEscapesRegExp: NSRegularExpression!
+    static private var escapesRegExp: NSRegularExpression = {
+        var escapesPatternParts = [String]()
+        var invertedEscapesPatternParts = [String]()
+        for c in "\\`*_{}[]()>#+-.!/" {
+            let key = String(c)
+            let replacement = "\u{1A}\\" + key + "\u{1A}"
+            escapeTable["\\" + key] = replacement
+            invertedEscapeTable[replacement] = key
+            escapesPatternParts.append(NSRegularExpression.escapedPatternForString("\\" + key))
+            invertedEscapesPatternParts.append(NSRegularExpression.escapedPatternForString(replacement))
+        }
+        let invertedEscapePattern = "(" + "|".join(invertedEscapesPatternParts) + ")"
+        // Build (\]|\[|...) but properly escaped ofcourse
+        let escapePattern = "(" + "|".join(escapesPatternParts) + ")"
+        invertedEscapesRegExp = NSRegularExpression(pattern: invertedEscapePattern, options: nil, error: nil)!
+        return NSRegularExpression(pattern: escapePattern, options: nil, error: nil)!
+    }()
     
     func formatBoldParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
@@ -287,7 +306,7 @@ public class MarkdownTextStorage : NSTextStorage
                 var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
                 result.appendAttributedString(monospaceString)
             } else {
-                let escaped = self.replaceBackslashEscapes(substring as String)
+                let escaped = self.hideBackslashEscapes(substring as String)
                 var attributedLine = NSAttributedString(string: escaped as String, attributes: self.styles[.Normal])
                 attributedLine = self.formatImageParts(attributedLine)
                 attributedLine = self.formatRawLinkParts(attributedLine)
@@ -297,16 +316,38 @@ public class MarkdownTextStorage : NSTextStorage
                 attributedLine = self.formatBoldParts(attributedLine)
                 attributedLine = self.formatItalicParts(attributedLine)
                 attributedLine = self.formatStrikethroughParts(attributedLine)
+                attributedLine = self.restoreBackslashEscapes(attributedLine)
                 result.appendAttributedString(attributedLine)
             }
         }
         return result
     }
     
-    func replaceBackslashEscapes(line: String) -> String {
+    func hideBackslashEscapes(line: String) -> String {
         var varline = NSMutableString(string: line)
-        MarkdownTextStorage.escapesRegExp.replaceMatchesInString(varline, options: nil, range: NSMakeRange(0,count(line)), withTemplate: "X$1X")
+        
+        if let matches = MarkdownTextStorage.escapesRegExp.matchesInString(line, options: nil, range:  NSMakeRange(0,count(line))) as? [NSTextCheckingResult] {
+            for match in matches.reverse() {
+                var matchedString = varline.substringWithRange(match.rangeAtIndex(1))
+                if let replacement = MarkdownTextStorage.escapeTable[matchedString] {
+                    varline.replaceCharactersInRange(match.range, withString: replacement)
+                }
+            }
+        }
         return varline as String
+    }
+    
+    func restoreBackslashEscapes(attributedString: NSAttributedString) -> NSAttributedString {
+        var varline = NSMutableAttributedString(attributedString: attributedString)
+        if let matches = MarkdownTextStorage.invertedEscapesRegExp.matchesInString(attributedString.string, options: nil, range:  NSMakeRange(0,attributedString.length)) as? [NSTextCheckingResult] {
+            for match in matches.reverse() {
+                var matchedString = (attributedString.string as NSString).substringWithRange(match.rangeAtIndex(1))
+                if let replacement = MarkdownTextStorage.invertedEscapeTable[matchedString] {
+                    varline.replaceCharactersInRange(match.range, withString: replacement)
+                }
+            }
+        }
+        return varline
     }
     
     func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
