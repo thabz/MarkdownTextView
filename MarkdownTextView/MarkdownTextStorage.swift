@@ -80,7 +80,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
     static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[]|^)(https?://\\S+)", options: nil, error: nil)!
+    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[]|^)(https?://[^#\\s]+(#[\\w\\-]+)?)", options: nil, error: nil)!
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!

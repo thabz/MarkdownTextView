@@ -69,6 +69,9 @@ class MarkdownTextViewTests: XCTestCase {
         let linkInludingSha = MarkdownTextStorage(markdown: "http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772")
         XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.linkAtIndex(0) ?? "No link found")
         XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.string)
+        XCTAssertEqual(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl)").string, "(http://www.kalliope.org/suburl)")
+        XCTAssertEqual(MarkdownTextStorage(markdown: "A (http://www.kalliope.org/suburl/) B").string, "A (http://www.kalliope.org/suburl/) B")
+        XCTAssertEqual(MarkdownTextStorage(markdown: "(See https://api.imgur.com/#authentication)").string, "(See https://api.imgur.com/#authentication)")
     }
 
     func testIssueLinks() {
