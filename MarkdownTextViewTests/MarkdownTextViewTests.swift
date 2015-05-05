@@ -125,6 +125,10 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("A [Link](http://apple.com/) B", MarkdownTextStorage(markdown: "A `[Link](http://apple.com/)` B").string)
     }
     
+    func testBackslashEscaping() {
+        XCTAssertEqual("X*X", MarkdownTextStorage(markdown: "\\*").string)
+    }
+    
 }
 
 extension MarkdownTextStorage {

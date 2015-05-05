@@ -84,7 +84,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    
+    static private let escapesRegExp = NSRegularExpression(pattern: "(\\\\\\`|\\\\(\\*)|\\\\\\_|\\\\\\{|\\\\\\}|\\\\\\[|\\\\\\]|\\\\\\(|\\\\\\)|\\\\\\>|\\\\\\#|\\\\\\+|\\\\\\-|\\\\\\.|\\\\\\!|\\\\\\/)", options: nil, error: nil)!
     func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
@@ -287,7 +287,8 @@ public class MarkdownTextStorage : NSTextStorage
                 var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
                 result.appendAttributedString(monospaceString)
             } else {
-                var attributedLine = NSAttributedString(string: substring as String, attributes: self.styles[.Normal])
+                let escaped = self.replaceBackslashEscapes(substring as String)
+                var attributedLine = NSAttributedString(string: escaped as String, attributes: self.styles[.Normal])
                 attributedLine = self.formatImageParts(attributedLine)
                 attributedLine = self.formatRawLinkParts(attributedLine)
                 attributedLine = self.formatIssueLinkParts(attributedLine)
@@ -300,6 +301,12 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
         return result
+    }
+    
+    func replaceBackslashEscapes(line: String) -> String {
+        var varline = NSMutableString(string: line)
+        MarkdownTextStorage.escapesRegExp.replaceMatchesInString(varline, options: nil, range: NSMakeRange(0,count(line)), withTemplate: "X$1X")
+        return varline as String
     }
     
     func formatCodeLine(line: String, font: UIFont) -> NSAttributedString {
