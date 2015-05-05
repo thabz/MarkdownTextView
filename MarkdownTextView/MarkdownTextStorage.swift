@@ -101,15 +101,15 @@ public class MarkdownTextStorage : NSTextStorage
         }
         return mutable
     }
-    static private var escapeTable = [String:String]() // \[ -> \u{1A}\[\u{1A}
-    static private var invertedEscapeTable = [String:String]() // \u{1A}[\u{1A} -> [
+    static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
+    static private var invertedEscapeTable = [String:String]() // \u{1A}6\u{1A} -> [
     static private var invertedEscapesRegExp: NSRegularExpression!
     static private var escapesRegExp: NSRegularExpression = {
         var escapesPatternParts = [String]()
         var invertedEscapesPatternParts = [String]()
-        for c in "\\`*_{}[]()>#+-.!/" {
+        for (index, c) in enumerate("\\`*_{}[]()>#+-.!/") {
             let key = String(c)
-            let replacement = "\u{1A}\\" + key + "\u{1A}"
+            let replacement = "\u{1A}" + String(index) + "\u{1A}"
             escapeTable["\\" + key] = replacement
             invertedEscapeTable[replacement] = key
             escapesPatternParts.append(NSRegularExpression.escapedPatternForString("\\" + key))

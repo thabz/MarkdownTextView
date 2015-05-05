@@ -126,12 +126,13 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testBackslashEscaping() {
-        XCTAssertEqual("*", MarkdownTextStorage(markdown: "\\*").string)
-        XCTAssertEqual("X\\Y", MarkdownTextStorage(markdown: "X\\\\Y").string)
-        XCTAssertEqual("B * A", MarkdownTextStorage(markdown: "B *\\** A").string)
-        XCTAssertEqual("[]", MarkdownTextStorage(markdown: "\\[\\]").string)
-        XCTAssertFalse(MarkdownTextStorage(markdown: "\\*A\\*").isBoldAtIndex(0))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "*\\**").isItalicAtIndex(0))
+        XCTAssertEqual("*", MarkdownTextStorage(markdown: "\\*").string, "Basic escape")
+        XCTAssertEqual("X\\Y", MarkdownTextStorage(markdown: "X\\\\Y").string, "Backslash escapes")
+        XCTAssertEqual("*", MarkdownTextStorage(markdown: "*\\**").string, "Escaped * inside italic marks")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*\\**").isItalicAtIndex(0), "Escaped * inside italic marks")
+        XCTAssertEqual("[]", MarkdownTextStorage(markdown: "\\[\\]").string, "Two escapes next to each other")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "\\*A\\*").isItalicAtIndex(0), "Escaped italic is not italic")
+        XCTAssertEqual("\\*", MarkdownTextStorage(markdown: "`\\*`").string, "Don't escape in code sections")
     }
     
 }
