@@ -23,23 +23,34 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testBold() {
-        XCTAssertTrue(MarkdownTextStorage(markdown: "*bold*").isBoldAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: "__bold__").isBoldAtIndex(0))
-        XCTAssertEqual("bold", MarkdownTextStorage(markdown: "*bold*").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "**bold**").isBoldAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "*italic*").isBoldAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "_italic_").isBoldAtIndex(0))
+        XCTAssertEqual("bold", MarkdownTextStorage(markdown: "**bold**").string)
         XCTAssertEqual("bold", MarkdownTextStorage(markdown: "__bold__").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
         //XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
 
     func testItalic() {
-        XCTAssertTrue(MarkdownTextStorage(markdown: "/italic/").isItalicAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: "_italic_").isItalicAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*italic*").isItalicAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "__bold__").isItalicAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "**bold**").isItalicAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isItalicAtIndex(2))
-        XCTAssertEqual("italic", MarkdownTextStorage(markdown: "/italic/").string)
+        XCTAssertFalse(MarkdownTextStorage(markdown: "__b__ _i_").isItalicAtIndex(0))
         XCTAssertEqual("italic", MarkdownTextStorage(markdown: "_italic_").string)
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(1))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(2))
         XCTAssertEqual("a_b_c_d", MarkdownTextStorage(markdown: "a_b_c_d").string)
+        XCTAssertFalse(MarkdownTextStorage(markdown: "/italic/").isItalicAtIndex(0), "This is wiki italic. Not supported by either GitHub or Bitbucket.")
+    }
+
+    func testStrikethrough() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "~~strikethrough~~").isStrikethroughAtIndex(0))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "~strikethrough~").isStrikethroughAtIndex(0))
+        XCTAssertEqual("strikethrough", MarkdownTextStorage(markdown: "~~strikethrough~~").string)
     }
 
     func testBackslashEscape() {
@@ -48,7 +59,7 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testNormalLinks() {
         XCTAssertTrue(count(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string) == 4)
-        let boldLink = MarkdownTextStorage(markdown: "[*Bold* link](http://www.kalliope.org/suburl/)")
+        let boldLink = MarkdownTextStorage(markdown: "[**Bold** link](http://www.kalliope.org/suburl/)")
         XCTAssertEqual("Bold link", boldLink.string)
         XCTAssertTrue(boldLink.isBoldAtIndex(0))
         XCTAssertTrue(boldLink.isLinkAtIndex(0))
@@ -145,6 +156,12 @@ extension MarkdownTextStorage {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         return attrs[NSLinkAttributeName] != nil
     }
+
+    func isStrikethroughAtIndex(index: Int) -> Bool {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        return attrs[NSStrikethroughStyleAttributeName] != nil
+    }
+
     
     func linkAtIndex(index: Int) -> String? {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
