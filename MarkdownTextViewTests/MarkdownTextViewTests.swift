@@ -185,6 +185,19 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("💣*🐞", MarkdownTextStorage(markdown: "*💣\\*🐞*").string, "Basic escape with emojis in italic")
     }
     
+    func testRawLinksInBrackets() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").isLinkAtIndex(1))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").isLinkAtIndex(0))
+        XCTAssertEqual("http://www.kalliope.org/", MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").string)
+        XCTAssertEqual("X http://www.kalliope.org/", MarkdownTextStorage(markdown: "X <http://www.kalliope.org/>").string)
+    }
+
+    func testNormalLinksWithURLInBrackets() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[XX](<http://www.kalliope.org/>)").isLinkAtIndex(0))
+        XCTAssertEqual("XX", MarkdownTextStorage(markdown: "[XX](<http://www.kalliope.org/>)").string)
+        XCTAssertTrue("http://www.kalliope.org/" == MarkdownTextStorage(markdown: "[XX](<http://www.kalliope.org/>)").linkAtIndex(0))
+        XCTAssertEqual("X XX", MarkdownTextStorage(markdown: "X [XX](<http://www.kalliope.org/>)").string)
+    }
 }
 
 extension MarkdownTextStorage {

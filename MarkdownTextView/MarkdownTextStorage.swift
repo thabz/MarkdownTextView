@@ -79,11 +79,11 @@ public class MarkdownTextStorage : NSTextStorage
     static private let italicMatchRegExp = NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_]|$)", options: nil, error: nil)!
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
-    static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[]|^)(https?://[^#\\s]+(#[\\w\\-]+)?)", options: nil, error: nil)!
+    static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\(<?(.*?)>?\\)", options: nil, error: nil)!
+    static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[<]|^)<?(https?://[^#\\s>]+(#[\\w\\-]+)?)>?", options: nil, error: nil)!
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
-    static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
+    static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(<?(.*?)>?\\)", options: nil, error: nil)!
 
     static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
     static private var invertedEscapeTable = [String:String]() // \u{1A}6\u{1A} -> [
