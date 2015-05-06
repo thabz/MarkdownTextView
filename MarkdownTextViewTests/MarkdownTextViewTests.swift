@@ -32,6 +32,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "__🐞__").string)
         XCTAssertEqual("🐞 bold", MarkdownTextStorage(markdown: "🐞 __bold__").string)
         XCTAssertEqual("🐞 bold 🐞", MarkdownTextStorage(markdown: "🐞 __bold__ 🐞").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "Z **bold**").isBoldAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 **bold**").isBoldAtIndex(2), "TODO: Why doesn't the equivalent italic test fail?")
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
         XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
@@ -47,6 +49,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "_🐞_").string)
         XCTAssertEqual("🐞 italic", MarkdownTextStorage(markdown: "🐞 _italic_").string)
         XCTAssertEqual("🐞 italic 🐞", MarkdownTextStorage(markdown: "🐞 _italic_ 🐞").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 *italic*").isItalicAtIndex(2))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(1))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(2))
         XCTAssertEqual("a_b_c_d", MarkdownTextStorage(markdown: "a_b_c_d").string)
@@ -59,6 +62,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("strikethrough", MarkdownTextStorage(markdown: "~~strikethrough~~").string)
         XCTAssertEqual("🐞strikethrough🐞", MarkdownTextStorage(markdown: "🐞~~strikethrough~~🐞").string)
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "~~🐞~~").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "X ~~XX~~").isStrikethroughAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 ~~XX~~").isStrikethroughAtIndex(2))
     }
     
     func testNormalLinks() {
@@ -154,6 +159,7 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testInlineCode() {
         XCTAssertEqual("ABC", MarkdownTextStorage(markdown: "`ABC`").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "`ABC`").isMonospaceAtIndex(0))
         XCTAssertEqual("*ABC*", MarkdownTextStorage(markdown: "`*ABC*`").string)
         XCTAssertEqual("A *bold* B", MarkdownTextStorage(markdown: "A `*bold*` B").string)
         XCTAssertEqual("A *bold* B /italic/", MarkdownTextStorage(markdown: "A `*bold*` B `/italic/`").string)
@@ -162,6 +168,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("A [Link](http://apple.com/) B", MarkdownTextStorage(markdown: "A `[Link](http://apple.com/)` B").string)
         XCTAssertEqual("A🐞B🐞C", MarkdownTextStorage(markdown: "`A🐞B🐞C`").string)
         XCTAssertEqual("💣A🐞B🐞C💣", MarkdownTextStorage(markdown: "💣`A🐞B🐞C`💣").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "💣`ABC`").isMonospaceAtIndex(1))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "`ABC`💣").isMonospaceAtIndex(2))
+        XCTAssertFalse(MarkdownTextStorage(markdown: "`ABC`💣").isMonospaceAtIndex(3))
     }
     
     func testBackslashEscaping() {
@@ -202,7 +211,16 @@ extension MarkdownTextStorage {
             return false
         }
     }
-    
+
+    func isMonospaceAtIndex(index: Int) -> Bool {
+        let attrs = attributesAtIndex(index, effectiveRange: nil)
+        if let font = attrs[NSFontAttributeName] as? UIFont {
+            return font.fontName.rangeOfString("Menlo") != nil
+        } else {
+            return false
+        }
+    }
+
     func isLinkAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         return attrs[NSLinkAttributeName] != nil

@@ -84,23 +84,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\((.*?)\\)", options: nil, error: nil)!
-    func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
-        var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            let range = NSMakeRange(0, mutable.length)
-            if let match = MarkdownTextStorage.italicMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
-                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
-                italicPart.appendAttributedString(mutable.attributedSubstringFromRange(match.rangeAtIndex(3)))
-                italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
-                mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
-            } else {
-                done = true
-            }
-        }
-        return mutable
-    }
+
     static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
     static private var invertedEscapeTable = [String:String]() // \u{1A}6\u{1A} -> [
     static private var invertedEscapesRegExp: NSRegularExpression!
@@ -131,6 +115,24 @@ public class MarkdownTextStorage : NSTextStorage
                 let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(2)))
                 italicPart.addAttributes(styles[.Bold]!, range: NSMakeRange(0, italicPart.length))
+                mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
+            } else {
+                done = true
+            }
+        }
+        return mutable
+    }
+    
+    func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            let range = NSMakeRange(0, mutable.length)
+            if let match = MarkdownTextStorage.italicMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let range = match.range
+                let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
+                italicPart.appendAttributedString(mutable.attributedSubstringFromRange(match.rangeAtIndex(3)))
+                italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
             } else {
                 done = true
