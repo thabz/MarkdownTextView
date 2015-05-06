@@ -33,7 +33,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞 bold", MarkdownTextStorage(markdown: "🐞 __bold__").string)
         XCTAssertEqual("🐞 bold 🐞", MarkdownTextStorage(markdown: "🐞 __bold__ 🐞").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
-        //XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
+        XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
 
     func testItalic() {
@@ -60,10 +60,6 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞strikethrough🐞", MarkdownTextStorage(markdown: "🐞~~strikethrough~~🐞").string)
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "~~🐞~~").string)
     }
-
-    func testBackslashEscape() {
-        XCTAssertTrue(true)
-    }
     
     func testNormalLinks() {
         XCTAssertTrue(count(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string) == 4)
@@ -81,6 +77,13 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)").string, "Emojis in links")
         XCTAssertEqual("🐞🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)🐞").string, "Emojis in links")
         XCTAssertEqual("🐞🐞🐞", MarkdownTextStorage(markdown: "🐞[🐞](http://www.kalliope.org/)🐞").string, "Emojis in links")
+        XCTAssertEqual("🐞X🐞", MarkdownTextStorage(markdown: "🐞[X](http://www.kalliope.org/)🐞").string, "Emojis in links")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)").isLinkAtIndex(0), "Emojis in links")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "A [🐞](http://www.kalliope.org/)").isLinkAtIndex(2), "Emojis in links")
+        XCTAssertFalse(MarkdownTextStorage(markdown: "A [🐞](http://www.kalliope.org/)").isLinkAtIndex(1), "Emojis in links")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞[A](http://www.kalliope.org/)").isLinkAtIndex(1), "This is the real culprit of a bunch of failing tests below")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [A](http://www.kalliope.org/)").isLinkAtIndex(2), "This is the real culprit of a bunch of failing tests below")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[A](http://www.kalliope.org/)🐞").isLinkAtIndex(0))
     }
     
     func testRawLinks() {
@@ -103,6 +106,13 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual(MarkdownTextStorage(markdown: "(See https://api.imgur.com/#authentication)").string, "(See https://api.imgur.com/#authentication)")
     }
 
+    func testUnicodeInRawLinks() {
+        XCTAssertEqual("🐞 https://www.kalliope.org/", MarkdownTextStorage(markdown: "🐞 [https://www.kalliope.org/](https://www.kalliope.org/)").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [XX](https://www.kalliope.org/)").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [https://www.kalliope.org/](https://www.kalliope.org/)").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(2))
+    }
+    
     func testIssueLinks() {
         println(MarkdownTextStorage(markdown: "#123").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "#123").isLinkAtIndex(0))
