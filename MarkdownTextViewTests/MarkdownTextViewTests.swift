@@ -189,6 +189,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").isLinkAtIndex(1))
         XCTAssertTrue(MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").isLinkAtIndex(0))
         XCTAssertEqual("http://www.kalliope.org/", MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").string)
+        XCTAssertTrue("http://www.kalliope.org/" == MarkdownTextStorage(markdown: "<http://www.kalliope.org/>").linkAtIndex(0))
         XCTAssertEqual("X http://www.kalliope.org/", MarkdownTextStorage(markdown: "X <http://www.kalliope.org/>").string)
     }
 
