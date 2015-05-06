@@ -15,7 +15,7 @@ class TableViewController: UITableViewController {
         "### Header between",
         "Paragraph"
         ],[
-        "Go download [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
+        "Go download 💣 [RayGay on GitHub](https://github.com/thabz/RayGay) if you're into raytracing.",
         "",
         "An `NSAttributedString` spread over multiple lines. ",
         "A section spread over multiple lines. ",
@@ -36,7 +36,7 @@ class TableViewController: UITableViewController {
         ],[
             "#### Demonstrating quotes",
             "> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "> Link to commit deadbeef and issue #1.",
+            "> Link to commit 💣 deadbeef and issue 💣 #1.",
             "And this marks the end of the quote section."
         ],[
             "Examples from /Apple Mail/ on OS X:",

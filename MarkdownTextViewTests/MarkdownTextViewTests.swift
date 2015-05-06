@@ -33,7 +33,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞 bold", MarkdownTextStorage(markdown: "🐞 __bold__").string)
         XCTAssertEqual("🐞 bold 🐞", MarkdownTextStorage(markdown: "🐞 __bold__ 🐞").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "Z **bold**").isBoldAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 **bold**").isBoldAtIndex(2), "TODO: Why doesn't the equivalent italic test fail?")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 **bold**").isBoldAtIndex(3))
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
         XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
@@ -49,7 +49,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "_🐞_").string)
         XCTAssertEqual("🐞 italic", MarkdownTextStorage(markdown: "🐞 _italic_").string)
         XCTAssertEqual("🐞 italic 🐞", MarkdownTextStorage(markdown: "🐞 _italic_ 🐞").string)
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 *italic*").isItalicAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 *italic*").isItalicAtIndex(3))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(1))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(2))
         XCTAssertEqual("a_b_c_d", MarkdownTextStorage(markdown: "a_b_c_d").string)
@@ -63,7 +63,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("🐞strikethrough🐞", MarkdownTextStorage(markdown: "🐞~~strikethrough~~🐞").string)
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "~~🐞~~").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "X ~~XX~~").isStrikethroughAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 ~~XX~~").isStrikethroughAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 ~~XX~~").isStrikethroughAtIndex(3))
     }
     
     func testNormalLinks() {
@@ -86,8 +86,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)").isLinkAtIndex(0), "Emojis in links")
         XCTAssertTrue(MarkdownTextStorage(markdown: "A [🐞](http://www.kalliope.org/)").isLinkAtIndex(2), "Emojis in links")
         XCTAssertFalse(MarkdownTextStorage(markdown: "A [🐞](http://www.kalliope.org/)").isLinkAtIndex(1), "Emojis in links")
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞[A](http://www.kalliope.org/)").isLinkAtIndex(1), "This is the real culprit of a bunch of failing tests below")
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [A](http://www.kalliope.org/)").isLinkAtIndex(2), "This is the real culprit of a bunch of failing tests below")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞[A](http://www.kalliope.org/)").isLinkAtIndex(2), "This is the real culprit of a bunch of failing tests below")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [A](http://www.kalliope.org/)").isLinkAtIndex(3), "This is the real culprit of a bunch of failing tests below")
         XCTAssertTrue(MarkdownTextStorage(markdown: "[A](http://www.kalliope.org/)🐞").isLinkAtIndex(0))
     }
     
@@ -99,9 +99,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "X https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(2))
         XCTAssertEqual("🐞 https://www.kalliope.org/", MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").string)
         XCTAssertEqual("🐞 https://www.kalliope.org/ 🐞", MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/ 🐞").string)
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(3))
         XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/ 🐞").isLinkAtIndex(0))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(3))
         XCTAssertEqual("http://www.kalliope.org/suburl/", MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").linkAtIndex(0) ?? "No link found")
         let linkInludingSha = MarkdownTextStorage(markdown: "http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772")
         XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.linkAtIndex(0) ?? "No link found")
@@ -113,9 +113,9 @@ class MarkdownTextViewTests: XCTestCase {
 
     func testUnicodeInRawLinks() {
         XCTAssertEqual("🐞 https://www.kalliope.org/", MarkdownTextStorage(markdown: "🐞 [https://www.kalliope.org/](https://www.kalliope.org/)").string)
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [XX](https://www.kalliope.org/)").isLinkAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [https://www.kalliope.org/](https://www.kalliope.org/)").isLinkAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [XX](https://www.kalliope.org/)").isLinkAtIndex(3))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [https://www.kalliope.org/](https://www.kalliope.org/)").isLinkAtIndex(3))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(3))
     }
     
     func testIssueLinks() {
@@ -125,9 +125,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(1))
         XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(2))
         XCTAssertTrue(MarkdownTextStorage(markdown: "X #123 ").isLinkAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 ").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 ").isLinkAtIndex(3))
         XCTAssertTrue(MarkdownTextStorage(markdown: "#123 🐞").isLinkAtIndex(0))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 🐞").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 🐞").isLinkAtIndex(3))
         XCTAssertEqual("🐞 #123 🐞", MarkdownTextStorage(markdown: "🐞 #123 🐞").string)
         XCTAssertEqual("(#123)", MarkdownTextStorage(markdown: "(#123)").string, "Should keep prefix and postfix")
         XCTAssertEqual("#123?", MarkdownTextStorage(markdown: "#123?").string, "Should postfix")
@@ -140,7 +140,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: " deadbeef ").isLinkAtIndex(1))
         XCTAssertTrue(MarkdownTextStorage(markdown: "deadbeef").isLinkAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: "X deadbeef").isLinkAtIndex(2))
-        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 deadbeef").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 deadbeef").isLinkAtIndex(3))
         XCTAssertFalse(MarkdownTextStorage(markdown: " cafebabes ").isLinkAtIndex(1))
         XCTAssertTrue(count(MarkdownTextStorage(markdown: " deadbee ").string) == 9, "Should keep prefix and postfix")
         XCTAssertEqual("(deadbee)", MarkdownTextStorage(markdown: "(deadbeefcafebabe)").string, "Should keep prefix and postfix")
@@ -168,7 +168,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("A [Link](http://apple.com/) B", MarkdownTextStorage(markdown: "A `[Link](http://apple.com/)` B").string)
         XCTAssertEqual("A🐞B🐞C", MarkdownTextStorage(markdown: "`A🐞B🐞C`").string)
         XCTAssertEqual("💣A🐞B🐞C💣", MarkdownTextStorage(markdown: "💣`A🐞B🐞C`💣").string)
-        XCTAssertTrue(MarkdownTextStorage(markdown: "💣`ABC`").isMonospaceAtIndex(1))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "💣`ABC`").isMonospaceAtIndex(2))
         XCTAssertTrue(MarkdownTextStorage(markdown: "`ABC`💣").isMonospaceAtIndex(2))
         XCTAssertFalse(MarkdownTextStorage(markdown: "`ABC`💣").isMonospaceAtIndex(3))
     }
