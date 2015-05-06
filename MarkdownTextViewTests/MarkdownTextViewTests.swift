@@ -29,6 +29,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertFalse(MarkdownTextStorage(markdown: "_italic_").isBoldAtIndex(0))
         XCTAssertEqual("bold", MarkdownTextStorage(markdown: "**bold**").string)
         XCTAssertEqual("bold", MarkdownTextStorage(markdown: "__bold__").string)
+        XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "__🐞__").string)
+        XCTAssertEqual("🐞 bold", MarkdownTextStorage(markdown: "🐞 __bold__").string)
+        XCTAssertEqual("🐞 bold 🐞", MarkdownTextStorage(markdown: "🐞 __bold__ 🐞").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isBoldAtIndex(0))
         //XCTAssertEqual("*bold*", MarkdownTextStorage(markdown: "\\*bold\\*").string)
     }
@@ -41,6 +44,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "__b__ _i_").isItalicAtIndex(2))
         XCTAssertFalse(MarkdownTextStorage(markdown: "__b__ _i_").isItalicAtIndex(0))
         XCTAssertEqual("italic", MarkdownTextStorage(markdown: "_italic_").string)
+        XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "_🐞_").string)
+        XCTAssertEqual("🐞 italic", MarkdownTextStorage(markdown: "🐞 _italic_").string)
+        XCTAssertEqual("🐞 italic 🐞", MarkdownTextStorage(markdown: "🐞 _italic_ 🐞").string)
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(1))
         XCTAssertFalse(MarkdownTextStorage(markdown: "a_b_c_d").isItalicAtIndex(2))
         XCTAssertEqual("a_b_c_d", MarkdownTextStorage(markdown: "a_b_c_d").string)
@@ -51,6 +57,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "~~strikethrough~~").isStrikethroughAtIndex(0))
         XCTAssertFalse(MarkdownTextStorage(markdown: "~strikethrough~").isStrikethroughAtIndex(0))
         XCTAssertEqual("strikethrough", MarkdownTextStorage(markdown: "~~strikethrough~~").string)
+        XCTAssertEqual("🐞strikethrough🐞", MarkdownTextStorage(markdown: "🐞~~strikethrough~~🐞").string)
+        XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "~~🐞~~").string)
     }
 
     func testBackslashEscape() {
@@ -70,6 +78,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772)").string.rangeOfString(")") == nil)
         XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#383)").string.rangeOfString(")") == nil)
         XCTAssertEqual("]", MarkdownTextStorage(markdown: "[\\]](http://www.kalliope.org/)").string, "Escapes in links")
+        XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)").string, "Emojis in links")
+        XCTAssertEqual("🐞🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)🐞").string, "Emojis in links")
+        XCTAssertEqual("🐞🐞🐞", MarkdownTextStorage(markdown: "🐞[🐞](http://www.kalliope.org/)🐞").string, "Emojis in links")
     }
     
     func testRawLinks() {
@@ -77,6 +88,12 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").isLinkAtIndex(5))
         XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(5))
         XCTAssertFalse(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl/").isLinkAtIndex(5))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "X https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(2))
+        XCTAssertEqual("🐞 https://www.kalliope.org/", MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").string)
+        XCTAssertEqual("🐞 https://www.kalliope.org/ 🐞", MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/ 🐞").string)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/ 🐞").isLinkAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(2))
         XCTAssertEqual("http://www.kalliope.org/suburl/", MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").linkAtIndex(0) ?? "No link found")
         let linkInludingSha = MarkdownTextStorage(markdown: "http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772")
         XCTAssertEqual("http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772", linkInludingSha.linkAtIndex(0) ?? "No link found")
@@ -92,6 +109,11 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertFalse(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(1))
         XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "X #123 ").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 ").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "#123 🐞").isLinkAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 #123 🐞").isLinkAtIndex(2))
+        XCTAssertEqual("🐞 #123 🐞", MarkdownTextStorage(markdown: "🐞 #123 🐞").string)
         XCTAssertEqual("(#123)", MarkdownTextStorage(markdown: "(#123)").string, "Should keep prefix and postfix")
         XCTAssertEqual("#123?", MarkdownTextStorage(markdown: "#123?").string, "Should postfix")
         XCTAssertFalse(MarkdownTextStorage(markdown: "#acd").isLinkAtIndex(0))
@@ -102,6 +124,8 @@ class MarkdownTextViewTests: XCTestCase {
     func testCommitLinks() {
         XCTAssertTrue(MarkdownTextStorage(markdown: " deadbeef ").isLinkAtIndex(1))
         XCTAssertTrue(MarkdownTextStorage(markdown: "deadbeef").isLinkAtIndex(0))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "X deadbeef").isLinkAtIndex(2))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 deadbeef").isLinkAtIndex(2))
         XCTAssertFalse(MarkdownTextStorage(markdown: " cafebabes ").isLinkAtIndex(1))
         XCTAssertTrue(count(MarkdownTextStorage(markdown: " deadbee ").string) == 9, "Should keep prefix and postfix")
         XCTAssertEqual("(deadbee)", MarkdownTextStorage(markdown: "(deadbeefcafebabe)").string, "Should keep prefix and postfix")
@@ -114,6 +138,8 @@ class MarkdownTextViewTests: XCTestCase {
 
     func testParagraphs() {
         XCTAssertEqual("Five Guy Burgers", MarkdownTextStorage(markdown: "Five\nGuy\nBurgers").string, "Should join lines.")
+        XCTAssertEqual("Five Guy 🐞 Burgers", MarkdownTextStorage(markdown: "Five\nGuy 🐞\nBurgers").string, "Should join lines with emojis")
+        XCTAssertEqual("🐞 Five Guy Burgers", MarkdownTextStorage(markdown: "🐞 Five\nGuy\nBurgers").string, "Should join lines with emojis")
     }
     
     func testInlineCode() {
@@ -124,6 +150,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("A *bold* B", MarkdownTextStorage(markdown: "A `*bold*` B").string)
         XCTAssertEqual("[Link](http://apple.com/)", MarkdownTextStorage(markdown: "`[Link](http://apple.com/)`").string)
         XCTAssertEqual("A [Link](http://apple.com/) B", MarkdownTextStorage(markdown: "A `[Link](http://apple.com/)` B").string)
+        XCTAssertEqual("A🐞B🐞C", MarkdownTextStorage(markdown: "`A🐞B🐞C`").string)
+        XCTAssertEqual("💣A🐞B🐞C💣", MarkdownTextStorage(markdown: "💣`A🐞B🐞C`💣").string)
     }
     
     func testBackslashEscaping() {
@@ -134,6 +162,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("[]", MarkdownTextStorage(markdown: "\\[\\]").string, "Two escapes next to each other")
         XCTAssertFalse(MarkdownTextStorage(markdown: "\\*A\\*").isItalicAtIndex(0), "Escaped italic is not italic")
         XCTAssertEqual("\\*", MarkdownTextStorage(markdown: "`\\*`").string, "Don't escape in code sections")
+        XCTAssertEqual("💣*🐞", MarkdownTextStorage(markdown: "💣\\*🐞").string, "Basic escape with emojis")
+        XCTAssertEqual("💣*🐞", MarkdownTextStorage(markdown: "*💣\\*🐞*").string, "Basic escape with emojis in italic")
     }
     
 }
