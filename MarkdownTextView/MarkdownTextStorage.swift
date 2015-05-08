@@ -61,10 +61,6 @@ public class MarkdownTextStorage : NSTextStorage
         edited(NSTextStorageEditActions.EditedAttributes, range: range, changeInLength: 0)
     }
     
-    func addPrefix(prefix: String) {
-        
-    }
-    
     static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*(.*?)\\s*#*\\s*$", options: nil, error: nil)!
     static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
     static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
