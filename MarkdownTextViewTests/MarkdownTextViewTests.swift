@@ -202,6 +202,7 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testRemovingDoubleSpaces() {
         XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "A  B  C").string)
+        XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "A  B \nC").string)
         XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "**A  B  C**").string)
         XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "[A  B  C](http://www.kalliope.org/)").string, "Spaces in links")
         XCTAssertEqual("A  B  C D", MarkdownTextStorage(markdown: "`A  B  C D`").string)
