@@ -207,6 +207,13 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "[A  B  C](http://www.kalliope.org/)").string, "Spaces in links")
         XCTAssertEqual("A  B  C D", MarkdownTextStorage(markdown: "`A  B  C D`").string)
     }
+    
+    func testHTMLEntityEscapes() {
+        XCTAssertEqual("Blåbærgrød", MarkdownTextStorage(markdown: "Bl&aring;b&aelig;rgr&oslash;d").string)
+        XCTAssertEqual("← ⇐", MarkdownTextStorage(markdown: "&larr; &lArr;").string)
+        XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string)
+        XCTAssertEqual("AT&T", MarkdownTextStorage(markdown: "[AT&amp;T](http://www.att.com/)").string, "HTML escapes in links")
+    }
 }
 
 extension MarkdownTextStorage {
