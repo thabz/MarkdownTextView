@@ -210,8 +210,11 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testHTMLEntityEscapes() {
         XCTAssertEqual("Blåbærgrød", MarkdownTextStorage(markdown: "Bl&aring;b&aelig;rgr&oslash;d").string)
-        XCTAssertEqual("← ⇐", MarkdownTextStorage(markdown: "&larr; &lArr;").string)
-        XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string)
+        XCTAssertEqual("← ⇐", MarkdownTextStorage(markdown: "&larr; &lArr;").string, "Beyond ASCII")
+        XCTAssertEqual("∞", MarkdownTextStorage(markdown: "*&infin;*").string, "Inside italic")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*&infin;*").isItalicAtIndex(0), "Inside italic")
+        XCTAssertEqual("&times;", MarkdownTextStorage(markdown: "`&times;`").string, "No entity escaping inside code blocks")
+        XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string, "Unrecognized entity escape")
         XCTAssertEqual("AT&T", MarkdownTextStorage(markdown: "[AT&amp;T](http://www.att.com/)").string, "HTML escapes in links")
     }
 }
