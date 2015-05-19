@@ -80,6 +80,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
     static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(<?(.*?)>?\\)", options: nil, error: nil)!
+    static private let doubleSpaceRegExp = NSRegularExpression(pattern: "\\s{2,}", options: nil, error: nil)!
 
     static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
     static private var invertedEscapeTable = [String:String]() // \u{1A}6\u{1A} -> [
@@ -291,6 +292,23 @@ public class MarkdownTextStorage : NSTextStorage
         return mutable
     }
     
+    func formatDoubleSpaces(line: NSAttributedString) -> NSAttributedString {
+        var done = false
+        var mutable = NSMutableAttributedString(attributedString: line)
+        while !done {
+            let range = NSMakeRange(0, mutable.length)
+            if let match = MarkdownTextStorage.doubleSpaceRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+                let range = match.range
+                let firstSpaceRange = NSMakeRange(range.location, 1)
+                let firstSpace = mutable.attributedSubstringFromRange(firstSpaceRange)
+                mutable.replaceCharactersInRange(range, withAttributedString: firstSpace)
+            } else {
+                done = true
+            }
+        }
+        return mutable
+    }
+    
     func formatParagraphLine(line: String) -> NSAttributedString {
         var normalStyle = styles[.Normal]
         
@@ -314,6 +332,7 @@ public class MarkdownTextStorage : NSTextStorage
                 attributedLine = self.formatBoldParts(attributedLine)
                 attributedLine = self.formatItalicParts(attributedLine)
                 attributedLine = self.formatStrikethroughParts(attributedLine)
+                attributedLine = self.formatDoubleSpaces(attributedLine)
                 attributedLine = self.restoreBackslashEscapes(attributedLine)
                 result.appendAttributedString(attributedLine)
             }
@@ -374,16 +393,15 @@ public class MarkdownTextStorage : NSTextStorage
     
     
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
-        let formattedLines = lines.map { return self.formatParagraphLine($0) }
-        let separator = NSAttributedString(string: " ", attributes: styles[.Normal])
-        var lines = separator.join(formattedLines)
+        var linesJoined = " ".join(lines)
+        let formattedLines = self.formatParagraphLine(linesJoined)
         var paragraph = copyDefaultParagrapStyle()
         paragraph.alignment = .Natural
         paragraph.paragraphSpacing = 8
         paragraph.lineSpacing = 2
         paragraph.paragraphSpacingBefore = 0
         paragraph.lineBreakMode = .ByWordWrapping
-        return applyParagraphStyle(lines, paragraphStyle: paragraph)
+        return applyParagraphStyle(formattedLines, paragraphStyle: paragraph)
     }
     
     func formatOrderedList(lines: [String]) -> NSAttributedString {

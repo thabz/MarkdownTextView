@@ -199,6 +199,13 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue("http://www.kalliope.org/" == MarkdownTextStorage(markdown: "[XX](<http://www.kalliope.org/>)").linkAtIndex(0))
         XCTAssertEqual("X XX", MarkdownTextStorage(markdown: "X [XX](<http://www.kalliope.org/>)").string)
     }
+    
+    func testRemovingDoubleSpaces() {
+        XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "A  B  C").string)
+        XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "**A  B  C**").string)
+        XCTAssertEqual("A B C", MarkdownTextStorage(markdown: "[A  B  C](http://www.kalliope.org/)").string, "Spaces in links")
+        XCTAssertEqual("A  B  C D", MarkdownTextStorage(markdown: "`A  B  C D`").string)
+    }
 }
 
 extension MarkdownTextStorage {
