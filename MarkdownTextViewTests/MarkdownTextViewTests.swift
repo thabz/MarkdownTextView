@@ -175,6 +175,7 @@ class MarkdownTextViewTests: XCTestCase {
     
     func testBackslashEscaping() {
         XCTAssertEqual("*", MarkdownTextStorage(markdown: "\\*").string, "Basic escape")
+        XCTAssertEqual("&", MarkdownTextStorage(markdown: "\\&").string, "Basic escape")
         XCTAssertEqual("X\\Y", MarkdownTextStorage(markdown: "X\\\\Y").string, "Backslash escapes")
         XCTAssertEqual("*", MarkdownTextStorage(markdown: "*\\**").string, "Escaped * inside italic marks")
         XCTAssertTrue(MarkdownTextStorage(markdown: "*\\**").isItalicAtIndex(0), "Escaped * inside italic marks")
@@ -213,6 +214,7 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("← ⇐", MarkdownTextStorage(markdown: "&larr; &lArr;").string, "Beyond ASCII")
         XCTAssertEqual("∞", MarkdownTextStorage(markdown: "*&infin;*").string, "Inside italic")
         XCTAssertTrue(MarkdownTextStorage(markdown: "*&infin;*").isItalicAtIndex(0), "Inside italic")
+        XCTAssertEqual("&times;", MarkdownTextStorage(markdown: "\\&times;").string, "Escaping")
         XCTAssertEqual("&times;", MarkdownTextStorage(markdown: "`&times;`").string, "No entity escaping inside code blocks")
         XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string, "Unrecognized entity escape")
         XCTAssertEqual("AT&T", MarkdownTextStorage(markdown: "[AT&amp;T](http://www.att.com/)").string, "HTML escapes in links")
@@ -221,6 +223,7 @@ class MarkdownTextViewTests: XCTestCase {
     func testEmojiSynonyms() {
         XCTAssertEqual("A 💣 B", MarkdownTextStorage(markdown: "A :bomb: B").string)
         XCTAssertEqual("💣🐞", MarkdownTextStorage(markdown: ":bomb::beetle:").string)
+        XCTAssertEqual("\\💣", MarkdownTextStorage(markdown: "\\:bomb:").string, "No backslash escaping")
         XCTAssertEqual(":💣:🐞:", MarkdownTextStorage(markdown: "::bomb:::beetle::").string)
         XCTAssertEqual("👍👎", MarkdownTextStorage(markdown: ":+1::-1:").string, "Reg exp escaping")
         XCTAssertEqual("A💣B", MarkdownTextStorage(markdown: "*A:bomb:B*").string, "Inside italic")

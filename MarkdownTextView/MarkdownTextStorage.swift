@@ -88,7 +88,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private var escapesRegExp: NSRegularExpression = {
         var escapesPatternParts = [String]()
         var invertedEscapesPatternParts = [String]()
-        for (index, c) in enumerate("\\`*_{}[]()>#+-.!/") {
+        for (index, c) in enumerate("\\`*_{}[]()>#+-.!/&") {
             let key = String(c)
             let replacement = "\u{1A}" + String(index) + "\u{1A}"
             escapeTable["\\" + key] = replacement
