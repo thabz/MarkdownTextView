@@ -217,6 +217,19 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string, "Unrecognized entity escape")
         XCTAssertEqual("AT&T", MarkdownTextStorage(markdown: "[AT&amp;T](http://www.att.com/)").string, "HTML escapes in links")
     }
+    
+    func testEmojiSynonyms() {
+        XCTAssertEqual("A 💣 B", MarkdownTextStorage(markdown: "A :bomb: B").string)
+        XCTAssertEqual("💣🐞", MarkdownTextStorage(markdown: ":bomb::beetle:").string)
+        XCTAssertEqual(":💣:🐞:", MarkdownTextStorage(markdown: "::bomb:::beetle::").string)
+        XCTAssertEqual("👍👎", MarkdownTextStorage(markdown: ":+1::-1:").string, "Reg exp escaping")
+        XCTAssertEqual("A💣B", MarkdownTextStorage(markdown: "*A:bomb:B*").string, "Inside italic")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "*:bomb:*").isItalicAtIndex(0), "Inside italic")
+        XCTAssertEqual("X:bomb:Y", MarkdownTextStorage(markdown: "`X:bomb:Y`").string, "No emoji synonyms inside code blocks")
+        XCTAssertEqual(":xxxxxx:", MarkdownTextStorage(markdown: ":xxxxxx:").string, "Unrecognized emoji synonym")
+        XCTAssertEqual(":bombs:", MarkdownTextStorage(markdown: ":bombs:").string, "Unrecognized emoji synonym")
+        XCTAssertEqual("A💣B", MarkdownTextStorage(markdown: "[A:bomb:B](http://www.att.com/)").string, "Emojis synonyms in links")
+    }
 }
 
 extension MarkdownTextStorage {
