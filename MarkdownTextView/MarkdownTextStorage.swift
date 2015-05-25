@@ -75,11 +75,11 @@ public class MarkdownTextStorage : NSTextStorage
     static private let italicMatchRegExp = NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_]|$)", options: nil, error: nil)!
     static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
     static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
-    static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\(<?(.*?)>?\\)", options: nil, error: nil)!
+    static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: nil, error: nil)!
     static private let rawLinkMatchRegExp =  NSRegularExpression(pattern: "([^(\\[<]|^)<?(https?://[^#\\s>]+(#[\\w\\-]+)?)>?", options: nil, error: nil)!
     static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
     static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
-    static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(<?(.*?)>?\\)", options: nil, error: nil)!
+    static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: nil, error: nil)!
     static private let doubleSpaceRegExp = NSRegularExpression(pattern: "\\s{2,}", options: nil, error: nil)!
 
     static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
@@ -216,25 +216,18 @@ public class MarkdownTextStorage : NSTextStorage
     
     // Convert raw standalone URLs into [url](url)
     func formatRawLinkParts(line: NSAttributedString) -> NSAttributedString {
-        var done = false
         var mutable = NSMutableAttributedString(attributedString: line)
-        while !done {
-            let range = NSMakeRange(0, mutable.length)
-            if let match = MarkdownTextStorage.rawLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
+        let range = NSMakeRange(0, mutable.length)
+        if let matches = MarkdownTextStorage.rawLinkMatchRegExp.matchesInString(mutable.string as String, options: nil, range: range).reverse() as? [NSTextCheckingResult] {
+            for match in matches {
                 let range = match.range
                 let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
                 let hrefString = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2))
+                let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2)).mutableCopy() as! NSMutableAttributedString
+                hrefFormatted.addAttribute(NSLinkAttributeName, value: hrefString, range: NSMakeRange(0, hrefFormatted.length))
                 let replacement = NSMutableAttributedString(attributedString: preample)
-                replacement.appendAttributedString(NSAttributedString(string:"["))
                 replacement.appendAttributedString(hrefFormatted)
-                replacement.appendAttributedString(NSAttributedString(string:"]"))
-                replacement.appendAttributedString(NSAttributedString(string:"("))
-                replacement.appendAttributedString(NSAttributedString(string: hrefString))
-                replacement.appendAttributedString(NSAttributedString(string:")"))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
-            } else {
-                done = true
             }
         }
         return mutable
@@ -384,9 +377,9 @@ public class MarkdownTextStorage : NSTextStorage
                 let escaped = self.hideBackslashEscapes(substring as String)
                 var attributedLine = NSAttributedString(string: escaped as String, attributes: self.styles[.Normal])
                 attributedLine = self.formatImageParts(attributedLine)
-                attributedLine = self.formatRawLinkParts(attributedLine)
                 attributedLine = self.formatIssueLinkParts(attributedLine)
                 attributedLine = self.formatLinkParts(attributedLine)
+                attributedLine = self.formatRawLinkParts(attributedLine)
                 attributedLine = self.formatCommitLinkParts(attributedLine)
                 attributedLine = self.formatBoldParts(attributedLine)
                 attributedLine = self.formatItalicParts(attributedLine)

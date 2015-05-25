@@ -89,10 +89,14 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "🐞[A](http://www.kalliope.org/)").isLinkAtIndex(2), "This is the real culprit of a bunch of failing tests below")
         XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 [A](http://www.kalliope.org/)").isLinkAtIndex(3), "This is the real culprit of a bunch of failing tests below")
         XCTAssertTrue(MarkdownTextStorage(markdown: "[A](http://www.kalliope.org/)🐞").isLinkAtIndex(0))
+        XCTAssertEqual("...XXX...", MarkdownTextStorage(markdown: "...[XXX]( https://appsto.re/dk/VxQbN.i)...").string, "Leading whitespace in the URL part")
+        XCTAssertEqual("...XXX...", MarkdownTextStorage(markdown: "...[XXX](\nhttps://appsto.re/dk/VxQbN.i)...").string, "Leading whitespace (newline) in the URL part")
+        XCTAssertEqual("...XXX...", MarkdownTextStorage(markdown: "...[XXX]( https://appsto.re/dk/VxQbN.i )...").string, "Leading and trailing whitespace in the URL part")
     }
     
     func testRawLinks() {
         XCTAssertTrue(MarkdownTextStorage(markdown: "XXX http://www.kalliope.org/suburl/").isLinkAtIndex(5))
+        XCTAssertTrue(MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/ http://www.kalliope.org/suburl/").isLinkAtIndex(5), "Two raw links side by side")
         XCTAssertTrue(MarkdownTextStorage(markdown: "http://www.kalliope.org/suburl/").isLinkAtIndex(5))
         XCTAssertTrue(MarkdownTextStorage(markdown: "https://www.kalliope.org/suburl/#anchor").isLinkAtIndex(5))
         XCTAssertFalse(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl/").isLinkAtIndex(5))
