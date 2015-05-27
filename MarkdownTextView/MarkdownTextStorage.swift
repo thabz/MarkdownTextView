@@ -2291,6 +2291,7 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
         didSet {
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
+                self.sizeToFit();
                 self.invalidateIntrinsicContentSize()
                 NSNotificationCenter.defaultCenter().removeObserver(self)
                 NSNotificationCenter.defaultCenter().addObserver(self, selector: "attributedTextAttachmentChanged:", name: MarkdownTextAttachmentChangedNotification, object: markdownTextStorage)
