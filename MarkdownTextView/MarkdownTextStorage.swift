@@ -2287,7 +2287,7 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    var markdownTextStorage: MarkdownTextStorage? {
+    public var markdownTextStorage: MarkdownTextStorage? {
         didSet {
             if let markdownTextStorage = markdownTextStorage {
                 self.attributedText = markdownTextStorage
