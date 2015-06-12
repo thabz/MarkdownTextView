@@ -2234,10 +2234,11 @@ public class MarkdownTextStorage : NSTextStorage
 
         override func attachmentBoundsForTextContainer(textContainer: NSTextContainer, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
             if let image = image {
-                if image.size.width > lineFrag.width {
+                let maxWidth = lineFrag.width - 2 * textContainer.lineFragmentPadding;
+                if image.size.width > maxWidth {
                     let ratio = image.size.width / image.size.height
-                    let newHeight = lineFrag.width / ratio
-                    return CGRectMake(0, 0, lineFrag.width, newHeight)
+                    let newHeight = maxWidth / ratio
+                    return CGRectMake(0, 0, maxWidth, newHeight)
                 } else {
                     return CGRectMake(0, 0, image.size.width, image.size.height)
                 }
@@ -2273,14 +2274,13 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
     weak var tableView: UITableView?
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
+        textContainer?.lineFragmentPadding = 0;
         super.init(frame: frame, textContainer: textContainer)
     }
 
     public required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        // UITextView has a 5 point left and right inset somewhere I'd like to avoid.
-        self.textContainerInset = UIEdgeInsetsMake(0, -5, 0, -5)
-        self.contentInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        textContainer.lineFragmentPadding = 0; // Default is 5 and we'd like to avoid that to make text flush.
     }
     
     deinit {
