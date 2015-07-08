@@ -1,6 +1,6 @@
 # README
 
-Display Markdown in a UITextView without converting to HTML first. 
+Display Markdown in a UITextView on iOS 8+ without converting to HTML first. 
 
 ## Features
 * Handle asynchronous download of inline images.
