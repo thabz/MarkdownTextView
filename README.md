@@ -17,3 +17,12 @@ let textView = MarkdownTextView()
 textView.markdownTextStorage = storage
 subviews.append(textView)
 ```
+
+## Contact
+
+[@thabz](https://twitter.com/thabz) on Twitter.
+
+
+## License
+
+MarkdownTextView is licensed under the MIT License. See `LICENSE` for more information.
