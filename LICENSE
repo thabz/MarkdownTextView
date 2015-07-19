@@ -24,7 +24,7 @@ History: Milan ported the Markdown processor to C#. He granted license to me so 
 and let the community contribute to and improve MarkdownSharp.
 
 MarkdownTextView
-
+----------------
 Copyright (c) 2015 Jesper Christensen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
