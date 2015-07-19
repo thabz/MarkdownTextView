@@ -113,6 +113,16 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual(MarkdownTextStorage(markdown: "(http://www.kalliope.org/suburl)").string, "(http://www.kalliope.org/suburl)")
         XCTAssertEqual(MarkdownTextStorage(markdown: "A (http://www.kalliope.org/suburl/) B").string, "A (http://www.kalliope.org/suburl/) B")
         XCTAssertEqual(MarkdownTextStorage(markdown: "(See https://api.imgur.com/#authentication)").string, "(See https://api.imgur.com/#authentication)")
+        XCTAssertEqual("https://www.branchesapp.co/", MarkdownTextStorage(markdown: "https://www.branchesapp.co/").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test#test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test#test").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/", MarkdownTextStorage(markdown: "https://www.branchesapp.co/.").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test.").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test#test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test#test.").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/", MarkdownTextStorage(markdown: "https://www.branchesapp.co/,").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test,").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/test#test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/test#test,").linkAtIndex(0) ?? "No link found")
+        XCTAssertEqual("https://www.branchesapp.co/.test", MarkdownTextStorage(markdown: "https://www.branchesapp.co/.test.").linkAtIndex(0) ?? "No link found")
     }
 
     func testUnicodeInRawLinks() {
