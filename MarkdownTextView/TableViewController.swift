@@ -105,7 +105,7 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         for section in markdownTexts {
-            let markdown = "\n".join(section)
+            let markdown = section.joinWithSeparator("\n")
             let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
             markdownTextStorages.append(markdownTextStorage)
         }

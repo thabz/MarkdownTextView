@@ -35,8 +35,8 @@ public typealias StylesDict = [MarkdownStylesName: [String:AnyObject]]
 public class MarkdownTextStorage : NSTextStorage
 {
     private var styles: StylesDict
-    private let bulletIndent: CGFloat = 20
-    private let bulletTextIndent: CGFloat = 25
+    private let bulletIndent: CGFloat = 20.0
+    private let bulletTextIndent: CGFloat = 25.0
 
     private var attributedStringBackend: NSMutableAttributedString!
     
@@ -44,8 +44,8 @@ public class MarkdownTextStorage : NSTextStorage
         return attributedStringBackend.string
     }
     
-    override public func attributesAtIndex(location: Int, effectiveRange range: NSRangePointer) -> [NSObject : AnyObject] {
-        return attributedStringBackend.attributesAtIndex(location, effectiveRange: range) ?? [NSObject: AnyObject]()
+    override public func attributesAtIndex(location: Int, effectiveRange range: NSRangePointer) -> [String : AnyObject] {
+        return attributedStringBackend.attributesAtIndex(location, effectiveRange: range) ?? [String: AnyObject]()
     }
     
     override public func replaceCharactersInRange(range: NSRange, withString str: String) {
@@ -56,36 +56,36 @@ public class MarkdownTextStorage : NSTextStorage
         }
     }
 
-    override public func setAttributes(attrs: [NSObject : AnyObject]?, range: NSRange) {
+    override public func setAttributes(attrs: [String : AnyObject]?, range: NSRange) {
         attributedStringBackend?.setAttributes(attrs, range: range)
         edited(NSTextStorageEditActions.EditedAttributes, range: range, changeInLength: 0)
     }
     
-    static private let headerLineExtractRegExp = NSRegularExpression(pattern: "^(#+)\\s*(.*?)\\s*#*\\s*$", options: nil, error: nil)!
-    static private let blankLineMatchRegExp = NSRegularExpression(pattern: "^\\s*$", options: nil, error: nil)!
-    static private let orderedListLineMatchRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s", options: nil, error: nil)!
-    static private let orderedListLineExtractRegExp = NSRegularExpression(pattern: "^\\d+\\.\\s*(.*)", options: nil, error: nil)!
-    static private let unorderedListLineMatchRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s", options: nil, error: nil)!
-    static private let unorderedListLineExtractRegExp = NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*(.*)", options: nil, error: nil)!
-    static private let checkedListLineMatchRegExp = NSRegularExpression(pattern: "^- \\[[\\sxX]\\]\\s", options: nil, error: nil)!
-    static private let checkedListLineExtractRegExp = NSRegularExpression(pattern: "^- \\[([\\sxX])\\]\\s*(.*)", options: nil, error: nil)!
-    static private let quoteLineMatchRegExp = NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive, error: nil)!
-    static private let quoteLineExtractRegExp = NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive, error: nil)!
-    static private let boldMatchRegExp = NSRegularExpression(pattern: "(\\*\\*|__)(.*?)\\1", options: nil, error: nil)!
-    static private let italicMatchRegExp = NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_]|$)", options: nil, error: nil)!
-    static private let monospaceMatchRegExp = NSRegularExpression(pattern: "`(.*?)`", options: nil, error: nil)!
-    static private let strikethroughMatchRegExp = NSRegularExpression(pattern: "~~(.*?)~~", options: nil, error: nil)!
-    static private let linkMatchRegExp =  NSRegularExpression(pattern: "\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: nil, error: nil)!
+    static private let headerLineExtractRegExp = try! NSRegularExpression(pattern: "^(#+)\\s*(.*?)\\s*#*\\s*$", options: [])
+    static private let blankLineMatchRegExp = try! NSRegularExpression(pattern: "^\\s*$", options: [])
+    static private let orderedListLineMatchRegExp = try! NSRegularExpression(pattern: "^\\d+\\.\\s", options: [])
+    static private let orderedListLineExtractRegExp = try! NSRegularExpression(pattern: "^\\d+\\.\\s*(.*)", options: [])
+    static private let unorderedListLineMatchRegExp = try! NSRegularExpression(pattern: "^[\\*\\+\\-]\\s", options: [])
+    static private let unorderedListLineExtractRegExp = try! NSRegularExpression(pattern: "^[\\*\\+\\-]\\s*(.*)", options: [])
+    static private let checkedListLineMatchRegExp = try! NSRegularExpression(pattern: "^- \\[[\\sxX]\\]\\s", options: [])
+    static private let checkedListLineExtractRegExp = try! NSRegularExpression(pattern: "^- \\[([\\sxX])\\]\\s*(.*)", options: [])
+    static private let quoteLineMatchRegExp = try! NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive)
+    static private let quoteLineExtractRegExp = try! NSRegularExpression(pattern: "^(>+)\\s*(.*?)\\s*?$", options: .CaseInsensitive)
+    static private let boldMatchRegExp = try! NSRegularExpression(pattern: "(\\*\\*|__)(.*?)\\1", options: [])
+    static private let italicMatchRegExp = try! NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_]|$)", options: [])
+    static private let monospaceMatchRegExp = try! NSRegularExpression(pattern: "`(.*?)`", options: [])
+    static private let strikethroughMatchRegExp = try! NSRegularExpression(pattern: "~~(.*?)~~", options: [])
+    static private let linkMatchRegExp =  try! NSRegularExpression(pattern: "\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: [])
     
     static private let rawLinkMatchRegExp: NSRegularExpression = {
         let charsInsideURL = "[-A-Z0-9+&@#/%?=~_|\\[\\]\\(\\)!:,\\.;\u{1a}]"
         let charEndingURL = "[-A-Z0-9+&@#/%=~_|\\[\\])]"
-        return NSRegularExpression(pattern: "([^(\\[<]|^)<?(https?://\(charsInsideURL)*\(charEndingURL))>?", options: .CaseInsensitive, error: nil)!
+        return try! NSRegularExpression(pattern: "([^(\\[<]|^)<?(https?://\(charsInsideURL)*\(charEndingURL))>?", options: .CaseInsensitive)
     }()
-    static private let issueLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: nil, error: nil)!
-    static private let commitLinkMatchRegExp =  NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: nil, error: nil)!
-    static private let imageMatchRegExp = NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: nil, error: nil)!
-    static private let doubleSpaceRegExp = NSRegularExpression(pattern: "\\s{2,}", options: nil, error: nil)!
+    static private let issueLinkMatchRegExp =  try! NSRegularExpression(pattern: "([^\\/\\[\\w]|^)#(\\d+)(\\W|$)", options: [])
+    static private let commitLinkMatchRegExp =  try! NSRegularExpression(pattern: "([^\\/\\[\\w]|^)([0-9a-fA-F]{7,40})(\\W|$)", options: [])
+    static private let imageMatchRegExp = try! NSRegularExpression(pattern: "\\!\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: [])
+    static private let doubleSpaceRegExp = try! NSRegularExpression(pattern: "\\s{2,}", options: [])
 
     static private var escapeTable = [String:String]() // \[ -> \u{1A}6\u{1A}
     static private var invertedEscapeTable = [String:String]() // \u{1A}6\u{1A} -> [
@@ -93,7 +93,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private var escapesRegExp: NSRegularExpression = {
         var escapesPatternParts = [String]()
         var invertedEscapesPatternParts = [String]()
-        for (index, c) in enumerate("\\`*_{}[]()>#+-.!/&") {
+        for (index, c) in "\\`*_{}[]()>#+-.!/&".characters.enumerate() {
             let key = String(c)
             let replacement = "\u{1A}" + String(index) + "\u{1A}"
             escapeTable["\\" + key] = replacement
@@ -101,11 +101,11 @@ public class MarkdownTextStorage : NSTextStorage
             escapesPatternParts.append(NSRegularExpression.escapedPatternForString("\\" + key))
             invertedEscapesPatternParts.append(NSRegularExpression.escapedPatternForString(replacement))
         }
-        let invertedEscapePattern = "(" + "|".join(invertedEscapesPatternParts) + ")"
+        let invertedEscapePattern = "(" + invertedEscapesPatternParts.joinWithSeparator("|") + ")"
         // Build (\]|\[|...) but properly escaped ofcourse
-        let escapePattern = "(" + "|".join(escapesPatternParts) + ")"
-        invertedEscapesRegExp = NSRegularExpression(pattern: invertedEscapePattern, options: nil, error: nil)!
-        return NSRegularExpression(pattern: escapePattern, options: nil, error: nil)!
+        let escapePattern = "(" + escapesPatternParts.joinWithSeparator("|") + ")"
+        invertedEscapesRegExp = try! NSRegularExpression(pattern: invertedEscapePattern, options: [])
+        return try! NSRegularExpression(pattern: escapePattern, options: [])
     }()
     static private var HTMLEntititesEscapeTable = [String:Int]() // "aring" -> 229
     static private var HTMLEntitiesRegExp: NSRegularExpression = {
@@ -118,8 +118,8 @@ public class MarkdownTextStorage : NSTextStorage
             HTMLEntititesEscapeTable[pattern] = unicodeValue
         }
         // Build &(aring|mdash|bullet|copy|...);
-        let escapePattern = "&(" + "|".join(escapesPatternParts) + ");"
-        return NSRegularExpression(pattern: escapePattern, options: nil, error: nil)!
+        let escapePattern = "&(" + escapesPatternParts.joinWithSeparator("|") + ");"
+        return try! NSRegularExpression(pattern: escapePattern, options: [])
     }()
     static private var EmojiSynonymsRegExp: NSRegularExpression = {
         var escapesPatternParts = [String]()
@@ -128,17 +128,16 @@ public class MarkdownTextStorage : NSTextStorage
             escapesPatternParts.append(NSRegularExpression.escapedPatternForString(synonym))
         }
         // Build :(happy|mad|apple|\\+1|...):
-        let escapePattern = ":(" + "|".join(escapesPatternParts) + "):"
-        return NSRegularExpression(pattern: escapePattern, options: nil, error: nil)!
+        let escapePattern = ":(" + escapesPatternParts.joinWithSeparator("|") + "):"
+        return try! NSRegularExpression(pattern: escapePattern, options: [])
         }()
     
     func formatBoldParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.boldMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(2)))
                 italicPart.addAttributes(styles[.Bold]!, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
@@ -151,11 +150,10 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatItalicParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.italicMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 italicPart.appendAttributedString(mutable.attributedSubstringFromRange(match.rangeAtIndex(3)))
                 italicPart.addAttributes(styles[.Italic]!, range: NSMakeRange(0, italicPart.length))
@@ -169,11 +167,10 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatMonospaceParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.monospaceMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 italicPart.addAttributes(styles[.Monospace]!, range: NSMakeRange(0, italicPart.length))
                 mutable.replaceCharactersInRange(match.range, withAttributedString: italicPart)
@@ -186,11 +183,10 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatStrikethroughParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.strikethroughMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
                 let italicPart = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 var attrs = styles[.Normal]!
                 attrs[NSStrikethroughStyleAttributeName] = NSUnderlineStyle.StyleSingle.rawValue
@@ -204,11 +200,11 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatLinkParts(line: NSAttributedString) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
+        let result = NSMutableAttributedString(string: "")
         self.splitString(line.string, regexp: MarkdownTextStorage.linkMatchRegExp) {
             (substring, range, match, delimiter) -> Void in
             if delimiter {
-                var linked = NSMutableAttributedString(attributedString: line.attributedSubstringFromRange(match!.rangeAtIndex(1)))
+                let linked = NSMutableAttributedString(attributedString: line.attributedSubstringFromRange(match!.rangeAtIndex(1)))
                 let href = (line.string as NSString).substringWithRange(match!.rangeAtIndex(2))
                 linked.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, linked.length))
                 result.appendAttributedString(linked)
@@ -221,19 +217,18 @@ public class MarkdownTextStorage : NSTextStorage
     
     // Convert raw standalone URLs into [url](url)
     func formatRawLinkParts(line: NSAttributedString) -> NSAttributedString {
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         let range = NSMakeRange(0, mutable.length)
-        if let matches = MarkdownTextStorage.rawLinkMatchRegExp.matchesInString(mutable.string as String, options: nil, range: range).reverse() as? [NSTextCheckingResult] {
-            for match in matches {
-                let range = match.range
-                let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
-                let hrefString = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
-                let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2)).mutableCopy() as! NSMutableAttributedString
-                hrefFormatted.addAttribute(NSLinkAttributeName, value: hrefString, range: NSMakeRange(0, hrefFormatted.length))
-                let replacement = NSMutableAttributedString(attributedString: preample)
-                replacement.appendAttributedString(hrefFormatted)
-                mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
-            }
+        let matches = Array(MarkdownTextStorage.rawLinkMatchRegExp.matchesInString(mutable.string as String, options: [], range: range).reverse())
+        
+        for match in matches {
+            let preample = mutable.attributedSubstringFromRange(match.rangeAtIndex(1))
+            let hrefString = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+            let hrefFormatted = mutable.attributedSubstringFromRange(match.rangeAtIndex(2)).mutableCopy() as! NSMutableAttributedString
+            hrefFormatted.addAttribute(NSLinkAttributeName, value: hrefString, range: NSMakeRange(0, hrefFormatted.length))
+            let replacement = NSMutableAttributedString(attributedString: preample)
+            replacement.appendAttributedString(hrefFormatted)
+            mutable.replaceCharactersInRange(match.range, withAttributedString: replacement)
         }
         return mutable
     }
@@ -241,7 +236,7 @@ public class MarkdownTextStorage : NSTextStorage
     // Convert issues refs (#123) into [#123](http://issue/123)
     func formatIssueLinkParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.issueLinkMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
@@ -270,14 +265,14 @@ public class MarkdownTextStorage : NSTextStorage
 
     // Convert commit refs (cafebabe) into [cafebab](http://commit/cafebabe)
     func formatCommitLinkParts(line: NSAttributedString) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
+        let result = NSMutableAttributedString(string: "")
         self.splitString(line.string, regexp: MarkdownTextStorage.commitLinkMatchRegExp) {
             (substring, range, match, delimiter) -> Void in
             if delimiter {
                 let preample = line.attributedSubstringFromRange(match!.rangeAtIndex(1))
                 let postample = line.attributedSubstringFromRange(match!.rangeAtIndex(3))
                 let sha = line.attributedSubstringFromRange(match!.rangeAtIndex(2))
-                let shortShaString = sha.string.substringToIndex(advance(sha.string.startIndex, 7))
+                let shortShaString = sha.string.substringToIndex(sha.string.startIndex.advancedBy(7))
                 let shortShaAttributed = NSMutableAttributedString(string: shortShaString, attributes: sha.attributesAtIndex(0, effectiveRange: nil))
                 let href = String(format: "http://commit/%@", sha.string)
                 shortShaAttributed.addAttribute(NSLinkAttributeName, value: href, range: NSMakeRange(0, shortShaAttributed.length))
@@ -295,16 +290,14 @@ public class MarkdownTextStorage : NSTextStorage
 
     func formatImageParts(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.imageMatchRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
-                let range = match.range
-                let alt = NSMutableAttributedString(attributedString: mutable.attributedSubstringFromRange(match.rangeAtIndex(1)))
                 let src = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
                 if let srcURL = NSURL(string: src) {
-                    var attachment = MarkdownTextAttachment(url: srcURL, textStorage: self)
-                    var textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
+                    let attachment = MarkdownTextAttachment(url: srcURL, textStorage: self)
+                    let textWithAttachment = NSMutableAttributedString(attributedString: NSAttributedString(attachment: attachment))
                     mutable.replaceCharactersInRange(match.range, withAttributedString: textWithAttachment)
                 }
             } else {
@@ -316,7 +309,7 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatDoubleSpaces(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.doubleSpaceRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
@@ -333,7 +326,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     func formatHTMLEscapes(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.HTMLEntitiesRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
@@ -351,7 +344,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     func formatEmojiSynomyms(line: NSAttributedString) -> NSAttributedString {
         var done = false
-        var mutable = NSMutableAttributedString(attributedString: line)
+        let mutable = NSMutableAttributedString(attributedString: line)
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.EmojiSynonymsRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
@@ -367,16 +360,15 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func formatParagraphLine(line: String) -> NSAttributedString {
-        var normalStyle = styles[.Normal]
         
         // Split code sections out
-        var result = NSMutableAttributedString(string: "")
+        let result = NSMutableAttributedString(string: "")
         self.splitString(line, regexp: MarkdownTextStorage.monospaceMatchRegExp) {
             (substring, range, match, delimiter) -> Void in
             if delimiter {
                 let insidePingsRange = match!.rangeAtIndex(1)
                 let insidePingsString = (line as NSString).substringWithRange(insidePingsRange)
-                var monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
+                let monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
                 result.appendAttributedString(monospaceString)
             } else {
                 let escaped = self.hideBackslashEscapes(substring as String)
@@ -400,27 +392,25 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func hideBackslashEscapes(line: String) -> String {
-        var varline = NSMutableString(string: line)
-        
-        if let matches = MarkdownTextStorage.escapesRegExp.matchesInString(line, options: nil, range:  NSMakeRange(0,count(line))) as? [NSTextCheckingResult] {
-            for match in matches.reverse() {
-                var matchedString = varline.substringWithRange(match.rangeAtIndex(1))
-                if let replacement = MarkdownTextStorage.escapeTable[matchedString] {
-                    varline.replaceCharactersInRange(match.range, withString: replacement)
-                }
+        let varline = NSMutableString(string: line)
+        let matches = MarkdownTextStorage.escapesRegExp.matchesInString(line, options: [], range:  NSMakeRange(0,line.characters.count))
+        for match in Array(matches.reverse()) {
+            let matchedString = varline.substringWithRange(match.rangeAtIndex(1))
+            if let replacement = MarkdownTextStorage.escapeTable[matchedString] {
+                varline.replaceCharactersInRange(match.range, withString: replacement)
             }
         }
+        
         return varline as String
     }
     
     func restoreBackslashEscapes(attributedString: NSAttributedString) -> NSAttributedString {
-        var varline = NSMutableAttributedString(attributedString: attributedString)
-        if let matches = MarkdownTextStorage.invertedEscapesRegExp.matchesInString(attributedString.string, options: nil, range:  NSMakeRange(0,attributedString.length)) as? [NSTextCheckingResult] {
-            for match in matches.reverse() {
-                var matchedString = (attributedString.string as NSString).substringWithRange(match.rangeAtIndex(1))
-                if let replacement = MarkdownTextStorage.invertedEscapeTable[matchedString] {
-                    varline.replaceCharactersInRange(match.range, withString: replacement)
-                }
+        let varline = NSMutableAttributedString(attributedString: attributedString)
+        let matches = MarkdownTextStorage.invertedEscapesRegExp.matchesInString(attributedString.string, options: [], range:  NSMakeRange(0,attributedString.length))
+        for match in Array(matches.reverse()) {
+            let matchedString = (attributedString.string as NSString).substringWithRange(match.rangeAtIndex(1))
+            if let replacement = MarkdownTextStorage.invertedEscapeTable[matchedString] {
+                varline.replaceCharactersInRange(match.range, withString: replacement)
             }
         }
         return varline
@@ -440,8 +430,8 @@ public class MarkdownTextStorage : NSTextStorage
         case 4: stylesName = MarkdownStylesName.Subsubsubheadline
         default: stylesName = MarkdownStylesName.Headline
         }
-        var line = NSAttributedString(string: title, attributes: styles[stylesName])
-        var paragraph = copyDefaultParagrapStyle()
+        let line = NSAttributedString(string: title, attributes: styles[stylesName])
+        let paragraph = copyDefaultParagrapStyle()
         paragraph.alignment = .Natural
         paragraph.paragraphSpacing = 8
         paragraph.lineSpacing = 0
@@ -452,9 +442,9 @@ public class MarkdownTextStorage : NSTextStorage
     
     
     func formatParagraphLines(lines: [String], styles: StylesDict) -> NSAttributedString {
-        var linesJoined = " ".join(lines)
+        let linesJoined = lines.joinWithSeparator(" ")
         let formattedLines = self.formatParagraphLine(linesJoined)
-        var paragraph = copyDefaultParagrapStyle()
+        let paragraph = copyDefaultParagrapStyle()
         paragraph.alignment = .Natural
         paragraph.paragraphSpacing = 8
         paragraph.lineSpacing = 2
@@ -465,15 +455,14 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatOrderedList(lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        var result = NSMutableAttributedString(string: "", attributes: styles[.Normal])
-        for (index,line) in enumerate(lines) {
+        for (index,line) in lines.enumerate() {
             let isLastLine = index == lines.count - 1
-            var prefixed = NSMutableAttributedString(string: "\t\(index+1).\t", attributes: styles[.Normal])
+            let prefixed = NSMutableAttributedString(string: "\t\(index+1).\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            var paragraph = copyDefaultParagrapStyle()
+            let paragraph = copyDefaultParagrapStyle()
             paragraph.tabStops = [
-                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                NSTextTab(textAlignment: NSTextAlignment.Right, location: bulletIndent, options: [String:AnyObject]()),
+                NSTextTab(textAlignment: NSTextAlignment.Left, location: bulletTextIndent, options: [String:AnyObject]())]
             paragraph.defaultTabInterval = bulletIndent
             paragraph.firstLineHeadIndent = 0
             paragraph.headIndent = bulletTextIndent
@@ -492,14 +481,14 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatUnorderedList(lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        for (index, line) in enumerate(lines) {
+        for (index, line) in lines.enumerate() {
             let isLastLine = index == lines.count - 1
-            var prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.Normal])
+            let prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            var paragraph = copyDefaultParagrapStyle()
+            let paragraph = copyDefaultParagrapStyle()
             paragraph.tabStops = [
-                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                NSTextTab(textAlignment: NSTextAlignment.Right, location: bulletIndent, options: [String:AnyObject]()),
+                NSTextTab(textAlignment: NSTextAlignment.Left, location: bulletTextIndent, options: [String:AnyObject]())]
             paragraph.defaultTabInterval = bulletIndent
             paragraph.firstLineHeadIndent = 0
             paragraph.headIndent = bulletTextIndent
@@ -517,15 +506,15 @@ public class MarkdownTextStorage : NSTextStorage
     
     func formatCheckedList(checks: [Bool], lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        for (index,line) in enumerate(lines) {
+        for (index,line) in lines.enumerate() {
             let isLastLine = index == lines.count - 1
             let prefixString = checks[index] ? "\t☑︎\t" : "\t☐\t"
-            var prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
+            let prefixed = NSMutableAttributedString(string: prefixString, attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
-            var paragraph = copyDefaultParagrapStyle()
+            let paragraph = copyDefaultParagrapStyle()
             paragraph.tabStops = [
-                NSTextTab(textAlignment: .Right, location: bulletIndent, options: nil),
-                NSTextTab(textAlignment: .Left, location: bulletTextIndent, options: nil)]
+                NSTextTab(textAlignment: NSTextAlignment.Right, location: bulletIndent, options: [String:AnyObject]()),
+                NSTextTab(textAlignment: NSTextAlignment.Left, location: bulletTextIndent, options: [String:AnyObject]())]
             paragraph.defaultTabInterval = bulletIndent
             paragraph.firstLineHeadIndent = 0
             paragraph.headIndent = bulletTextIndent
@@ -543,15 +532,15 @@ public class MarkdownTextStorage : NSTextStorage
 
     func formatQuoteList(levels: [Int], lines: [String]) -> NSAttributedString {
         var parts = [NSAttributedString]()
-        for (index,line) in enumerate(lines) {
-            var prefixed = NSMutableAttributedString(string: "", attributes: styles[.Normal])
+        for line in lines {
+            let prefixed = NSMutableAttributedString(string: "", attributes: styles[.Normal])
             prefixed.appendAttributedString(formatParagraphLine(line))
             prefixed.addAttributes(styles[.Quote]!, range: NSMakeRange(0, prefixed.length))
             parts.append(prefixed)
         }
         let separator = NSAttributedString(string: "\u{2028}", attributes: styles[.Quote])
         let joined = separator.join(parts)
-        var paragraph = copyDefaultParagrapStyle()
+        let paragraph = copyDefaultParagrapStyle()
         paragraph.alignment = .Natural
         paragraph.paragraphSpacing = 6
         paragraph.lineSpacing = 2
@@ -563,9 +552,9 @@ public class MarkdownTextStorage : NSTextStorage
     }
 
     func formatCodeLines(lines: [String], styles: StylesDict) -> NSAttributedString {
-        var joinedLines = "\u{2028}".join(lines)
-        var lines = NSAttributedString(string: joinedLines, attributes: styles[.Monospace])
-        var paragraph = copyDefaultParagrapStyle()
+        let joinedLines = lines.joinWithSeparator("\u{2028}")
+        let lines = NSAttributedString(string: joinedLines, attributes: styles[.Monospace])
+        let paragraph = copyDefaultParagrapStyle()
         paragraph.alignment = .Natural
         paragraph.paragraphSpacing = 8
         paragraph.lineSpacing = 2
@@ -575,7 +564,7 @@ public class MarkdownTextStorage : NSTextStorage
     }
     
     func applyParagraphStyle(attributedString: NSAttributedString, paragraphStyle: NSMutableParagraphStyle) -> NSAttributedString {
-        var mutableSection = NSMutableAttributedString(attributedString: attributedString)
+        let mutableSection = NSMutableAttributedString(attributedString: attributedString)
         let attrs = [NSParagraphStyleAttributeName: paragraphStyle, NSKernAttributeName: 0]
         mutableSection.addAttributes(attrs, range: NSMakeRange(0, mutableSection.length))
         return mutableSection
@@ -585,7 +574,7 @@ public class MarkdownTextStorage : NSTextStorage
         return NSMutableParagraphStyle.defaultParagraphStyle().mutableCopy() as! NSMutableParagraphStyle
     }
     
-    enum MarkdownSectionData: Printable {
+    enum MarkdownSectionData: CustomStringConvertible {
         case Headline(Int, String)
         case Paragraph([String])
         case Code([String])
@@ -625,7 +614,6 @@ public class MarkdownTextStorage : NSTextStorage
         let italicFont = UIFont.italicSystemFontOfSize(13)
         let boldFont = UIFont.boldSystemFontOfSize(13)
         let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
-        let black = UIColor.blackColor()
         var defaultStyles: StylesDict = [
             MarkdownStylesName.Normal: [NSFontAttributeName: font],
             MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
@@ -660,8 +648,7 @@ public class MarkdownTextStorage : NSTextStorage
         // Group the text into sections
         (markdown+"\n\n").enumerateLines { (line,stop) in
             var lineHandled: Bool?
-            var i = 0
-            do {
+            repeat {
                 //println("CurSection: \(curSection.rawValue): line: \(line)")
                 lineHandled = nil
                 switch curSection {
@@ -848,10 +835,8 @@ public class MarkdownTextStorage : NSTextStorage
         
         // Convert each section into an NSAttributedString
         var attributedSections = [NSAttributedString]()
-        var result = NSMutableAttributedString(string: "")
-        for (index,section) in enumerate(sections) {
+        for section in sections {
             var sectionAttributedString: NSAttributedString
-            var paragraph = copyDefaultParagrapStyle()
             switch section {
             case .Paragraph(let lines):
                 sectionAttributedString = formatParagraphLines(lines, styles: styles)
@@ -875,7 +860,7 @@ public class MarkdownTextStorage : NSTextStorage
         attributedStringBackend = NSMutableAttributedString(attributedString: joinedSections)
     }
     
-    required public init(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         self.attributedStringBackend = aDecoder.decodeObjectForKey("attributedStringBackend") as? NSMutableAttributedString
         self.styles = aDecoder.decodeObjectForKey("styles") as! StylesDict
         super.init()
@@ -903,7 +888,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     private func isUnorderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = MarkdownTextStorage.unorderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let _ = MarkdownTextStorage.unorderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -912,7 +897,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     private func isOrderedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = MarkdownTextStorage.orderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let _ = MarkdownTextStorage.orderedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -921,7 +906,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     private func isCheckedListSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = MarkdownTextStorage.checkedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let _ = MarkdownTextStorage.checkedListLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -930,7 +915,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     private func isQuoteSection(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = MarkdownTextStorage.quoteLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let _ = MarkdownTextStorage.quoteLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -939,7 +924,7 @@ public class MarkdownTextStorage : NSTextStorage
 
     private func isBlankLine(line: NSString) -> Bool {
         let range = NSMakeRange(0, line.length)
-        if let match = MarkdownTextStorage.blankLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
+        if let _ = MarkdownTextStorage.blankLineMatchRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             return true
         } else {
             return false
@@ -948,8 +933,6 @@ public class MarkdownTextStorage : NSTextStorage
 
     
     private func extractOrderedListLine(line: NSString) -> String {
-        var hashmarks: String?
-        var title: String?
         let range = NSMakeRange(0, line.length)
         if let match = MarkdownTextStorage.orderedListLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
@@ -960,8 +943,6 @@ public class MarkdownTextStorage : NSTextStorage
     }
 
     private func extractUnorderedListLine(line: NSString) -> String {
-        var hashmarks: String?
-        var title: String?
         let range = NSMakeRange(0, line.length)
         if let match = MarkdownTextStorage.unorderedListLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
@@ -982,7 +963,7 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
         if let check = check, let title = title {
-            var checkBool: Bool = check == "x" || check == "X"
+            let checkBool: Bool = check == "x" || check == "X"
             return (checkBool, title)
         } else {
             return (false, "")
@@ -996,7 +977,7 @@ public class MarkdownTextStorage : NSTextStorage
         if let match = MarkdownTextStorage.quoteLineExtractRegExp.firstMatchInString(line as String, options: NSMatchingOptions(), range: range) {
             if match.range.location != NSNotFound {
                 let lessthans = line.substringWithRange(match.rangeAtIndex(1))
-                level = count(lessthans)
+                level = lessthans.characters.count
                 title = line.substringWithRange(match.rangeAtIndex(2))
             }
         }
@@ -1018,7 +999,7 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
         if let hashmarks = hashmarks, let title = title {
-            return MarkdownSectionData.Headline(count(hashmarks), title)
+            return MarkdownSectionData.Headline(hashmarks.characters.count, title)
         } else {
             return MarkdownSectionData.Headline(1, "")
         }
@@ -1026,7 +1007,7 @@ public class MarkdownTextStorage : NSTextStorage
     
     private func splitString(string: NSString, regexp: NSRegularExpression, callback: (substring: NSString, range: NSRange, match: NSTextCheckingResult?, delimiter: Bool) -> Void) {
         let allStringRange = NSMakeRange(0, string.length)
-        var matches = regexp.matchesInString(string as String, options: nil, range: allStringRange) as! [NSTextCheckingResult]
+        var matches = regexp.matchesInString(string as String, options: [], range: allStringRange) 
         if matches.count == 0 {
             callback(substring: string, range: allStringRange, match: nil, delimiter: false)
         } else {
@@ -1038,7 +1019,7 @@ public class MarkdownTextStorage : NSTextStorage
                 callback(substring: string.substringWithRange(preMatchRange), range: preMatchRange, match: nil, delimiter: false)
             }
 
-            for (i, checkingResult) in enumerate(matches) {
+            for (i, checkingResult) in matches.enumerate() {
                 // Handle delimiter string
                 let delimiterRange = checkingResult.range
                 callback(substring: string.substringWithRange(delimiterRange), range: delimiterRange,  match: checkingResult, delimiter: true)
@@ -2207,7 +2188,7 @@ public class MarkdownTextStorage : NSTextStorage
             self.init()
             let cache = MarkdownTextAttachment.cache
             if let image = cache.objectForKey(url) as? UIImage {
-                println("Using cached image for \(url.absoluteString ?? nil)")
+                print("Using cached image for \(url.absoluteString)")
                 self.image = image
             } else {
                 self.textStorage = textStorage
@@ -2237,9 +2218,9 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
 
-        override func attachmentBoundsForTextContainer(textContainer: NSTextContainer, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
+        override func attachmentBoundsForTextContainer(textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
             if let image = image {
-                let maxWidth = lineFrag.width - 2 * textContainer.lineFragmentPadding;
+                let maxWidth = lineFrag.width - 2 * (textContainer?.lineFragmentPadding ?? 0);
                 if image.size.width > maxWidth {
                     let ratio = image.size.width / image.size.height
                     let newHeight = maxWidth / ratio
@@ -2256,8 +2237,8 @@ public class MarkdownTextStorage : NSTextStorage
 private extension NSAttributedString {
     
     func join(parts: [NSAttributedString]) -> NSAttributedString {
-        var result = NSMutableAttributedString(string: "")
-        for (index, part) in enumerate(parts) {
+        let result = NSMutableAttributedString(string: "")
+        for (index, part) in parts.enumerate() {
             result.appendAttributedString(part)
             if index < parts.count - 1 {
                 result.appendAttributedString(self)
@@ -2283,7 +2264,7 @@ public class MarkdownTextView: UITextView, UITextViewDelegate {
         super.init(frame: frame, textContainer: textContainer)
     }
 
-    public required init(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         textContainer.lineFragmentPadding = 0; // Default is 5 and we'd like to avoid that to make text flush.
     }

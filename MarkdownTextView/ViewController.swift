@@ -42,11 +42,7 @@ class ViewController: UIViewController {
             "2. Second item",
             ""
         ]
-        let font = UIFont.systemFontOfSize(13)
-        let italicFont = UIFont.italicSystemFontOfSize(13)
-        let boldFont = UIFont.boldSystemFontOfSize(13)
-        let monospaceFont = UIFont(name: "Menlo-Regular", size: 11)!
-        let joinedMarkdown = "\n".join(markdownExample)
+        let joinedMarkdown = markdownExample.joinWithSeparator("\n")
         
         textStorage = MarkdownTextStorage(markdown: joinedMarkdown)
   
@@ -61,7 +57,7 @@ class ViewController: UIViewController {
 
     func setUpNewTextView() {
         
-        var layoutManager = NSLayoutManager()
+        let layoutManager = NSLayoutManager()
         textStorage?.addLayoutManager(layoutManager)
         
         let containerSize = CGSizeMake(self.view.bounds.size.width, CGFloat.max)
@@ -70,7 +66,7 @@ class ViewController: UIViewController {
         textContainer.heightTracksTextView = true
         layoutManager.addTextContainer(textContainer)
         
-        var newTextView = UITextView(frame: CGRectInset(self.view.bounds, 0, 0), textContainer: textContainer)
+        let newTextView = UITextView(frame: CGRectInset(self.view.bounds, 0, 0), textContainer: textContainer)
         newTextView.backgroundColor = UIColor.greenColor()
         newTextView.editable = false
         view.addSubview(newTextView)
@@ -92,8 +88,8 @@ class ViewController: UIViewController {
     }
     
     func setUpWithNotifications() {
-        var markdownTextView = MarkdownTextView(frame: self.view.bounds)
-        markdownTextView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        let markdownTextView = MarkdownTextView(frame: self.view.bounds)
+        markdownTextView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         markdownTextView.editable = false
         markdownTextView.markdownTextStorage = textStorage
         view.addSubview(markdownTextView)
