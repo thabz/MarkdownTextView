@@ -263,7 +263,8 @@ extension MarkdownTextStorage {
     func isItalicAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("Italic") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitItalic)
         } else {
             return false
         }
