@@ -273,7 +273,8 @@ extension MarkdownTextStorage {
     func isMonospaceAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("Menlo") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitMonoSpace)
         } else {
             return false
         }
