@@ -253,16 +253,11 @@ extension MarkdownTextStorage {
     func isBoldAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("bold") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitBold)
         } else {
             return false
         }
-        /*
-        let traits = font.fontDescriptor().symbolicTraits
-        let r = traits
-        let b = UIFontDescriptorSymbolicTraits.TraitBold
-        return (r & b) ? true : false
-        */
     }
     
     func isItalicAtIndex(index: Int) -> Bool {
