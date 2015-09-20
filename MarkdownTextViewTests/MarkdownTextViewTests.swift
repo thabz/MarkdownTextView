@@ -67,7 +67,7 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testNormalLinks() {
-        XCTAssertTrue(count(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string) == 4)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[Link](http://www.kalliope.org/suburl/)").string.characters.count == 4)
         let boldLink = MarkdownTextStorage(markdown: "[**Bold** link](http://www.kalliope.org/suburl/)")
         XCTAssertEqual("Bold link", boldLink.string)
         XCTAssertTrue(boldLink.isBoldAtIndex(0))
@@ -133,7 +133,7 @@ class MarkdownTextViewTests: XCTestCase {
     }
     
     func testIssueLinks() {
-        println(MarkdownTextStorage(markdown: "#123").string)
+        print(MarkdownTextStorage(markdown: "#123").string)
         XCTAssertTrue(MarkdownTextStorage(markdown: "#123").isLinkAtIndex(0))
         XCTAssertFalse(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(0))
         XCTAssertTrue(MarkdownTextStorage(markdown: " #123 ").isLinkAtIndex(1))
@@ -156,9 +156,9 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(MarkdownTextStorage(markdown: "X deadbeef").isLinkAtIndex(2))
         XCTAssertTrue(MarkdownTextStorage(markdown: "🐞 deadbeef").isLinkAtIndex(3))
         XCTAssertFalse(MarkdownTextStorage(markdown: " cafebabes ").isLinkAtIndex(1))
-        XCTAssertTrue(count(MarkdownTextStorage(markdown: " deadbee ").string) == 9, "Should keep prefix and postfix")
+        XCTAssertTrue(MarkdownTextStorage(markdown: " deadbee ").string.characters.count == 9, "Should keep prefix and postfix")
         XCTAssertEqual("(deadbee)", MarkdownTextStorage(markdown: "(deadbeefcafebabe)").string, "Should keep prefix and postfix")
-        XCTAssertTrue(count(MarkdownTextStorage(markdown: "cafebabedeadbeef").string) == 7, "Should truncate link text to 7 hex chars")
+        XCTAssertTrue(MarkdownTextStorage(markdown: "cafebabedeadbeef").string.characters.count == 7, "Should truncate link text to 7 hex chars")
         XCTAssertFalse(MarkdownTextStorage(markdown: "deadbe").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 6.")
         XCTAssertTrue(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f53").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Like 40.")
         XCTAssertFalse(MarkdownTextStorage(markdown: "1dafd76e861262f609db7786b64406101f942f530").isLinkAtIndex(0), "A recognized SHA is between 7 and 40 hex chars. Not 41.")
@@ -253,22 +253,18 @@ extension MarkdownTextStorage {
     func isBoldAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("Medium") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitBold)
         } else {
             return false
         }
-        /*
-        let traits = font.fontDescriptor().symbolicTraits
-        let r = traits
-        let b = UIFontDescriptorSymbolicTraits.TraitBold
-        return (r & b) ? true : false
-        */
     }
     
     func isItalicAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("Italic") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitItalic)
         } else {
             return false
         }
@@ -277,7 +273,8 @@ extension MarkdownTextStorage {
     func isMonospaceAtIndex(index: Int) -> Bool {
         let attrs = attributesAtIndex(index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            return font.fontName.rangeOfString("Menlo") != nil
+            let traits = font.fontDescriptor().symbolicTraits
+            return traits.contains(.TraitMonoSpace)
         } else {
             return false
         }
