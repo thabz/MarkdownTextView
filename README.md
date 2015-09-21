@@ -1,4 +1,5 @@
-![](https://travis-ci.org/thabz/MarkdownTextView.svg?branch=master)
+[![Build Status](https://travis-ci.org/thabz/MarkdownTextView.svg?branch=master)](https://travis-ci.org/thabz/MarkdownTextView)
+
 # README
 
 Display Markdown in a UITextView on iOS 8+ without converting to HTML first. 
