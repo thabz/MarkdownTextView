@@ -1,7 +1,7 @@
 language: objective-c
 osx_image: xcode7
 script:
-  - xcodebuild -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextView  -sdk iphonesimulator
-  - xcodebuild test -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextView -sdk iphonesimulator
+  - xcodebuild -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextViewKit  -sdk iphonesimulator
+  - xcodebuild test -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextViewKit -sdk iphonesimulator
 
 
