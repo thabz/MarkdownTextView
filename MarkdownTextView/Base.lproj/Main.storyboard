@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JDt-db-Q6W">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15B17c" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="JDt-db-Q6W">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -10,22 +11,27 @@
             <objects>
                 <tableViewController id="iza-Gv-BrL" customClass="TableViewController" customModule="MarkdownTextView" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="22" sectionFooterHeight="22" id="s3y-9g-s1l">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+                        <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="MarkdownCell" rowHeight="140" id="tjD-Cm-6hd" customClass="MarkdownCell" customModule="MarkdownTextView" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="22" width="600" height="140"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tjD-Cm-6hd" id="bR2-lf-hFH">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="139.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="sdf" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t94-XO-9mH" customClass="MarkdownTextView" customModule="MarkdownTextView" customModuleProvider="target">
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" editable="NO" text="sdf" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t94-XO-9mH" customClass="MarkdownTextView" customModule="MarkdownTextViewKit">
                                             <rect key="frame" x="8" y="8" width="592" height="131"/>
+                                            <animations/>
                                             <color key="backgroundColor" red="0.95294123888015747" green="0.94117653369903564" blue="0.84313732385635376" alpha="1" colorSpace="deviceRGB"/>
                                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                         </textView>
                                     </subviews>
+                                    <animations/>
                                     <constraints>
                                         <constraint firstAttribute="bottomMargin" secondItem="t94-XO-9mH" secondAttribute="bottomMargin" id="8fI-GA-3ut"/>
                                         <constraint firstItem="t94-XO-9mH" firstAttribute="top" secondItem="bR2-lf-hFH" secondAttribute="topMargin" id="UcL-b6-BEW"/>
@@ -33,6 +39,7 @@
                                         <constraint firstAttribute="trailingMargin" secondItem="t94-XO-9mH" secondAttribute="trailingMargin" id="t6O-qt-2VN"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <animations/>
                                 <connections>
                                     <outlet property="markdownTextView" destination="t94-XO-9mH" id="EWB-BF-UEt"/>
                                 </connections>
@@ -58,6 +65,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="FMk-Q2-qf9">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

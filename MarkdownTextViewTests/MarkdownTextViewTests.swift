@@ -8,7 +8,7 @@
 
 import UIKit
 import XCTest
-import MarkdownTextView
+import MarkdownTextViewKit
 
 class MarkdownTextViewTests: XCTestCase {
     

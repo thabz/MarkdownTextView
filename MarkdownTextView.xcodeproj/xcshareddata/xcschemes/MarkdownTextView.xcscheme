@@ -52,6 +52,16 @@
                ReferencedContainer = "container:MarkdownTextView.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "81D544191BB91F60003F826C"
+               BuildableName = "MarkdownTextViewKitTests.xctest"
+               BlueprintName = "MarkdownTextViewKitTests"
+               ReferencedContainer = "container:MarkdownTextView.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MarkdownTextViewKit
 
 class ViewController: UIViewController {
 

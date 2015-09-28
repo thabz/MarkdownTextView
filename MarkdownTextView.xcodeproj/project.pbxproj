@@ -12,9 +12,14 @@
 		8119992B1ACF9C8200809293 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 811999291ACF9C8200809293 /* Main.storyboard */; };
 		8119992D1ACF9C8200809293 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8119992C1ACF9C8200809293 /* Images.xcassets */; };
 		811999301ACF9C8200809293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8119992E1ACF9C8200809293 /* LaunchScreen.xib */; };
-		8119993C1ACF9C8200809293 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; };
-		811999461ACF9EA600809293 /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* MarkdownTextStorage.swift */; };
 		817CC4221ADC362A00EAA5D5 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817CC4211ADC362A00EAA5D5 /* TableViewController.swift */; };
+		81D544141BB91F60003F826C /* MarkdownTextViewKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 81D544131BB91F60003F826C /* MarkdownTextViewKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		81D5441B1BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; settings = {ASSET_TAGS = (); }; };
+		81D544221BB91F60003F826C /* MarkdownTextViewKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D544211BB91F60003F826C /* MarkdownTextViewKitTests.swift */; };
+		81D544261BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; };
+		81D544271BB91F60003F826C /* MarkdownTextViewKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		81D5442F1BB91F78003F826C /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* MarkdownTextStorage.swift */; settings = {ASSET_TAGS = (); }; };
+		81D544301BB92019003F826C /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,7 +30,42 @@
 			remoteGlobalIDString = 8119991F1ACF9C8200809293;
 			remoteInfo = MarkdownTextView;
 		};
+		81D5441C1BB91F60003F826C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 811999181ACF9C8200809293 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81D544101BB91F60003F826C;
+			remoteInfo = MarkdownTextViewKit;
+		};
+		81D5441E1BB91F60003F826C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 811999181ACF9C8200809293 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8119991F1ACF9C8200809293;
+			remoteInfo = MarkdownTextView;
+		};
+		81D544241BB91F60003F826C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 811999181ACF9C8200809293 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 81D544101BB91F60003F826C;
+			remoteInfo = MarkdownTextViewKit;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		81D5442D1BB91F60003F826C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				81D544271BB91F60003F826C /* MarkdownTextViewKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		811999201ACF9C8200809293 /* MarkdownTextView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MarkdownTextView.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -37,9 +77,15 @@
 		8119992F1ACF9C8200809293 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkdownTextViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8119993A1ACF9C8200809293 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
-		811999451ACF9EA600809293 /* MarkdownTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MarkdownTextStorage.swift; sourceTree = "<group>"; };
+		8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MarkdownTextViewTests.swift; path = ../MarkdownTextViewTests/MarkdownTextViewTests.swift; sourceTree = "<group>"; };
+		811999451ACF9EA600809293 /* MarkdownTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MarkdownTextStorage.swift; path = ../MarkdownTextView/MarkdownTextStorage.swift; sourceTree = "<group>"; };
 		817CC4211ADC362A00EAA5D5 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MarkdownTextViewKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		81D544131BB91F60003F826C /* MarkdownTextViewKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkdownTextViewKit.h; sourceTree = "<group>"; };
+		81D544151BB91F60003F826C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		81D5441A1BB91F60003F826C /* MarkdownTextViewKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MarkdownTextViewKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		81D544211BB91F60003F826C /* MarkdownTextViewKitTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewKitTests.swift; sourceTree = "<group>"; };
+		81D544231BB91F60003F826C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				81D544261BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +101,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D5440D1BB91F60003F826C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D544171BB91F60003F826C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D5441B1BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +127,8 @@
 			children = (
 				811999221ACF9C8200809293 /* MarkdownTextView */,
 				811999381ACF9C8200809293 /* MarkdownTextViewTests */,
+				81D544121BB91F60003F826C /* MarkdownTextViewKit */,
+				81D544201BB91F60003F826C /* MarkdownTextViewKitTests */,
 				811999211ACF9C8200809293 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -74,6 +138,8 @@
 			children = (
 				811999201ACF9C8200809293 /* MarkdownTextView.app */,
 				811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */,
+				81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */,
+				81D5441A1BB91F60003F826C /* MarkdownTextViewKitTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,7 +149,6 @@
 			children = (
 				811999271ACF9C8200809293 /* ViewController.swift */,
 				817CC4211ADC362A00EAA5D5 /* TableViewController.swift */,
-				811999451ACF9EA600809293 /* MarkdownTextStorage.swift */,
 				811999291ACF9C8200809293 /* Main.storyboard */,
 				811999231ACF9C8200809293 /* Supporting Files */,
 			);
@@ -104,7 +169,6 @@
 		811999381ACF9C8200809293 /* MarkdownTextViewTests */ = {
 			isa = PBXGroup;
 			children = (
-				8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */,
 				811999391ACF9C8200809293 /* Supporting Files */,
 			);
 			path = MarkdownTextViewTests;
@@ -118,7 +182,38 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		81D544121BB91F60003F826C /* MarkdownTextViewKit */ = {
+			isa = PBXGroup;
+			children = (
+				811999451ACF9EA600809293 /* MarkdownTextStorage.swift */,
+				81D544131BB91F60003F826C /* MarkdownTextViewKit.h */,
+				81D544151BB91F60003F826C /* Info.plist */,
+			);
+			path = MarkdownTextViewKit;
+			sourceTree = "<group>";
+		};
+		81D544201BB91F60003F826C /* MarkdownTextViewKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				81D544211BB91F60003F826C /* MarkdownTextViewKitTests.swift */,
+				8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */,
+				81D544231BB91F60003F826C /* Info.plist */,
+			);
+			path = MarkdownTextViewKitTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		81D5440E1BB91F60003F826C /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D544141BB91F60003F826C /* MarkdownTextViewKit.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		8119991F1ACF9C8200809293 /* MarkdownTextView */ = {
@@ -128,10 +223,12 @@
 				8119991C1ACF9C8200809293 /* Sources */,
 				8119991D1ACF9C8200809293 /* Frameworks */,
 				8119991E1ACF9C8200809293 /* Resources */,
+				81D5442D1BB91F60003F826C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				81D544251BB91F60003F826C /* PBXTargetDependency */,
 			);
 			name = MarkdownTextView;
 			productName = MarkdownTextView;
@@ -156,6 +253,43 @@
 			productReference = 811999351ACF9C8200809293 /* MarkdownTextViewTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		81D544101BB91F60003F826C /* MarkdownTextViewKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81D5442C1BB91F60003F826C /* Build configuration list for PBXNativeTarget "MarkdownTextViewKit" */;
+			buildPhases = (
+				81D5440C1BB91F60003F826C /* Sources */,
+				81D5440D1BB91F60003F826C /* Frameworks */,
+				81D5440E1BB91F60003F826C /* Headers */,
+				81D5440F1BB91F60003F826C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MarkdownTextViewKit;
+			productName = MarkdownTextViewKit;
+			productReference = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		81D544191BB91F60003F826C /* MarkdownTextViewKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 81D5442E1BB91F60003F826C /* Build configuration list for PBXNativeTarget "MarkdownTextViewKitTests" */;
+			buildPhases = (
+				81D544161BB91F60003F826C /* Sources */,
+				81D544171BB91F60003F826C /* Frameworks */,
+				81D544181BB91F60003F826C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				81D5441D1BB91F60003F826C /* PBXTargetDependency */,
+				81D5441F1BB91F60003F826C /* PBXTargetDependency */,
+			);
+			name = MarkdownTextViewKitTests;
+			productName = MarkdownTextViewKitTests;
+			productReference = 81D5441A1BB91F60003F826C /* MarkdownTextViewKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -172,6 +306,13 @@
 					};
 					811999341ACF9C8200809293 = {
 						CreatedOnToolsVersion = 6.2;
+						TestTargetID = 8119991F1ACF9C8200809293;
+					};
+					81D544101BB91F60003F826C = {
+						CreatedOnToolsVersion = 7.0;
+					};
+					81D544191BB91F60003F826C = {
+						CreatedOnToolsVersion = 7.0;
 						TestTargetID = 8119991F1ACF9C8200809293;
 					};
 				};
@@ -191,6 +332,8 @@
 			targets = (
 				8119991F1ACF9C8200809293 /* MarkdownTextView */,
 				811999341ACF9C8200809293 /* MarkdownTextViewTests */,
+				81D544101BB91F60003F826C /* MarkdownTextViewKit */,
+				81D544191BB91F60003F826C /* MarkdownTextViewKitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -213,6 +356,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		81D5440F1BB91F60003F826C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D544181BB91F60003F826C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -222,7 +379,6 @@
 			files = (
 				811999281ACF9C8200809293 /* ViewController.swift in Sources */,
 				811999261ACF9C8200809293 /* AppDelegate.swift in Sources */,
-				811999461ACF9EA600809293 /* MarkdownTextStorage.swift in Sources */,
 				817CC4221ADC362A00EAA5D5 /* TableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -231,7 +387,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8119993C1ACF9C8200809293 /* MarkdownTextViewTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D5440C1BB91F60003F826C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D5442F1BB91F78003F826C /* MarkdownTextStorage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81D544161BB91F60003F826C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				81D544301BB92019003F826C /* MarkdownTextViewTests.swift in Sources */,
+				81D544221BB91F60003F826C /* MarkdownTextViewKitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,6 +414,21 @@
 			isa = PBXTargetDependency;
 			target = 8119991F1ACF9C8200809293 /* MarkdownTextView */;
 			targetProxy = 811999361ACF9C8200809293 /* PBXContainerItemProxy */;
+		};
+		81D5441D1BB91F60003F826C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81D544101BB91F60003F826C /* MarkdownTextViewKit */;
+			targetProxy = 81D5441C1BB91F60003F826C /* PBXContainerItemProxy */;
+		};
+		81D5441F1BB91F60003F826C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8119991F1ACF9C8200809293 /* MarkdownTextView */;
+			targetProxy = 81D5441E1BB91F60003F826C /* PBXContainerItemProxy */;
+		};
+		81D544251BB91F60003F826C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 81D544101BB91F60003F826C /* MarkdownTextViewKit */;
+			targetProxy = 81D544241BB91F60003F826C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -349,6 +536,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
@@ -360,6 +548,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
@@ -397,6 +586,78 @@
 			};
 			name = Release;
 		};
+		81D544281BB91F60003F826C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = MarkdownTextViewKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		81D544291BB91F60003F826C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = MarkdownTextViewKit/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		81D5442A1BB91F60003F826C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = MarkdownTextViewKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
+			};
+			name = Debug;
+		};
+		81D5442B1BB91F60003F826C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = MarkdownTextViewKitTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKitTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -426,6 +687,22 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		81D5442C1BB91F60003F826C /* Build configuration list for PBXNativeTarget "MarkdownTextViewKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81D544281BB91F60003F826C /* Debug */,
+				81D544291BB91F60003F826C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		81D5442E1BB91F60003F826C /* Build configuration list for PBXNativeTarget "MarkdownTextViewKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				81D5442A1BB91F60003F826C /* Debug */,
+				81D5442B1BB91F60003F826C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

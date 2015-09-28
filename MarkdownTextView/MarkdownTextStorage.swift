@@ -2257,7 +2257,7 @@ private extension String {
 
 public class MarkdownTextView: UITextView, UITextViewDelegate {
     
-    weak var tableView: UITableView?
+    public weak var tableView: UITableView?
     
     override init(frame: CGRect, textContainer: NSTextContainer?) {
         textContainer?.lineFragmentPadding = 0;
