@@ -254,6 +254,35 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("ABC", MarkdownTextStorage(markdown: "A<!-- X -->B<!-- X -->C").string)
         XCTAssertEqual("A<!-- X -->BC", MarkdownTextStorage(markdown: "A`<!-- X -->`B<!-- X -->C").string)
     }
+    
+    func testHeaderTrimming() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "# Header").string.characters.count == 6)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "#  Header").string.characters.count == 6)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "#  Header ").string.characters.count == 6)
+    }
+    
+    // Links and formatting in headlines
+    func testRichHeadlines() {
+        XCTAssertTrue(MarkdownTextStorage(markdown: "# Header [Link](http://www.kalliope.org/suburl/)").string.characters.count == 11)
+        var header = MarkdownTextStorage(markdown: "# Header [Link](http://www.kalliope.org/suburl/)")
+        XCTAssertEqual("Header Link", header.string)
+        XCTAssertTrue(header.isLinkAtIndex(8))
+        XCTAssertTrue(header.isLinkAtIndex(10))
+        header = MarkdownTextStorage(markdown: "# Header http://www.kalliope.org/suburl/")
+        XCTAssertEqual("Header http://www.kalliope.org/suburl/", header.string)
+        XCTAssertTrue(header.isLinkAtIndex(8))
+        XCTAssertTrue(header.isLinkAtIndex(10))
+        header = MarkdownTextStorage(markdown: "# Header #123")
+        XCTAssertEqual("Header #123", header.string)
+        XCTAssertTrue(header.isLinkAtIndex(8))
+        header = MarkdownTextStorage(markdown: "# _Header_ **bold**")
+        XCTAssertEqual("Header bold", header.string)
+        XCTAssertTrue(header.isItalicAtIndex(0))
+        XCTAssertTrue(header.isBoldAtIndex(8))
+        header = MarkdownTextStorage(markdown: "# Header :bomb:")
+        XCTAssertEqual("Header 💣", header.string)
+    }
+
 }
 
 extension MarkdownTextStorage {

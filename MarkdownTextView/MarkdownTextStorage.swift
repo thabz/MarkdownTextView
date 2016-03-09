@@ -448,7 +448,18 @@ public class MarkdownTextStorage : NSTextStorage
         paragraph.lineSpacing = 0
         paragraph.paragraphSpacingBefore = 0
         paragraph.lineBreakMode = .ByWordWrapping
-        return applyParagraphStyle(line, paragraphStyle: paragraph)
+        var attributedLine = applyParagraphStyle(line, paragraphStyle: paragraph)
+        attributedLine = self.formatIssueLinkParts(attributedLine)
+        attributedLine = self.formatLinkParts(attributedLine)
+        attributedLine = self.formatRawLinkParts(attributedLine)
+        attributedLine = self.formatCommitLinkParts(attributedLine)
+        attributedLine = self.formatBoldParts(attributedLine)
+        attributedLine = self.formatItalicParts(attributedLine)
+        attributedLine = self.formatStrikethroughParts(attributedLine)
+        attributedLine = self.formatHTMLEscapes(attributedLine)
+        attributedLine = self.formatEmojiSynomyms(attributedLine)
+        attributedLine = self.formatDoubleSpaces(attributedLine)
+        return attributedLine
     }
     
     

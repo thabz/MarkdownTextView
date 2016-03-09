@@ -27,6 +27,8 @@ class TableViewController: UITableViewController {
             "- [X] Line.",
             "With a new paragraph after"
         ],[
+            "#   Short headline with [link](http://www.apple.com)",
+        ],[
         "###   Short headline. ### ",
         "* Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
         "- Link to commit deadbeef and issue #1. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
