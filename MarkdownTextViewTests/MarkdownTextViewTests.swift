@@ -247,6 +247,13 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual(":bombs:", MarkdownTextStorage(markdown: ":bombs:").string, "Unrecognized emoji synonym")
         XCTAssertEqual("A💣B", MarkdownTextStorage(markdown: "[A:bomb:B](http://www.att.com/)").string, "Emojis synonyms in links")
     }
+    
+    // We should remove HTML comments outside of codeblocks.
+    func testHTMLComments() {
+        XCTAssertEqual("AB", MarkdownTextStorage(markdown: "A<!-- comment -->B").string)
+        XCTAssertEqual("ABC", MarkdownTextStorage(markdown: "A<!-- X -->B<!-- X -->C").string)
+        XCTAssertEqual("A<!-- X -->BC", MarkdownTextStorage(markdown: "A`<!-- X -->`B<!-- X -->C").string)
+    }
 }
 
 extension MarkdownTextStorage {

@@ -74,6 +74,7 @@ public class MarkdownTextStorage : NSTextStorage
     static private let boldMatchRegExp = try! NSRegularExpression(pattern: "(\\*\\*|__)(.*?)\\1", options: [])
     static private let italicMatchRegExp = try! NSRegularExpression(pattern: "(^|[\\W_/])(?:(?!\\1)|(?=^))(\\*|_)(?=\\S)((?:(?!\\2).)*?\\S)\\2(?!\\2)(?=[\\W_]|$)", options: [])
     static private let monospaceMatchRegExp = try! NSRegularExpression(pattern: "`(.*?)`", options: [])
+    static private let htmlCommentMatchRegExp = try! NSRegularExpression(pattern: "<!--.*?-->", options: [])
     static private let strikethroughMatchRegExp = try! NSRegularExpression(pattern: "~~(.*?)~~", options: [])
     static private let linkMatchRegExp =  try! NSRegularExpression(pattern: "\\[(.*?)\\]\\(\\s*<?\\s*(\\S*?)\\s*>?\\s*\\)", options: [])
     
@@ -371,7 +372,8 @@ public class MarkdownTextStorage : NSTextStorage
                 let monospaceString = NSAttributedString(string: insidePingsString as String, attributes: self.styles[.Monospace])
                 result.appendAttributedString(monospaceString)
             } else {
-                let escaped = self.hideBackslashEscapes(substring as String)
+                var escaped = self.hideBackslashEscapes(substring as String)
+                escaped = self.trimHTMLComments(escaped)
                 var attributedLine = NSAttributedString(string: escaped as String, attributes: self.styles[.Normal])
                 attributedLine = self.formatImageParts(attributedLine)
                 attributedLine = self.formatIssueLinkParts(attributedLine)
@@ -401,6 +403,15 @@ public class MarkdownTextStorage : NSTextStorage
             }
         }
         
+        return varline as String
+    }
+    
+    func trimHTMLComments(line: String) -> String {
+        let varline = NSMutableString(string: line)
+        let matches = MarkdownTextStorage.htmlCommentMatchRegExp.matchesInString(line, options: [], range:  NSMakeRange(0,line.characters.count))
+        for match in Array(matches.reverse()) {
+            varline.replaceCharactersInRange(match.range, withString: "")
+        }
         return varline as String
     }
     
