@@ -233,6 +233,11 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertEqual("&xxxxxx;", MarkdownTextStorage(markdown: "&xxxxxx;").string, "Unrecognized entity escape")
         XCTAssertEqual("AT&T", MarkdownTextStorage(markdown: "[AT&amp;T](http://www.att.com/)").string, "HTML escapes in links")
     }
+
+    func testNumericHTMLEntityEscapes() {
+        XCTAssertEqual("α&ω", MarkdownTextStorage(markdown: "&#945;&#38;&#969;").string)
+        XCTAssertEqual("α&ω", MarkdownTextStorage(markdown: "&#x3B1;&#x26;&#x3c9;").string)
+    }
     
     func testEmojiSynonyms() {
         XCTAssertEqual("A 💣 B", MarkdownTextStorage(markdown: "A :bomb: B").string)

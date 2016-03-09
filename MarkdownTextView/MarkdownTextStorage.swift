@@ -122,6 +122,14 @@ public class MarkdownTextStorage : NSTextStorage
         let escapePattern = "&(" + escapesPatternParts.joinWithSeparator("|") + ");"
         return try! NSRegularExpression(pattern: escapePattern, options: [])
     }()
+    static private var HTMLNumericEntitiesRegExp: NSRegularExpression = {
+        let pattern = "&#(x?)(.+?);";
+        if let regexp = try? NSRegularExpression(pattern: pattern, options: NSRegularExpressionOptions()) {
+            return regexp
+        } else {
+            fatalError("Bad regexp")
+        }
+    }()
     static private var EmojiSynonymsRegExp: NSRegularExpression = {
         var escapesPatternParts = [String]()
         var invertedEscapesPatternParts = [String]()
@@ -328,6 +336,8 @@ public class MarkdownTextStorage : NSTextStorage
     func formatHTMLEscapes(line: NSAttributedString) -> NSAttributedString {
         var done = false
         let mutable = NSMutableAttributedString(attributedString: line)
+        
+        // Named escapes like &amp;
         while !done {
             let range = NSMakeRange(0, mutable.length)
             if let match = MarkdownTextStorage.HTMLEntitiesRegExp.firstMatchInString(mutable.string as String, options: NSMatchingOptions(), range: range) {
@@ -338,6 +348,18 @@ public class MarkdownTextStorage : NSTextStorage
                 mutable.replaceCharactersInRange(range, withString: replacement)
             } else {
                 done = true
+            }
+        }
+        // Numeric escapes like &#38; or &#x26;
+        let range = NSMakeRange(0, mutable.length)
+        let matches = MarkdownTextStorage.HTMLNumericEntitiesRegExp.matchesInString(mutable.string as String, options: NSMatchingOptions(), range: range).reverse()
+        for match in matches {
+            let range = match.range // Whole matched range encompasses "&aring;"
+            let isHex = !(mutable.string as NSString).substringWithRange(match.rangeAtIndex(1)).isEmpty
+            let escape = (mutable.string as NSString).substringWithRange(match.rangeAtIndex(2))
+            if let replacementUnicodeValue = Int(escape, radix: isHex ? 16 : 10) {
+                let replacement = String(Character(UnicodeScalar(replacementUnicodeValue)))
+                mutable.replaceCharactersInRange(range, withString: replacement)
             }
         }
         return mutable
