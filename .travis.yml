@@ -1,5 +1,5 @@
 language: objective-c
-osx_image: xcode7.3
+osx_image: xcode8
 script:
   - xcodebuild -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextViewKit  -sdk iphonesimulator
   - xcodebuild test -workspace MarkdownTextView.xcodeproj/project.xcworkspace -scheme MarkdownTextViewKit -sdk iphonesimulator
