@@ -303,10 +303,12 @@
 				TargetAttributes = {
 					8119991F1ACF9C8200809293 = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = 948EVF7J4M;
 						LastSwiftMigration = 0800;
 					};
 					811999341ACF9C8200809293 = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = 948EVF7J4M;
 						LastSwiftMigration = 0800;
 						TestTargetID = 8119991F1ACF9C8200809293;
 					};
@@ -316,6 +318,7 @@
 					};
 					81D544191BB91F60003F826C = {
 						CreatedOnToolsVersion = 7.0;
+						DevelopmentTeam = 948EVF7J4M;
 						LastSwiftMigration = 0800;
 						TestTargetID = 8119991F1ACF9C8200809293;
 					};
@@ -548,6 +551,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
@@ -561,6 +565,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
@@ -573,6 +578,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -591,6 +597,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = MarkdownTextViewTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -655,6 +662,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = MarkdownTextViewKitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -670,6 +678,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 948EVF7J4M;
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = MarkdownTextViewKitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
