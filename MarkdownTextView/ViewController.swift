@@ -43,7 +43,7 @@ class ViewController: UIViewController {
             "2. Second item",
             ""
         ]
-        let joinedMarkdown = markdownExample.joinWithSeparator("\n")
+        let joinedMarkdown = markdownExample.joined(separator: "\n")
         
         textStorage = MarkdownTextStorage(markdown: joinedMarkdown)
   
@@ -61,18 +61,18 @@ class ViewController: UIViewController {
         let layoutManager = NSLayoutManager()
         textStorage?.addLayoutManager(layoutManager)
         
-        let containerSize = CGSizeMake(self.view.bounds.size.width, CGFloat.max)
+        let containerSize = CGSize(width: self.view.bounds.size.width, height: CGFloat.greatestFiniteMagnitude)
         let textContainer = NSTextContainer(size: containerSize)
         textContainer.widthTracksTextView = true
         textContainer.heightTracksTextView = true
         layoutManager.addTextContainer(textContainer)
         
-        let newTextView = UITextView(frame: CGRectInset(self.view.bounds, 0, 0), textContainer: textContainer)
-        newTextView.backgroundColor = UIColor.greenColor()
-        newTextView.editable = false
+        let newTextView = UITextView(frame: (self.view.bounds).insetBy(dx: 0, dy: 0), textContainer: textContainer)
+        newTextView.backgroundColor = UIColor.green
+        newTextView.isEditable = false
         view.addSubview(newTextView)
         
-        self.textView.hidden = true
+        self.textView.isHidden = true
     }
     
     func setUpAttributedString() {
@@ -90,11 +90,11 @@ class ViewController: UIViewController {
     
     func setUpWithNotifications() {
         let markdownTextView = MarkdownTextView(frame: self.view.bounds)
-        markdownTextView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
-        markdownTextView.editable = false
+        markdownTextView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        markdownTextView.isEditable = false
         markdownTextView.markdownTextStorage = textStorage
         view.addSubview(markdownTextView)
-        self.textView.hidden = true
+        self.textView.isHidden = true
     }
 }
 

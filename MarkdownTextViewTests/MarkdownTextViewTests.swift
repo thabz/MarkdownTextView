@@ -76,8 +76,8 @@ class MarkdownTextViewTests: XCTestCase {
         XCTAssertTrue(boldLink.isLinkAtIndex(6))
         XCTAssertTrue(MarkdownTextStorage(markdown: "[XXX](http://www.kalliope.org/suburl/)  ").isLinkAtIndex(1))
         // The following test exposes issue #18. The "#3835772" part gets recognized as a commit sha which causes problems.
-        XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772)").string.rangeOfString(")") == nil)
-        XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#383)").string.rangeOfString(")") == nil)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#3835772)").string.range(of: ")") == nil)
+        XCTAssertTrue(MarkdownTextStorage(markdown: "[Static Overflow](http://stackoverflow.com/questions/1637332/static-const-vs-define/3835772#383)").string.range(of: ")") == nil)
         XCTAssertEqual("]", MarkdownTextStorage(markdown: "[\\]](http://www.kalliope.org/)").string, "Escapes in links")
         XCTAssertEqual("🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)").string, "Emojis in links")
         XCTAssertEqual("🐞🐞", MarkdownTextStorage(markdown: "[🐞](http://www.kalliope.org/)🐞").string, "Emojis in links")
@@ -291,49 +291,49 @@ class MarkdownTextViewTests: XCTestCase {
 }
 
 extension MarkdownTextStorage {
-    func isBoldAtIndex(index: Int) -> Bool {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func isBoldAtIndex(_ index: Int) -> Bool {
+        let attrs = attributes(at: index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            let traits = font.fontDescriptor().symbolicTraits
-            return traits.contains(.TraitBold)
+            let traits = font.fontDescriptor.symbolicTraits
+            return traits.contains(.traitBold)
         } else {
             return false
         }
     }
     
-    func isItalicAtIndex(index: Int) -> Bool {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func isItalicAtIndex(_ index: Int) -> Bool {
+        let attrs = attributes(at: index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            let traits = font.fontDescriptor().symbolicTraits
-            return traits.contains(.TraitItalic)
+            let traits = font.fontDescriptor.symbolicTraits
+            return traits.contains(.traitItalic)
         } else {
             return false
         }
     }
 
-    func isMonospaceAtIndex(index: Int) -> Bool {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func isMonospaceAtIndex(_ index: Int) -> Bool {
+        let attrs = attributes(at: index, effectiveRange: nil)
         if let font = attrs[NSFontAttributeName] as? UIFont {
-            let traits = font.fontDescriptor().symbolicTraits
-            return traits.contains(.TraitMonoSpace)
+            let traits = font.fontDescriptor.symbolicTraits
+            return traits.contains(.traitMonoSpace)
         } else {
             return false
         }
     }
 
-    func isLinkAtIndex(index: Int) -> Bool {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func isLinkAtIndex(_ index: Int) -> Bool {
+        let attrs = attributes(at: index, effectiveRange: nil)
         return attrs[NSLinkAttributeName] != nil
     }
 
-    func isStrikethroughAtIndex(index: Int) -> Bool {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func isStrikethroughAtIndex(_ index: Int) -> Bool {
+        let attrs = attributes(at: index, effectiveRange: nil)
         return attrs[NSStrikethroughStyleAttributeName] != nil
     }
 
     
-    func linkAtIndex(index: Int) -> String? {
-        let attrs = attributesAtIndex(index, effectiveRange: nil)
+    func linkAtIndex(_ index: Int) -> String? {
+        let attrs = attributes(at: index, effectiveRange: nil)
         return attrs[NSLinkAttributeName] as? String
     }
 

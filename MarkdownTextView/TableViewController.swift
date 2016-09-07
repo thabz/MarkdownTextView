@@ -90,17 +90,17 @@ class TableViewController: UITableViewController {
 
     var defaultStyles: StylesDict = {
         let fontSize = CGFloat(13)
-        let boldFont = UIFont.boldSystemFontOfSize(fontSize)
+        let boldFont = UIFont.boldSystemFont(ofSize: fontSize)
         return [
-            MarkdownStylesName.Normal: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize)],
-            MarkdownStylesName.Bold: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Italic: [NSFontAttributeName: UIFont.italicSystemFontOfSize(fontSize)],
-            MarkdownStylesName.Quote: [NSFontAttributeName: UIFont.systemFontOfSize(fontSize), NSForegroundColorAttributeName: UIColor.grayColor()],
-            MarkdownStylesName.Monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
-            MarkdownStylesName.Headline: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Subheadline: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Subsubheadline: [NSFontAttributeName: boldFont],
-            MarkdownStylesName.Subsubsubheadline: [NSFontAttributeName: boldFont]]
+            MarkdownStylesName.normal: [NSFontAttributeName: UIFont.systemFont(ofSize: fontSize)],
+            MarkdownStylesName.bold: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.italic: [NSFontAttributeName: UIFont.italicSystemFont(ofSize: fontSize)],
+            MarkdownStylesName.quote: [NSFontAttributeName: UIFont.systemFont(ofSize: fontSize), NSForegroundColorAttributeName: UIColor.gray],
+            MarkdownStylesName.monospace: [NSFontAttributeName: UIFont(name: "Menlo-Regular", size: fontSize-2)!],
+            MarkdownStylesName.headline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.subheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.subsubheadline: [NSFontAttributeName: boldFont],
+            MarkdownStylesName.subsubsubheadline: [NSFontAttributeName: boldFont]]
     }()
     
     var markdownTextStorages = [MarkdownTextStorage]()
@@ -108,36 +108,36 @@ class TableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         for section in markdownTexts {
-            let markdown = section.joinWithSeparator("\n")
+            let markdown = section.joined(separator: "\n")
             let markdownTextStorage = MarkdownTextStorage(markdown: markdown, styles: defaultStyles)
             markdownTextStorages.append(markdownTextStorage)
         }
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
 
     // MARK: - Table view data source
 
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return markdownTexts.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MarkdownCell", forIndexPath: indexPath) as! MarkdownCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MarkdownCell", for: indexPath) as! MarkdownCell
         cell.markdownTextView.tableView = self.tableView
         cell.markdownTextView.markdownTextStorage = markdownTextStorages[indexPath.row]
         return cell

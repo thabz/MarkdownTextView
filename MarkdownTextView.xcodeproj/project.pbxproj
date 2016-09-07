@@ -14,12 +14,12 @@
 		811999301ACF9C8200809293 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8119992E1ACF9C8200809293 /* LaunchScreen.xib */; };
 		817CC4221ADC362A00EAA5D5 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817CC4211ADC362A00EAA5D5 /* TableViewController.swift */; };
 		81D544141BB91F60003F826C /* MarkdownTextViewKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 81D544131BB91F60003F826C /* MarkdownTextViewKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		81D5441B1BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; settings = {ASSET_TAGS = (); }; };
+		81D5441B1BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; };
 		81D544221BB91F60003F826C /* MarkdownTextViewKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D544211BB91F60003F826C /* MarkdownTextViewKitTests.swift */; };
 		81D544261BB91F60003F826C /* MarkdownTextViewKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; };
 		81D544271BB91F60003F826C /* MarkdownTextViewKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 81D544111BB91F60003F826C /* MarkdownTextViewKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		81D5442F1BB91F78003F826C /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* MarkdownTextStorage.swift */; settings = {ASSET_TAGS = (); }; };
-		81D544301BB92019003F826C /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; settings = {ASSET_TAGS = (); }; };
+		81D5442F1BB91F78003F826C /* MarkdownTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811999451ACF9EA600809293 /* MarkdownTextStorage.swift */; };
+		81D544301BB92019003F826C /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8119993B1ACF9C8200809293 /* MarkdownTextViewTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -298,21 +298,25 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Jesper Christensen";
 				TargetAttributes = {
 					8119991F1ACF9C8200809293 = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 0800;
 					};
 					811999341ACF9C8200809293 = {
 						CreatedOnToolsVersion = 6.2;
+						LastSwiftMigration = 0800;
 						TestTargetID = 8119991F1ACF9C8200809293;
 					};
 					81D544101BB91F60003F826C = {
 						CreatedOnToolsVersion = 7.0;
+						LastSwiftMigration = 0800;
 					};
 					81D544191BB91F60003F826C = {
 						CreatedOnToolsVersion = 7.0;
+						LastSwiftMigration = 0800;
 						TestTargetID = 8119991F1ACF9C8200809293;
 					};
 				};
@@ -465,8 +469,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -475,6 +481,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -509,8 +516,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -518,6 +527,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -527,6 +537,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -535,24 +546,26 @@
 		811999401ACF9C8200809293 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		811999411ACF9C8200809293 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				INFOPLIST_FILE = MarkdownTextView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -569,6 +582,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
 			};
 			name = Debug;
@@ -582,6 +596,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.kalliope.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
 			};
 			name = Release;
@@ -590,6 +605,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
@@ -604,6 +620,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -613,6 +630,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
@@ -627,6 +645,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -642,6 +661,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
 			};
 			name = Debug;
@@ -656,6 +676,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.kalliope.MarkdownTextViewKitTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MarkdownTextView.app/MarkdownTextView";
 			};
 			name = Release;
@@ -697,6 +718,7 @@
 				81D544291BB91F60003F826C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		81D5442E1BB91F60003F826C /* Build configuration list for PBXNativeTarget "MarkdownTextViewKitTests" */ = {
 			isa = XCConfigurationList;
@@ -705,6 +727,7 @@
 				81D5442B1BB91F60003F826C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
