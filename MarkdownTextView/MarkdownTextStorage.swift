@@ -527,7 +527,7 @@ open class MarkdownTextStorage : NSTextStorage
         var parts = [NSAttributedString]()
         for (index, line) in lines.enumerated() {
             let isLastLine = index == lines.count - 1
-            let prefixed = NSMutableAttributedString(string: "\t●\t", attributes: styles[.normal])
+            let prefixed = NSMutableAttributedString(string: "\t•\t", attributes: styles[.normal])
             prefixed.append(formatParagraphLine(line))
             let paragraph = copyDefaultParagrapStyle()
             paragraph.tabStops = [
